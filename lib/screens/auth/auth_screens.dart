@@ -16,7 +16,7 @@ class _AuthScreenState extends State<AuthScreen> {
       Get.put(RegisterationController());
 
   LoginController loginController = Get.put(LoginController());
-  var isLogin = false.obs;
+  var isLogin = true.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +78,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     SizedBox(
                       height: 80,
                     ),
-                    isLogin.value ? loginWidget() : registerWidget()
+                    isLogin.value ? loginController : registerWidget()
                   ]),
             ),
           ),
@@ -91,6 +91,11 @@ class _AuthScreenState extends State<AuthScreen> {
     return Column(
       children: [
         InputTextFieldWidget(registerationController.nameController, 'name'),
+        SizedBox(
+          height: 20,
+        ),
+        InputTextFieldWidget(
+            registerationController.phoneController, 'phone_number'),
         SizedBox(
           height: 20,
         ),
@@ -112,25 +117,25 @@ class _AuthScreenState extends State<AuthScreen> {
     );
   }
 
-  Widget loginWidget() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 20,
-        ),
-        InputTextFieldWidget(loginController.emailController, 'email address'),
-        SizedBox(
-          height: 20,
-        ),
-        InputTextFieldWidget(loginController.passwordController, 'password'),
-        SizedBox(
-          height: 20,
-        ),
-        SubmitButton(
-          onPressed: () => loginController.loginWithEmail(),
-          title: 'Login',
-        )
-      ],
-    );
-  }
+  // Widget loginWidget() {
+  //   return Column(
+  //     children: [
+  //       SizedBox(
+  //         height: 20,
+  //       ),
+  //       InputTextFieldWidget(loginController.emailController, 'email address'),
+  //       SizedBox(
+  //         height: 20,
+  //       ),
+  //       InputTextFieldWidget(loginController.passwordController, 'password'),
+  //       SizedBox(
+  //         height: 20,
+  //       ),
+  //       SubmitButton(
+  //         onPressed: () => loginController.loginWithEmail(),
+  //         title: 'Login',
+  //       )
+  //     ],
+  //   );
+  // }
 }

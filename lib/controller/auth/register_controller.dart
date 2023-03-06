@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 
 class RegisterationController extends GetxController {
   TextEditingController nameController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -22,6 +23,7 @@ class RegisterationController extends GetxController {
           ApiEndPoints.baseUrl + ApiEndPoints.authEndpoints.registerEmail);
       Map body = {
         'name': nameController.text,
+        'phone_number': phoneController.text,
         'email': emailController.text.trim(),
         'password': passwordController.text
       };
@@ -37,6 +39,7 @@ class RegisterationController extends GetxController {
           final SharedPreferences? prefs = await _prefs;
           await prefs?.setString('token', token);
           nameController.clear();
+          phoneController.clear();
           emailController.clear();
           passwordController.clear();
           Get.offAll(HomeScreen());

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './auth/auth_screens.dart';
+// import './auth/auth_screens.dart';
+
+import '../main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -13,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
+  var tokenText;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,23 +24,31 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               final SharedPreferences? prefs = await _prefs;
               prefs?.clear();
-              Get.offAll(AuthScreen());
+              Get.offAll(MyApp());
             },
             child: Text(
               'logout',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.black),
             ))
       ]),
       body: Center(
         child: Column(
           children: [
-            Text('Welcome home'),
-            TextButton(
+            Text('Welcome home asu'),
+            ElevatedButton(
                 onPressed: () async {
-                  final SharedPreferences? prefs = await _prefs;
-                  print(prefs?.get('token'));
+                  final prefs = await SharedPreferences.getInstance();
+                  // final SharedPreferences? prefs = await _prefs;
+                  // print(prefs?.get('message'));
+                  final token = prefs.getString('token');
+                  // tokenText = token;
+                  print(token);
+                  setState(() {
+                    tokenText = token ?? 'Token not found';
+                  });
                 },
-                child: Text('print token'))
+                child: Text('print token')),
+            Center(child: Text('Ini Tokennya : ${tokenText}')),
           ],
         ),
       ),
