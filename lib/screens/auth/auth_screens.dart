@@ -1,123 +1,75 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
-import '../../controller/auth/login_controller.dart';
-import '../../controller/auth/register_controller.dart';
+import 'dart:io';
+
 import './widget/input_fields.dart';
 import './widget/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:carousel_slider/carousel_slider.dart';
 class AuthScreen extends StatefulWidget {
   @override
   State<AuthScreen> createState() => _AuthScreenState();
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  RegisterationController registerationController =
-      Get.put(RegisterationController());
 
-  LoginController loginController = Get.put(LoginController());
-  var isLogin = true.obs;
+  var isLogin = false.obs;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(36),
-          child: Center(
-            child: Obx(
-              () => Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: Text(
-                        'Masuk',
-                        style: TextStyle(
-                            fontSize: 30,
-                            color: Colors.black,
-                            fontWeight: FontWeight.w800),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        MaterialButton(
-                          color: !isLogin.value ? Colors.purple : Colors.white,
-                          onPressed: () {
-                            isLogin.value = false;
-                          },
-                          child: Text(
-                            'Register',
-                            style: TextStyle(
-                              color:
-                                  !isLogin.value ? Colors.white : Colors.black,
+      body: Column(
+        
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(36),
+                  child: Center(
+                    child: Obx(
+                      () => Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 50,
                             ),
-                          ),
-                        ),
-                        MaterialButton(
-                          color: isLogin.value ? Colors.purple : Colors.white,
-                          onPressed: () {
-                            isLogin.value = true;
-                          },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                              color:
-                                  isLogin.value ? Colors.white : Colors.black,
+                            Container(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Masuk',
+                                style: TextStyle(
+                                    fontSize: 30,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w800),
+                                    textAlign: TextAlign.left,
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
+                            SizedBox(
+                              height: 10,
+                            ),
+                            
+                            
+                          ]),
                     ),
-                    SizedBox(
-                      height: 80,
-                    ),
-                    isLogin.value ? loginController : registerWidget()
-                  ]),
+                  ),
+                ),
+                Image(image: AssetImage('assets/images/carLogin.png', ), height: 320),
+              ],
+              
             ),
+
           ),
-        ),
+          
+        ],
+        
       ),
     );
+    
   }
 
-  Widget registerWidget() {
-    return Column(
-      children: [
-        InputTextFieldWidget(registerationController.nameController, 'name'),
-        SizedBox(
-          height: 20,
-        ),
-        InputTextFieldWidget(
-            registerationController.phoneController, 'phone_number'),
-        SizedBox(
-          height: 20,
-        ),
-        InputTextFieldWidget(
-            registerationController.emailController, 'email address'),
-        SizedBox(
-          height: 20,
-        ),
-        InputTextFieldWidget(
-            registerationController.passwordController, 'password'),
-        SizedBox(
-          height: 20,
-        ),
-        SubmitButton(
-          onPressed: () => registerationController.registerWithEmail(),
-          title: 'Register',
-        )
-      ],
-    );
-  }
-
-  // Widget loginWidget() {
   //   return Column(
   //     children: [
   //       SizedBox(
