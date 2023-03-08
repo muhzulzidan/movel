@@ -5,9 +5,8 @@ import 'package:movel/screens/auth/register.dart';
 import 'package:movel/screens/home.dart';
 import 'package:movel/screens/auth/intro.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:hexcolor/hexcolor.dart';
+
 void main() async {
   runApp(MyApp());
 }
@@ -24,7 +23,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'Poppins',
           useMaterial3: true,
-          // scaffoldBackgroundColor: Color.fromRGBO(238, 238, 238, 0.957),c
+          scaffoldBackgroundColor: HexColor("#F2F2F2"),
           // colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         ),
         // home: LoginScreen(),
@@ -58,5 +57,3 @@ class MyAppState extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-

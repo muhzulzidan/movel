@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
 import 'dart:io';
 
+import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
 
@@ -64,7 +65,7 @@ class _IntroScreenState extends State<IntroScreen> {
                         width: double.infinity,
                         height: VisualDensity.maximumDensity,
                         // padding: EdgeInsets.symmetric(vertical: 40),
-                        decoration: BoxDecoration(color: Colors.white),
+                        decoration: BoxDecoration(color: HexColor("#F2F2F2")),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -79,7 +80,8 @@ class _IntroScreenState extends State<IntroScreen> {
                               height: 40,
                             ),
                             Container(
-                              decoration: BoxDecoration(color: Colors.white),
+                              decoration:
+                                  BoxDecoration(color: HexColor("#F2F2F2")),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: items.asMap().entries.map((entry) {
@@ -147,7 +149,7 @@ class _IntroScreenState extends State<IntroScreen> {
             ),
           ),
           // Container(
-          //   decoration: BoxDecoration(color: Colors.white),
+          //   decoration: BoxDecoration(color: HexColor("#F2F2F2")),
           //   child: Row(
           //     mainAxisAlignment: MainAxisAlignment.center,
           //     children: items.asMap().entries.map((entry) {
@@ -188,7 +190,7 @@ class _IntroScreenState extends State<IntroScreen> {
                     },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 12),
-                      backgroundColor: Colors.yellow[600],
+                      backgroundColor: Colors.amberAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(100),
                       ),
@@ -213,7 +215,8 @@ class _IntroScreenState extends State<IntroScreen> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => RegisterScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => RegisterScreen()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
