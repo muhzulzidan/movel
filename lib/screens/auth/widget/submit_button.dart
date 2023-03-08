@@ -16,9 +16,9 @@ class SubmitButton extends StatelessWidget {
       decoration:
           BoxDecoration(borderRadius: BorderRadius.circular(20), boxShadow: [
         BoxShadow(
-            color: Colors.white.withOpacity(0.25),
-            offset: Offset(0, 0),
-            blurRadius: 2,
+            color: Colors.black.withOpacity(0.2),
+            offset: Offset(0, 5),
+            blurRadius: 10,
             spreadRadius: 1)
       ]),
       child: ElevatedButton(
