@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:http/http.dart' as http;
+import 'package:movel/screens/auth/login.dart';
 
 import '../../controller/auth/auth_state.dart';
 
@@ -21,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
 
   bool _isLoading = false;
+  bool _passwordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -32,202 +34,218 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
-        child: Column(
-          // mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.7,
-              child: Column(
-                children: [
-                  Container(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'Daftar',
-                      style: TextStyle(
-                          fontSize: 30,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w800),
-                      textAlign: TextAlign.left,
+        child: SingleChildScrollView(
+          child: Column(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                child: Column(
+                  children: [
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Daftar',
+                        style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w800),
+                        textAlign: TextAlign.left,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
+                    SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          labelStyle:
+                              TextStyle(fontSize: 12, color: Colors.black54),
+                          labelText: 'Name',
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelStyle:
+                              TextStyle(fontSize: 12, color: Colors.black54),
+                          labelText: 'E-Mail',
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        controller: _phoneNumberController,
+                        decoration: const InputDecoration(
+                          labelStyle:
+                              TextStyle(fontSize: 12, color: Colors.black54),
+                          labelText: 'No. Handphone',
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        obscureText: !_passwordVisible,
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          labelStyle:
+                              TextStyle(fontSize: 12, color: Colors.black54),
+                          labelText: 'Kata Sandi',
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.purple[900],
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => {},
+                          style: ElevatedButton.styleFrom(
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            minimumSize: Size.zero,
+                            padding: EdgeInsets.zero,
+                            backgroundColor: Colors.transparent,
+                          ),
+                          child: Text(
+                            "Lupa kata sandi ?",
+                          ),
                         ),
                       ],
                     ),
-                    child: TextField(
-                      controller: _nameController,
-                      decoration: const InputDecoration(
-                        labelStyle:
-                            TextStyle(fontSize: 12, color: Colors.black54),
-                        labelText: 'Name',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 13),
+                          backgroundColor: Colors.amber,
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
                         ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        labelStyle:
-                            TextStyle(fontSize: 12, color: Colors.black54),
-                        labelText: 'E-Mail',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        onPressed: _isLoading ? null : register,
+                        child: _isLoading
+                            ? const CircularProgressIndicator()
+                            : const Text(
+                                'Daftar',
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 17),
+                              ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _phoneNumberController,
-                      decoration: const InputDecoration(
-                        labelStyle:
-                            TextStyle(fontSize: 12, color: Colors.black54),
-                        labelText: 'No. Handphone',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 2,
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: TextField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                        labelStyle:
-                            TextStyle(fontSize: 12, color: Colors.black54),
-                        labelText: 'Kata Sandi',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => {},
+                  ],
+                ),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.12,
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  // crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text("Sudah punya akun?"),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => LoginScreen()),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           minimumSize: Size.zero,
                           padding: EdgeInsets.zero,
                           backgroundColor: Colors.transparent,
                         ),
-                        child: Text(
-                          "Lupa kata sandi ?",
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: 13),
-                        backgroundColor: Colors.amber,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      onPressed: _isLoading ? null : register,
-                      child: _isLoading
-                          ? const CircularProgressIndicator()
-                          : const Text(
-                              'Daftar',
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 17),
-                            ),
-                    ),
-                  ),
-                ],
+                        child: Text("Masuk"))
+                  ],
+                ),
               ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.12,
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                // crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text("Tidak punya akun?"),
-                  TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterScreen()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: Size.zero,
-                        padding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                      ),
-                      child: Text("Daftar"))
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -276,19 +294,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Send the registration data to your backend server
     // and wait for the response
-    final response = await http.post(
-        Uri.parse('https://mobiltravelapp.shym2501.repl.co/api/register'),
-        body: {
-          'name': name,
-          'phone_number': phoneNumber,
-          'email': email,
-          'password': password,
-        });
+    final response =
+        await http.post(Uri.parse('http://191.96.1.36/api/register'), body: {
+      'name': name,
+      'phone_number': phoneNumber,
+      'email': email,
+      'password': password,
+    });
 
     // Check the response status code
     if (response.statusCode == 200) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration successful')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

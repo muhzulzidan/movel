@@ -6,9 +6,16 @@ import 'package:movel/screens/home.dart';
 import 'package:movel/screens/auth/intro.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 void main() async {
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   runApp(MyApp());
+  Future.delayed(Duration(seconds: 2), () {
+    // Remove the splash screen
+    FlutterNativeSplash.remove();
+  });
 }
 
 class MyApp extends StatelessWidget {
