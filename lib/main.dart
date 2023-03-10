@@ -24,7 +24,7 @@ void main() async {
     ),
   );
   // runApp(MyApp(
-      // isLoggedIn: isLoggedIn
+  // isLoggedIn: isLoggedIn
   //     ));
   // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
