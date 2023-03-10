@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-
 class AuthState with ChangeNotifier {
   String _token = '';
 
@@ -22,7 +21,7 @@ Future<void> saveToken(String token) async {
 }
 
 class AuthService {
-  static const API_URL = 'https://mobiltravelapp.shym2501.repl.co/api';
+  static const API_URL = 'http://191.96.1.36/api';
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
@@ -47,5 +46,3 @@ class AuthService {
     }
   }
 }
-
-

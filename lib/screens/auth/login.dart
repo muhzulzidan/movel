@@ -19,6 +19,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   bool _isLoading = false;
+  bool _passwordVisible = false;
 
   TextEditingController get emailController => _emailController;
   // final int padding = 16;
@@ -95,14 +96,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: TextField(
                         controller: _passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
+                        obscureText: !_passwordVisible,
+                        decoration: InputDecoration(
                           labelStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
                           labelText: 'Kata Sandi',
                           border: InputBorder.none,
                           contentPadding:
                               EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.purple[900],
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
                         ),
                       ),
                     ),
