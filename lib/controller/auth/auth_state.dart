@@ -21,7 +21,7 @@ Future<void> saveToken(String token) async {
 }
 
 class AuthService {
-  static const API_URL = 'http://191.96.1.36/api';
+  static const API_URL = 'https://movel.id/api';
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
