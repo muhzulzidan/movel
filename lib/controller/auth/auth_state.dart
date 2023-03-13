@@ -62,10 +62,10 @@ class AuthService {
           roleName = "unknown";
           break;
       }
-      
+
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt('roleId', roleId);
-      
+
       // print("$token");
       // ... save token to state management system or storage
       return true; // Return true to indicate successful login
