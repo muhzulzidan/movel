@@ -1,5 +1,6 @@
 import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
 import 'package:movel/screens/home.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => MyAppState(),
-      child: MaterialApp(
+      child: GetMaterialApp(
+        // key: UniqueKey(),
         title: 'Movel : Mobil Travel',
         theme: ThemeData(
           fontFamily: 'Poppins',

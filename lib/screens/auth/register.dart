@@ -268,6 +268,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter your name')),
       );
+      _isLoading = false;
       return;
     }
 
@@ -275,6 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter your phone number')),
       );
+      _isLoading = false;
       return;
     }
 
@@ -282,6 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter your email')),
       );
+      _isLoading = false;
       return;
     }
 
@@ -289,13 +292,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter your password')),
       );
+      _isLoading = false;
       return;
     }
 
     // Send the registration data to your backend server
     // and wait for the response
     final response =
-        await http.post(Uri.parse('http://191.96.1.36/api/register'), body: {
+        await http.post(Uri.parse('https://movel.id/api/register'), body: {
       'name': name,
       'phone_number': phoneNumber,
       'email': email,
@@ -314,6 +318,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Registration failed')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RegisterScreen()),
       );
     }
   }

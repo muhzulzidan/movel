@@ -226,6 +226,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if (result) {
       Navigator.pushNamed(context, '/home');
     } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Cek Email atau password kamu'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+          // behavior: SnackBarBehavior.floating,
+        ),
+      );
       // Show an error message to the user
     }
   }

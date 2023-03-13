@@ -22,9 +22,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(actions: [
         TextButton(
             onPressed: () async {
-              final SharedPreferences? prefs = await _prefs;
-              prefs?.clear();
-              Get.offAll(MyApp());
+              final SharedPreferences prefs = await _prefs;
+              await prefs.clear();
+              Get.offAll(() => MyApp());
             },
             child: Text(
               'logout',
@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text('Welcome home asu'),
             ElevatedButton(
-               onPressed: () async {
+                onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   // final SharedPreferences? prefs = await _prefs;
                   // print(prefs?.get('message'));
