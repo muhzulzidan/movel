@@ -4,6 +4,7 @@ import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
 import 'package:movel/screens/home/home.dart';
 import 'package:movel/screens/auth/intro.dart';
+import 'package:movel/screens/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
