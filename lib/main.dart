@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
-import 'package:movel/screens/home.dart';
+import 'package:movel/screens/home/home.dart';
 import 'package:movel/screens/auth/intro.dart';
+import 'package:movel/screens/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -31,38 +32,33 @@ class MyApp extends StatelessWidget {
         title: 'Movel : Mobil Travel',
         theme: ThemeData(
           fontFamily: 'Poppins',
-          useMaterial3: true,
-          scaffoldBackgroundColor: HexColor("#F2F2F2"),
-          // colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          // useMaterial3: true,
+          scaffoldBackgroundColor: HexColor("#Ffffff"),
+          appBarTheme: AppBarTheme(
+            iconTheme: IconThemeData(
+              color: Colors.black, //change your color here
+            ),
+            elevation: 0,
+            // shadowColor: Colors.transparent,
+            backgroundColor: Colors.white,
+          ),
+          // scaffoldBackgroundColor: HexColor("#F2F2F2"),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple.shade900),
         ),
         // home: LoginScreen(),
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
-          '/': (context) => IntroScreen(),
-          '/home': (context) => HomeScreen(),
+          // '/': (context) => IntroScreen(),
+          '/': (context) => MyHomePage(),
+          // '/home': (context) => MyHomePage(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
+          // '/profile' : (context) => ProfileScreen(),
         },
       ),
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  var current = WordPair.random();
-  void getNext() {
-    current = WordPair.random();
-    notifyListeners();
-  }
-
-  var favorites = <WordPair>[];
-  void toggleFavorite() {
-    if (favorites.contains(current)) {
-      favorites.remove(current);
-    } else {
-      favorites.add(current);
-    }
-    notifyListeners();
-  }
-}
+class MyAppState extends ChangeNotifier {}

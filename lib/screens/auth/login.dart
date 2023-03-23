@@ -28,7 +28,11 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor("#F2F2F2"),
+        iconTheme: IconThemeData(
+          color: Colors.black, //change your color here
+        ),
+        shadowColor: Colors.transparent,
+        backgroundColor: Colors.white,
         // title: const Text('Login'),
       ),
       body: SingleChildScrollView(
@@ -71,12 +75,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: TextField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'E-Mail / No. Handphone',
+                          hintText: 'E-Mail / No. Handphone',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                         ),
                       ),
                     ),
@@ -98,12 +102,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         controller: _passwordController,
                         obscureText: !_passwordVisible,
                         decoration: InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'Kata Sandi',
+                          hintText: 'Kata Sandi',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible
@@ -134,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Text(
                             "Lupa kata sandi ?",
+                            
                           ),
                         ),
                       ],
