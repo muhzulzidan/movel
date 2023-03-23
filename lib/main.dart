@@ -38,6 +38,12 @@ class MyApp extends StatelessWidget {
             iconTheme: IconThemeData(
               color: Colors.black, //change your color here
             ),
+
+            titleTextStyle: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                fontFamily: 'Poppins'),
             elevation: 0,
             // shadowColor: Colors.transparent,
             backgroundColor: Colors.white,
@@ -49,9 +55,9 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
         routes: {
-          // '/': (context) => IntroScreen(),
-          '/': (context) => MyHomePage(),
-          // '/home': (context) => MyHomePage(),
+          '/': (context) => IntroScreen(),
+          // '/': (context) => MyHomePage(),
+          '/home': (context) => MyHomePage(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           // '/profile' : (context) => ProfileScreen(),
