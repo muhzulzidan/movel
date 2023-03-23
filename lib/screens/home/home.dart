@@ -58,6 +58,7 @@
 import 'package:flutter/material.dart';
 import 'package:movel/screens/home/home_content.dart';
 import 'package:movel/screens/inbox.dart';
+import 'package:movel/screens/pesanan.dart';
 import 'package:movel/screens/profile/profile.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -97,6 +98,13 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator(
             onGenerateRoute: (settings) {
               return MaterialPageRoute(
+                builder: (context) => PesananScreen(),
+              );
+            },
+          ),
+          Navigator(
+            onGenerateRoute: (settings) {
+              return MaterialPageRoute(
                 builder: (context) => ProfileScreen(),
               );
             },
@@ -108,18 +116,23 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         onTap: onTabTapped,
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed, //
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.home_outlined),
+            label: 'Beranda',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.inbox),
-            label: 'Inbox',
+            icon: Icon(Icons.chat_outlined),
+            label: 'Kotak Masuk',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.list_alt_rounded),
+            label: 'Pesanan',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_2_outlined),
+            label: 'Akun',
           ),
         ],
       ),

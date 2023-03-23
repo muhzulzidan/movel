@@ -15,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 TextButton(
                   onPressed: () {},
+                  
                   child: Column(
                     children: [
                       Text(
@@ -72,6 +73,9 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
           ),
+          Container(
+              alignment: Alignment.centerRight,
+              child: Image.asset("assets/bgProfile.png"))
         ],
       ),
     );

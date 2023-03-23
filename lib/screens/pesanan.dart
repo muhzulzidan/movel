@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'home/home.dart';
 
-class InboxScreen extends StatefulWidget {
+class PesananScreen extends StatefulWidget {
   @override
-  _InboxScreenState createState() => _InboxScreenState();
+  _PesananScreenState createState() => _PesananScreenState();
 }
 
-class _InboxScreenState extends State<InboxScreen> {
+class _PesananScreenState extends State<PesananScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +23,7 @@ class _InboxScreenState extends State<InboxScreen> {
           )),
       body: Container(
         child: Center(
-          child: Text('This is the inbox screen'),
+          child: Text('This is Pesanan'),
         ),
       ),
     );
