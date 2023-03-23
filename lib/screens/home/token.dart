@@ -4,16 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 // import './auth/auth_screens.dart';
 
-import '../main.dart';
+// import '../main.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class TokecScreen extends StatefulWidget {
+  const TokecScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<TokecScreen> createState() => _TokecScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _TokecScreenState extends State<TokecScreen> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   var tokenText;
   @override
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               final SharedPreferences prefs = await _prefs;
               await prefs.clear();
-              Get.offAll(() => MyApp());
+              // Get.offAll(() => MyApp());
             },
             child: Text(
               'logout',
@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           children: [
-            Text('Welcome home asu'),
+            Text('Welcome home'),
             ElevatedButton(
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();

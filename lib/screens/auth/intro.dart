@@ -48,11 +48,14 @@ class _IntroScreenState extends State<IntroScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(
+              height: 100,
+            ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 0),
               child: CarouselSlider(
                 options: CarouselOptions(
-                    height: 600,
+                    height: 400,
                     viewportFraction: 1,
                     onPageChanged: (index, reason) {
                       setState(() {
@@ -66,7 +69,7 @@ class _IntroScreenState extends State<IntroScreen> {
                           width: double.infinity,
                           height: VisualDensity.maximumDensity,
                           // padding: EdgeInsets.symmetric(vertical: 40),
-                          decoration: BoxDecoration(color: HexColor("#F2F2F2")),
+                          // decoration: BoxDecoration(color: HexColor("#F2F2F2")),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -77,42 +80,12 @@ class _IntroScreenState extends State<IntroScreen> {
                                     ),
                                     height: 250),
                               ),
-                              SizedBox(
-                                height: 40,
-                              ),
-                              Container(
-                                decoration:
-                                    BoxDecoration(color: HexColor("#F2F2F2")),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: items.asMap().entries.map((entry) {
-                                    return GestureDetector(
-                                      // onTap: () =>
-                                      //     _controller.animateToPage(entry.key),
-                                      child: Container(
-                                        width: 10,
-                                        height: 10,
-                                        margin: EdgeInsets.symmetric(
-                                            vertical: 0, horizontal: 3),
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                (Theme.of(context).brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.white
-                                                        : Colors.purple[900])
-                                                    ?.withOpacity(
-                                                        _current == entry.key
-                                                            ? 1
-                                                            : 0.1)),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                              SizedBox(
-                                height: 50,
-                              ),
+                              // SizedBox(
+                              //   height: 40,
+                              // ),
+                              // SizedBox(
+                              //   height: 50,
+                              // ),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 40),
@@ -172,6 +145,37 @@ class _IntroScreenState extends State<IntroScreen> {
             //     }).toList(),
             //   ),
             // ),
+
+            SizedBox(
+              height: 50,
+            ),
+            Container(
+              // decoration: BoxDecoration(color: HexColor("#F2F2F2")),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: items.asMap().entries.map((entry) {
+                  return GestureDetector(
+                    // onTap: () =>
+                    //     _controller.animateToPage(entry.key),
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      margin: EdgeInsets.symmetric(vertical: 0, horizontal: 3),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: (Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.purple[900])
+                              ?.withOpacity(_current == entry.key ? 1 : 0.1)),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            SizedBox(
+              height: 100,
+            ),
             Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -192,7 +196,7 @@ class _IntroScreenState extends State<IntroScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.amberAccent,
+                        backgroundColor: Colors.amber,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100),
                         ),

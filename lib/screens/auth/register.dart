@@ -28,10 +28,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor("#F2F2F2"),
-        // foregroundColor: HexColor("#F2F2F2"),
-        // title: const Text('Login'),
-      ),
+          // title: const Text('Login'),
+          ),
       body: Padding(
         padding: EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -70,12 +68,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextField(
                         controller: _nameController,
                         decoration: const InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'Name',
+                          hintText: 'Name',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                         ),
                       ),
                     ),
@@ -96,12 +94,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextField(
                         controller: _emailController,
                         decoration: const InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'E-Mail',
+                          hintText: 'E-Mail',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                         ),
                       ),
                     ),
@@ -122,12 +120,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: TextField(
                         controller: _phoneNumberController,
                         decoration: const InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'No. Handphone',
+                          hintText: 'No. Handphone',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                         ),
                       ),
                     ),
@@ -149,12 +147,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         obscureText: !_passwordVisible,
                         controller: _passwordController,
                         decoration: InputDecoration(
-                          labelStyle:
+                          hintStyle:
                               TextStyle(fontSize: 12, color: Colors.black54),
-                          labelText: 'Kata Sandi',
+                          hintText: 'Kata Sandi',
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
                               _passwordVisible
