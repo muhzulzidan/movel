@@ -364,3 +364,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+Future<void> logout(BuildContext context, String token) async {
+  final url = Uri.parse('https://admin.movel.id/api/user/logout');
+
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': 'Bearer $token',
+    },
+  );
+
+  if (response.statusCode == 200) {
+    // Logout was successful
+    Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(builder: (context) => IntroScreen()));
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Logout failed')),
+    );
+    // Logout failed
+  }
+}

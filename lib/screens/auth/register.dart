@@ -396,6 +396,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
       );
+    } else if (response.statusCode == 200 &&
+        jsonResponse.containsKey('status') &&
+        jsonResponse['status'] == 'failed') {
+      // Registration failed
+      print("status failed");
+      print(jsonResponse);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${jsonResponse['message']}')),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => RegisterScreen()),
+      );
     } else {
       // Unexpected response
       print(response);
