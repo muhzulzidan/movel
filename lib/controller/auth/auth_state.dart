@@ -35,7 +35,7 @@ class AuthService {
     if (response.statusCode == 200) {
       // Save authentication data here, such as a JWT token
       final responseData = jsonDecode(response.body);
-      final token = responseData['access_token'];
+      final token = responseData['token'];
       AuthState()._token = token; // set the token in the state management class
       await saveToken(token); // save the token to storage
 
