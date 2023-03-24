@@ -60,6 +60,7 @@ import 'package:movel/screens/home/home_content.dart';
 import 'package:movel/screens/inbox.dart';
 import 'package:movel/screens/pesanan.dart';
 import 'package:movel/screens/profile/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
