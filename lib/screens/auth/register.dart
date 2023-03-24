@@ -191,6 +191,48 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                       child: TextField(
+                        obscureText: !_passwordVisible,
+                        controller: _passwordConfirmationController,
+                        decoration: InputDecoration(
+                          hintStyle:
+                              TextStyle(fontSize: 12, color: Colors.black54),
+                          hintText: 'Konfirmasi Kata Sandi',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 21, vertical: 10),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.deepPurple.shade700,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 2,
+                            blurRadius: 5,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
                         obscureText: !_passwordVisible2,
                         controller: _passwordConfirmationController,
                         decoration: InputDecoration(
