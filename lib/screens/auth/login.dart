@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/auth/register.dart';
+import 'package:movel/screens/home/home.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth/auth_state.dart';
 
@@ -138,7 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Text(
                             "Lupa kata sandi ?",
-                            
                           ),
                         ),
                       ],
@@ -219,8 +220,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final email = emailController.text;
-    final password = _passwordController.text;
+    // final email = emailController.text;
+    // final password = _passwordController.text;
+    final email = "zidan2@gmail.com";
+    final password = "zidan100";
 
     final result = await _authService.login(email, password);
 
@@ -228,8 +231,19 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
+    Future<String> getToken() async {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? '';
+      // print(token);
+      return token;
+    }
+
     if (result) {
-      Navigator.pushNamed(context, '/home');
+      final accessToken = await getToken();
+      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      // Navigator.pushNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

@@ -363,18 +363,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // and wait for the response
     final response = await http
         .post(Uri.parse('https://admin.movel.id/api/user/register'), body: {
-      'name': "zidan",
-      'tc': "true",
-      'no_hp': "08243324234",
-      'email': "zidan8@gmail.com",
-      'password': "zidan100",
-      'password_confirmation': "zidan100",
-      // 'name': name,
+      // 'name': "zidan",
       // 'tc': "true",
-      // 'no_hp': phoneNumber,
-      // 'email': email,
-      // 'password': password,
-      // 'password_confirmation': password_confirmation,
+      // 'no_hp': "08243324234",
+      // 'email': "zidan8@gmail.com",
+      // 'password': "zidan100",
+      // 'password_confirmation': "zidan100",
+      'name': name,
+      'tc': "true",
+      'no_hp': phoneNumber,
+      'email': email,
+      'password': password,
+      'password_confirmation': password_confirmation,
     });
 
     String message = '';

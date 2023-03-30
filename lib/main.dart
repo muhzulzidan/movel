@@ -9,11 +9,17 @@ import 'package:movel/screens/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  runApp(MyApp());
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  bool isLoggedIn = token != null && token.isNotEmpty;
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
+  // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
     // Remove the splash screen
     FlutterNativeSplash.remove();
@@ -21,8 +27,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // const MyApp({super.key});
+  final bool isLoggedIn;
 
+  const MyApp({required this.isLoggedIn});
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -38,10 +46,10 @@ class MyApp extends StatelessWidget {
             iconTheme: IconThemeData(
               color: Colors.black, //change your color here
             ),
-
+            toolbarHeight: 60,
             titleTextStyle: TextStyle(
                 color: Colors.black,
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 fontFamily: 'Poppins'),
             elevation: 0,
@@ -54,10 +62,12 @@ class MyApp extends StatelessWidget {
         // home: LoginScreen(),
         debugShowCheckedModeBanner: false,
         initialRoute: '/',
+        // home: isLoggedIn ? IntroScreen() : MyHomePage(),
         routes: {
           '/': (context) => IntroScreen(),
           // '/': (context) => MyHomePage(),
           '/home': (context) => MyHomePage(),
+          //  "/home": isLoggedIn ? MyHomePage() : LoginScreen(),
           '/login': (context) => LoginScreen(),
           '/register': (context) => RegisterScreen(),
           // '/profile' : (context) => ProfileScreen(),

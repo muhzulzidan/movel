@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 
 class EditProfileScreen extends StatelessWidget {
+  final Map<String, dynamic> userData;
+
+  EditProfileScreen({required this.userData});
+
+  // int no_hp = "userData["user"]["no_hp"]";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,6 +15,7 @@ class EditProfileScreen extends StatelessWidget {
           "Edit Profil",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: Colors.purple.shade700,
       ),
       body: Column(
@@ -22,7 +29,8 @@ class EditProfileScreen extends StatelessWidget {
                   padding: EdgeInsets.all(16.0),
                   child: CircleAvatar(
                     radius: 50.0,
-                    backgroundImage: AssetImage('assets/images/zidan.png'),
+                    backgroundColor: Colors.transparent,
+                    backgroundImage: AssetImage('assets/placeholderPhoto.png'),
                   ),
                 ),
                 SizedBox(height: 40),
@@ -30,6 +38,9 @@ class EditProfileScreen extends StatelessWidget {
             ),
           ),
           Divider(),
+          Column(
+            children: [Text('${userData["user"]}')],
+          ),
           ListTile(
             title: Row(
               children: [
@@ -37,7 +48,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('Nama Pengguna'),
                 ),
                 Expanded(
-                  child: Text('Muhammad Zulzidan M.'),
+                  child: Text('${userData["user"]["name"]}'),
                 ),
               ],
             ),
@@ -50,7 +61,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('E-mail'),
                 ),
                 Expanded(
-                  child: Text('zulzidan@gmail.com'),
+                  child: Text('${userData["user"]["email"]}'),
                 ),
               ],
             ),
@@ -63,7 +74,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('No. Handphone'),
                 ),
                 Expanded(
-                  child: Text('081233334444'),
+                  child: Text('${userData["user"]["no_hp"]}'),
                 ),
               ],
             ),
@@ -76,12 +87,15 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('Alamat'),
                 ),
                 Expanded(
-                  child: Text('Perumnas Tibojong'),
+                  child: Text(
+                    userData["user"]["alamat"] ?? "kosong",
+                  ),
                 ),
               ],
             ),
           ),
           Divider(),
+
           // ListTile(
           //   leading: Icon(Icons.person),
           //   title: Text('Personal Information'),

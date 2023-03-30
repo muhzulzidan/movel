@@ -13,7 +13,7 @@ class _PesananScreenState extends State<PesananScreen> {
     return Scaffold(
       appBar: AppBar(
           title: Text(
-            "Kotak Masuk",
+            "Pesanan",
           ),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
