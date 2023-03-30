@@ -4,8 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../trx/ChooseLocationScreen.dart';
 
-
-
 var items = [
   {
     "foto": "assets/ardi.png",
@@ -65,7 +63,6 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: Column(
           children: [
@@ -77,10 +74,8 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 Image.asset(
                   'assets/Hero.png',
                   fit: BoxFit.cover,
-
                 ),
                 Positioned(
-
                   bottom: 15,
                   left: 70,
                   right: 70,
@@ -131,7 +126,7 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 )
               ],
             ),
-            
+
             SizedBox(
               height: 10,
             ),
@@ -314,8 +309,6 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 },
               ),
             ),
-
-           
           ],
         ),
       ),
