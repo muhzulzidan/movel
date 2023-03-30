@@ -63,12 +63,37 @@ import 'package:movel/screens/profile/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyHomePage extends StatefulWidget {
+  // final String userAccessToken;
+
+  // MyHomePage({required this.userAccessToken});
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
+// String _userData = '';
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _fetchUserData();
+//   }
+
+//     Future<void> _fetchUserData() async {
+//     final response = await http.get(
+//       Uri.parse('https://admin.movel.id/api/user'),
+//       headers: {'Authorization': 'Bearer ${widget.userAccessToken}'},
+//     );
+
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+//       setState(() {
+//         _userData = data.toString();
+//       });
+//     }
+//   }
+
 
   void onTabTapped(int index) {
     setState(() {
@@ -79,7 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
+      body:  IndexedStack(
         index: _currentIndex,
         children: [
           Navigator(

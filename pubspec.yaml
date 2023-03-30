@@ -46,6 +46,7 @@ dependencies:
   google_fonts: ^4.0.3
   hexcolor: ^3.0.1
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -93,6 +94,8 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - assets/
