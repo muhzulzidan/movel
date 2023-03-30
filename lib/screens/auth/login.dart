@@ -148,7 +148,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           child: Text(
                             "Lupa kata sandi ?",
-                            
                           ),
                         ),
                       ],
