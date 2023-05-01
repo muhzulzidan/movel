@@ -29,7 +29,7 @@ Future<void> saveToken(String token) async {
 }
 
 class AuthService {
-  static const API_URL = 'https://admin.movel.id/api/user';
+  static const API_URL = 'https://api.movel.id/api/user';
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
@@ -46,6 +46,7 @@ class AuthService {
       final token = responseData['token'];
       AuthState().token = token; // set the token in the state management class
       await saveToken(token); // save the token to storage
+
       // print("$token");
       // ... save token to state management system or storage
       return true; // Return true to indicate successful login
@@ -83,7 +84,7 @@ class UserService {
 
     print(token);
     final response = await http.get(
-      Uri.parse('https://admin.movel.id/api/user/loggeduser'),
+      Uri.parse('https://api.movel.id/api/user/loggeduser'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -91,7 +92,7 @@ class UserService {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      // print(responseData);
+      print(responseData);
       return responseData;
     } else {
       print('${response.statusCode}');

@@ -5,6 +5,7 @@ import 'package:movel/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth/auth_state.dart';
+import 'forget_pass.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -131,7 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () => {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordScreen()),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             minimumSize: Size.zero,
@@ -220,10 +227,10 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // final email = emailController.text;
-    // final password = _passwordController.text;
-    final email = "zidan2@gmail.com";
-    final password = "zidan100";
+    final email = emailController.text;
+    final password = _passwordController.text;
+    // final email = "zidan2@gmail.com";
+    // final password = "zidan100";
 
     final result = await _authService.login(email, password);
 
@@ -240,6 +247,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (result) {
       final accessToken = await getToken();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("isLoggedIn", true);
       Navigator.of(context).pop();
       Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));

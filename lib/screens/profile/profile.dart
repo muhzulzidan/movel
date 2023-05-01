@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
-    final url = Uri.parse('https://admin.movel.id/api/user/logout');
+    final url = Uri.parse('https://api.movel.id/api/user/logout');
 
     final response = await http.post(
       url,
@@ -331,6 +331,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // final SharedPreferences? prefs = await _prefs;
                       // print(prefs?.get('message'));
                       final token = prefs.getString('token');
+                      print(token);
                       logout(context, token!);
                       // TODO: Log out the user and navigate to the login screen.
                     },

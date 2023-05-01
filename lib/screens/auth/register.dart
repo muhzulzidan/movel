@@ -362,7 +362,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Send the registration data to your backend server
     // and wait for the response
     final response = await http
-        .post(Uri.parse('https://admin.movel.id/api/user/register'), body: {
+        .post(Uri.parse('https://api.movel.id/api/user/register'), body: {
       // 'name': "zidan",
       // 'tc': "true",
       // 'no_hp': "08243324234",
@@ -370,7 +370,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       // 'password': "zidan100",
       // 'password_confirmation': "zidan100",
       'name': name,
-      'tc': "true",
+      'role_id': "2",
       'no_hp': phoneNumber,
       'email': email,
       'password': password,

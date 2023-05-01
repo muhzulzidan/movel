@@ -16,8 +16,8 @@ void main() async {
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString('token');
-  bool isLoggedIn = token != null && token.isNotEmpty;
-
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  print(isLoggedIn);
   runApp(MyApp(isLoggedIn: isLoggedIn));
   // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         ),
         // home: LoginScreen(),
         debugShowCheckedModeBanner: false,
-        initialRoute: '/home',
+        initialRoute: '/',
         // home: isLoggedIn ? IntroScreen() : MyHomePage(),
         routes: {
           '/': (context) => IntroScreen(),
