@@ -5,6 +5,7 @@ import 'package:movel/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth/auth_state.dart';
+import '../home/driver/home.dart';
 import 'forget_pass.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -227,10 +228,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final email = emailController.text;
-    final password = _passwordController.text;
-    // final email = "zidan2@gmail.com";
+    // final email = emailController.text;
+    // final password = _passwordController.text;
+    // final email = "zidan3@gmail.com";
     // final password = "zidan100";
+    final email = "sopirbaru@gmail.com";
+    final password = "123456";
 
     final result = await _authService.login(email, password);
 
@@ -249,9 +252,19 @@ class _LoginScreenState extends State<LoginScreen> {
       final accessToken = await getToken();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool("isLoggedIn", true);
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      final roleId = await prefs.getInt('roleId');
+      print(result);
+      print('role id from login is : ${roleId}');
+      if (roleId == 3) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => MyHomeDriverPage()));
+      } else {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      }
+
       // Navigator.pushNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

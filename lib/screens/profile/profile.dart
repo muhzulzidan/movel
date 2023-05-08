@@ -31,9 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (response.statusCode == 200) {
       // Logout was successful
+      final responseData = jsonDecode(response.body);
+      print(responseData);
       Navigator.of(context, rootNavigator: true).pushReplacement(
           MaterialPageRoute(builder: (context) => IntroScreen()));
     } else {
+      print(response.body);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Logout failed')),
       );
@@ -42,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _userName = '';
+  // String _userName = '';
   // String _u = '';
   late Map<String, dynamic> _userData = {};
 
@@ -50,8 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final userService = UserService();
       final user = await userService.getUser();
       setState(() {
-        _userName = user["user"]["name"].toString();
-        _userData = user;
+        // _userName = user["user"]["name"].toString();
+        _userName = user[0]['name'].toString();
+
+        _userData = user[0];
       });
       print('testtt');
       print(_userName);
@@ -150,6 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          // '$_userData',
                           'Personal Information',
                           style: TextStyle(fontWeight: FontWeight.w500),
                         ),

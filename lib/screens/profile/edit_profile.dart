@@ -5,7 +5,7 @@ class EditProfileScreen extends StatelessWidget {
 
   EditProfileScreen({required this.userData});
 
-  // int no_hp = "userData["user"]["no_hp"]";
+  // int no_hp = "userData["no_hp"]";
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class EditProfileScreen extends StatelessWidget {
           ),
           Divider(),
           Column(
-            children: [Text('${userData["user"]}')],
+            children: [Text('${userData}')],
           ),
           ListTile(
             title: Row(
@@ -48,7 +48,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('Nama Pengguna'),
                 ),
                 Expanded(
-                  child: Text('${userData["user"]["name"]}'),
+                  child: Text('${userData["name"]}'),
                 ),
               ],
             ),
@@ -61,7 +61,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('E-mail'),
                 ),
                 Expanded(
-                  child: Text('${userData["user"]["email"]}'),
+                  child: Text('${userData["email"]}'),
                 ),
               ],
             ),
@@ -74,7 +74,7 @@ class EditProfileScreen extends StatelessWidget {
                   child: Text('No. Handphone'),
                 ),
                 Expanded(
-                  child: Text('${userData["user"]["no_hp"]}'),
+                  child: Text('${userData["no_hp"]}'),
                 ),
               ],
             ),
@@ -88,7 +88,7 @@ class EditProfileScreen extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    userData["user"]["alamat"] ?? "kosong",
+                    userData["alamat"] ?? "kosong",
                   ),
                 ),
               ],

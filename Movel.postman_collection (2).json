@@ -1,0 +1,535 @@
+{
+	"info": {
+		"_postman_id": "66d34001-5c8e-48b5-86b7-6842dea83530",
+		"name": "Movel",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27129257",
+		"_collection_link": "https://blue-eclipse-279966.postman.co/workspace/19e15a4a-6d58-45df-8f2f-a86aeb0325e8/collection/27129257-66d34001-5c8e-48b5-86b7-6842dea83530?action=share&creator=27129257&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept-encoding": true,
+							"accept": true,
+							"user-agent": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "jasatugasta@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.movel.id/api/user/login",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "Mamad",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "mamad@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "no_hp",
+									"value": "085234567890",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "123456",
+									"type": "text"
+								},
+								{
+									"key": "role_id",
+									"value": "2",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.movel.id/api/user/register",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "8|OFgFbRyvhUEH04lKZUGlsenkRWdXznjz3BJGi468",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://admin.movel.id/api/user/logout",
+							"protocol": "https",
+							"host": [
+								"admin",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Email Verification",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.movel.id/api/user/email/verification-notification",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"email",
+								"verification-notification"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Email Verified",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.movel.id/api/user/email-verify/4/40fbd8f670e0a16ab6bff26b4eaf608bbb69fa1c?expires=1682048149&signature=c31fd8d26e514e90f48c98fa74cad7f577b3d96c375cd6989c840d011042d20d",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"email-verify",
+								"4",
+								"40fbd8f670e0a16ab6bff26b4eaf608bbb69fa1c"
+							],
+							"query": [
+								{
+									"key": "expires",
+									"value": "1682048149"
+								},
+								{
+									"key": "signature",
+									"value": "c31fd8d26e514e90f48c98fa74cad7f577b3d96c375cd6989c840d011042d20d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send Email Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "jasatugasta@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "_method",
+									"value": "POST",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://admin.movel.id/api/user/send-reset-password-email",
+							"protocol": "http",
+							"host": [
+								"admin",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"send-reset-password-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.movel.id/api/user/reset-password/FMHivGwQaOmqdXUncGpRbdukjW3uGlEcBQedRDqS3w5tKa2Yt61WUTM6yVUX",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"reset-password",
+								"FMHivGwQaOmqdXUncGpRbdukjW3uGlEcBQedRDqS3w5tKa2Yt61WUTM6yVUX"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9|DvkBUpVADod9GkHCsxiG6tP3Ev6vYvTaLk5cu7BZ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "old_password",
+									"value": "1234567",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "12345678",
+									"type": "text"
+								},
+								{
+									"key": "password_confirmation",
+									"value": "12345678",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://api.movel.id/api/user/changepassword",
+							"protocol": "http",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"changepassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Passenger",
+			"item": [
+				{
+					"name": "Read Passenger Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9|DvkBUpVADod9GkHCsxiG6tP3Ev6vYvTaLk5cu7BZ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.movel.id/api/user/passenger",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"passenger"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Passenger Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9|DvkBUpVADod9GkHCsxiG6tP3Ev6vYvTaLk5cu7BZ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Monalisa",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Corowali",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "c8FMB0Awe/oak-g2751983b1_1920.jpg"
+								},
+								{
+									"key": "gender",
+									"value": "Laki-Laki",
+									"type": "text"
+								},
+								{
+									"key": "_method",
+									"value": "PUT",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.movel.id/api/user/passenger/update",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"passenger",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Driver",
+			"item": [
+				{
+					"name": "Read Driver Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9|B2fxLicuRrPEtOgJl7iGPqk3UEbLzJa7V3oOKM7d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://api.movel.id/api/user/driver",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"driver"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Driver Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "9|B2fxLicuRrPEtOgJl7iGPqk3UEbLzJa7V3oOKM7d",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Mikasa",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "Makassar",
+									"type": "text"
+								},
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "l_CxNVnsB/061911700_1485148942-10.jpg"
+								},
+								{
+									"key": "is_smoking",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "driver_age",
+									"value": "20",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://api.movel.id/api/user/driver/update",
+							"protocol": "https",
+							"host": [
+								"api",
+								"movel",
+								"id"
+							],
+							"path": [
+								"api",
+								"user",
+								"driver",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -124,6 +124,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: _phoneNumberController,
                         decoration: const InputDecoration(
                           hintStyle:
@@ -363,59 +364,93 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // and wait for the response
     final response = await http
         .post(Uri.parse('https://api.movel.id/api/user/register'), body: {
-      // 'name': "zidan",
-      // 'tc': "true",
-      // 'no_hp': "08243324234",
-      // 'email': "zidan8@gmail.com",
-      // 'password': "zidan100",
-      // 'password_confirmation': "zidan100",
-      'name': name,
+      'name': "zidan",
       'role_id': "2",
-      'no_hp': phoneNumber,
-      'email': email,
-      'password': password,
-      'password_confirmation': password_confirmation,
+      'no_hp': "08111111111",
+      'email': "zidan3@gmail.com",
+      'password': "zidan100",
+      'password_confirmation': "zidan100",
+      // 'name': name,
+      // 'role_id': "2",
+      // 'no_hp': phoneNumber,
+      // 'email': email,
+      // 'password': password,
+      // 'password_confirmation': password_confirmation,
     });
 
     String message = '';
-    final jsonResponse = jsonDecode(response.body);
 
-    if (jsonResponse.containsKey('token')) {
+    if (response.statusCode == 201) {
       // Registration was successful
       print("success");
+      final jsonResponse = jsonDecode(response.body);
       print(jsonResponse);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration Success')),
+        SnackBar(
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.deepPurple[800],
+            content: Text('Registration Success')),
       );
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
       );
-    } else if (response.statusCode == 200 &&
-        jsonResponse.containsKey('status') &&
-        jsonResponse['status'] == 'failed') {
-      // Registration failed
-      print("status failed");
-      print(jsonResponse);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${jsonResponse['message']}')),
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RegisterScreen()),
-      );
     } else {
       // Unexpected response
-      print(jsonResponse);
+      print(response);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration Failed')),
+        SnackBar(
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.deepPurple[800],
+            content: Text(
+              'Registration Failed',
+              style: TextStyle(color: Colors.white),
+            )),
       );
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => RegisterScreen()),
       );
     }
+
+    // if (jsonResponse.containsKey('token')) {
+    //   // Registration was successful
+    //   print("success");
+    //   print(jsonResponse);
+
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Registration Success')),
+    //   );
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => LoginScreen()),
+    //   );
+    // } else if (response.statusCode == 200 &&
+    //     jsonResponse.containsKey('status') &&
+    //     jsonResponse['status'] == 'failed') {
+    //   // Registration failed
+    //   print("status failed");
+    //   print(jsonResponse);
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('${jsonResponse['message']}')),
+    //   );
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
+    //   );
+    // } else {
+    //   // Unexpected response
+    //   print(jsonResponse);
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text('Registration Failed')),
+    //   );
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
+    //   );
+    // }
+
     // if (response.statusCode == 200) {
     //   final jsonResponse = jsonDecode(response.body);
 

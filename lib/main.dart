@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
         ),
         // home: LoginScreen(),
         debugShowCheckedModeBanner: false,
-        initialRoute: '/',
+        initialRoute: '/login',
         // home: isLoggedIn ? IntroScreen() : MyHomePage(),
         routes: {
           '/': (context) => IntroScreen(),
