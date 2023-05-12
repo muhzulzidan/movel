@@ -33,45 +33,55 @@ class MyApp extends StatelessWidget {
   const MyApp({required this.isLoggedIn});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: GetMaterialApp(
-        // key: UniqueKey(),
-        title: 'Movel : Mobil Travel',
-        theme: ThemeData(
-          fontFamily: 'Poppins',
-          // useMaterial3: true,
-          scaffoldBackgroundColor: HexColor("#Ffffff"),
-          appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(
-              color: Colors.black, //change your color here
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: ChangeNotifierProvider(
+        create: (context) => MyAppState(),
+        child: GetMaterialApp(
+          // key: UniqueKey(),
+          title: 'Movel : Mobil Travel',
+          theme: ThemeData(
+            fontFamily: 'Poppins',
+            // useMaterial3: true,
+            scaffoldBackgroundColor: HexColor("#Ffffff"),
+            appBarTheme: AppBarTheme(
+              iconTheme: IconThemeData(
+                color: Colors.black, //change your color here
+              ),
+              toolbarHeight: 60,
+              titleTextStyle: TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: 'Poppins'),
+              elevation: 0,
+              // shadowColor: Colors.transparent,
+              backgroundColor: Colors.white,
             ),
-            toolbarHeight: 60,
-            titleTextStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                fontFamily: 'Poppins'),
-            elevation: 0,
-            // shadowColor: Colors.transparent,
-            backgroundColor: Colors.white,
+            // scaffoldBackgroundColor: HexColor("#F2F2F2"),
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: Colors.purple.shade900),
           ),
-          // scaffoldBackgroundColor: HexColor("#F2F2F2"),
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple.shade900),
+          // home: LoginScreen(),
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/login',
+          // home: isLoggedIn ? IntroScreen() : MyHomePage(),
+          routes: {
+            '/': (context) => IntroScreen(),
+            // '/': (context) => MyHomePage(),
+            '/home': (context) => MyHomePage(),
+            //  "/home": isLoggedIn ? MyHomePage() : LoginScreen(),
+            '/login': (context) => LoginScreen(),
+            '/register': (context) => RegisterScreen(),
+            // '/profile' : (context) => ProfileScreen(),
+          },
         ),
-        // home: LoginScreen(),
-        debugShowCheckedModeBanner: false,
-        initialRoute: '/login',
-        // home: isLoggedIn ? IntroScreen() : MyHomePage(),
-        routes: {
-          '/': (context) => IntroScreen(),
-          // '/': (context) => MyHomePage(),
-          '/home': (context) => MyHomePage(),
-          //  "/home": isLoggedIn ? MyHomePage() : LoginScreen(),
-          '/login': (context) => LoginScreen(),
-          '/register': (context) => RegisterScreen(),
-          // '/profile' : (context) => ProfileScreen(),
-        },
       ),
     );
   }
