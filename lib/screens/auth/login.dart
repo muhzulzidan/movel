@@ -5,6 +5,8 @@ import 'package:movel/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth/auth_state.dart';
+import '../home/driver/home.dart';
+import 'forget_pass.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -131,7 +133,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         TextButton(
-                          onPressed: () => {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ForgotPasswordScreen()),
+                            );
+                          },
                           style: ElevatedButton.styleFrom(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             minimumSize: Size.zero,
@@ -222,8 +230,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // final email = emailController.text;
     // final password = _passwordController.text;
-    final email = "zidan2@gmail.com";
-    final password = "zidan100";
+    // final email = "zidan3@gmail.com";
+    // final password = "zidan100";
+    final email = "sopirbaru@gmail.com";
+    final password = "123456";
 
     final result = await _authService.login(email, password);
 
@@ -240,9 +250,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (result) {
       final accessToken = await getToken();
-      Navigator.of(context).pop();
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("isLoggedIn", true);
+      final roleId = await prefs.getInt('roleId');
+      print(result);
+      print('role id from login is : ${roleId}');
+      if (roleId == 3) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => MyHomeDriverPage()));
+      } else {
+        Navigator.of(context).pop();
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
+      }
+
       // Navigator.pushNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -29,7 +29,7 @@ Future<void> saveToken(String token) async {
 }
 
 class AuthService {
-  static const API_URL = 'https://admin.movel.id/api/user';
+  static const API_URL = 'https://api.movel.id/api/user';
 
   Future<bool> login(String email, String password) async {
     final response = await http.post(
@@ -43,9 +43,29 @@ class AuthService {
     if (response.statusCode == 200) {
       // Save authentication data here, such as a JWT token
       final responseData = jsonDecode(response.body);
+      print(responseData);
       final token = responseData['token'];
+      final roleId = responseData['role_id'];
+      // print(roleId);
       AuthState().token = token; // set the token in the state management class
       await saveToken(token); // save the token to storage
+
+      String roleName;
+      switch (roleId) {
+        case 2:
+          roleName = "passenger";
+          break;
+        case 3:
+          roleName = "driver";
+          break;
+        default:
+          roleName = "unknown";
+          break;
+      }
+      
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('roleId', roleId);
+      
       // print("$token");
       // ... save token to state management system or storage
       return true; // Return true to indicate successful login
@@ -73,7 +93,7 @@ bool verifyToken(String token) {
 class UserService {
   // static const API_URL = 'https://admin.movel.id/api/user/';
 
-  Future<Map<String, dynamic>> getUser() async {
+  Future<List<dynamic>> getUser() async {
     final authState = AuthState();
     final token = authState.token;
 
@@ -83,7 +103,7 @@ class UserService {
 
     print(token);
     final response = await http.get(
-      Uri.parse('https://admin.movel.id/api/user/loggeduser'),
+      Uri.parse('https://api.movel.id/api/user/passenger'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -91,12 +111,22 @@ class UserService {
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      // print(responseData);
+      print(responseData);
       return responseData;
     } else {
-      print('${response.statusCode}');
-      // print('Failed to get user information. Response body: ${response.body}');
       throw Exception('Failed to get user information');
     }
+
+    // if (response.statusCode == 200) {
+    //   final responseData = jsonDecode(response.body);
+    //   // print(responseData[0]["name"]);
+    //   // print(responseData);
+    //   // _userName = user[0]["name"].toString();
+    //   return responseData;
+    // } else {
+    //   print('${response.statusCode}');
+    //   // print('Failed to get user information. Response body: ${response.body}');
+    //   throw Exception('Failed to get user information');
+    // }
   }
 }

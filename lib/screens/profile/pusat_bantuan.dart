@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PusatBantuanScreen extends StatelessWidget {
   final String userName;
@@ -38,7 +39,10 @@ class PusatBantuanScreen extends StatelessWidget {
                 SizedBox(height: 24),
                 ElevatedButton.icon(
                   // onPressed: () => launch('tel:+6281234567890'),
-                  onPressed: null,
+                  // onPressed: null,
+                  onPressed: () => launchUrl(
+                      'https://wa.me/+6281354789375?text=Hello' as Uri),
+
                   icon: Icon(Icons.call),
                   label: Text('Hubungi Admin'),
                 ),
@@ -50,7 +54,10 @@ class PusatBantuanScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 ElevatedButton.icon(
                   // onPressed: () => launch('mailto:admin@example.com'),
-                  onPressed: null,
+                  // onPressed: null,
+                  onPressed: () => launchUrl(
+                      'https://mail.google.com/mail/?view=cm&fs=1&to=zulzdn@gmail.com.com&su=movel&body=BODY&bcc=someone.else@example.com'
+                          as Uri),
                   icon: Icon(Icons.email),
                   label: Text('Kirim Email'),
                 ),

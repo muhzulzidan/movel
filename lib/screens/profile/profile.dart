@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
-    final url = Uri.parse('https://admin.movel.id/api/user/logout');
+    final url = Uri.parse('https://api.movel.id/api/user/logout');
 
     final response = await http.post(
       url,
@@ -31,9 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (response.statusCode == 200) {
       // Logout was successful
+      final responseData = jsonDecode(response.body);
+      print(responseData);
       Navigator.of(context, rootNavigator: true).pushReplacement(
           MaterialPageRoute(builder: (context) => IntroScreen()));
     } else {
+      print(response.body);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Logout failed')),
       );
@@ -42,6 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _userName = '';
+  // String _userName = '';
   // String _u = '';
   late Map<String, dynamic> _userData = {};
 
@@ -50,8 +55,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final userService = UserService();
       final user = await userService.getUser();
       setState(() {
-        _userName = user["user"]["name"].toString();
-        _userData = user;
+        // _userName = user["user"]["name"].toString();
+        _userName = user[0]['name'].toString();
+
+        _userData = user[0];
       });
       print('testtt');
       print(_userName);
@@ -150,6 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          // '$_userData',
                           'Personal Information',
                           style: TextStyle(fontWeight: FontWeight.w500),
                         ),
@@ -331,6 +339,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // final SharedPreferences? prefs = await _prefs;
                       // print(prefs?.get('message'));
                       final token = prefs.getString('token');
+                      print(token);
                       logout(context, token!);
                       // TODO: Log out the user and navigate to the login screen.
                     },

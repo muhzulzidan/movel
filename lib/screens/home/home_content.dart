@@ -4,6 +4,9 @@ import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../trx/ChooseLocationScreen.dart';
+import '../trx/cari-sopir.dart';
+
 // import './auth/auth_screens.dart';
 
 // import '../main.dart';
@@ -101,7 +104,14 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(20),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // print('context: $context');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChooseLocationScreen()),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: Colors.amberAccent,
