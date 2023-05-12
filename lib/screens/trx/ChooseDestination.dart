@@ -1,90 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:movel/screens/home/token.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../profile/alamat.dart';
-import '../profile/change_password.dart';
-import '../profile/riwayat_pesanan.dart';
-
-class ChooseLocationScreen extends StatefulWidget {
+class ChooseDestinationScreen extends StatefulWidget {
   @override
-  _ChooseLocationScreenState createState() => _ChooseLocationScreenState();
+  _ChooseDestinationScreenState createState() =>
+      _ChooseDestinationScreenState();
 }
 
-final List<Map<String, dynamic>> listData = [
-  {
-    "title": "Personal Information",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => TokecScreen()),
-      );
-    },
-  },
-  {
-    "title": "Ubah kata sandi",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
-      );
-    },
-  },
-  {
-    "title": "Riwayat pesanan",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RiwayatPesananScreen()),
-      );
-    },
-  },
-  {
-    "title": "Pusat bantuan",
-    "onTap": () {
-      // TODO: Navigate to pusat bantuan screen.
-    },
-  },
-  {
-    "title": "Pengaturan",
-    "onTap": () {
-      // TODO: Navigate to pengaturan screen.
-    },
-  },
-  {
-    "title": "Alamat",
-    "onTap": () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => AlamatScreen()));
-    },
-  },
-  {
-    "title": "Keluar",
-    "onTap": () async {
-      // TODO: Log out the user and navigate to the login screen.
-    },
-  },
-];
-
-
-
-
-class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
+class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
   String _selectedLocation = '';
   bool _isLoading = false;
   bool _showOptions = false;
-  bool _showObject = true;
-
-  FocusNode _searchFocusNode = FocusNode();
-
-  void _handleTap() {
-    print('onTap');
-    setState(() {
-      _showObject = !_showObject;
-      print(_showObject);
-    });
-  }
 
   var login;
   @override
@@ -94,17 +20,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         iconTheme: IconThemeData(
           color: Colors.white, //change your color here
         ),
-        // title: _showOptions
-        //     ? Text(
-        //         'benar',
-        //         style: TextStyle(color: Colors.white),
-        //       )
-        //     : Text(
-        //         'salah',
-        //         style: TextStyle(color: Colors.white),
-        //       ),
         title: Text(
-          'Pilih Lokasi Asal Anda',
+          'Pilih Lokasi Tujuan Anda',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: HexColor("#60009A"),
@@ -113,55 +30,42 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         // crossAxisAlignment: CrossAxisAlignment.stretch,
 
         children: [
-          // Visibility(
-          //   visible: _showObject,
-          //   child: Text('Object that needs to be hidden'),
-          // ),
-
           Container(
             decoration: BoxDecoration(color: HexColor("#60009A")),
-            height: _showObject
-                ? MediaQuery.of(context).size.height * 0.45
-                : MediaQuery.of(context).size.height * 0.1,
+            height: MediaQuery.of(context).size.height * 0.45,
             child: Stack(children: [
               Positioned(
                 left: 90,
                 top: 80,
-                child: Visibility(
-                  visible: _showObject,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'MO',
-                        style: TextStyle(
-                            color: HexColor("#FFD12E"),
-                            height: .8,
-                            fontSize: 100,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text(
-                        'Vel',
-                        style: TextStyle(
-                            color: HexColor("#FFD12E"),
-                            height: .8,
-                            fontSize: 110,
-                            fontWeight: FontWeight.w700),
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'MO',
+                      style: TextStyle(
+                          color: HexColor("#FFD12E"),
+                          height: .8,
+                          fontSize: 100,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text(
+                      'Vel',
+                      style: TextStyle(
+                          color: HexColor("#FFD12E"),
+                          height: .8,
+                          fontSize: 110,
+                          fontWeight: FontWeight.w700),
+                    ),
+                  ],
                 ),
               ),
               Positioned(
                 right: 0,
                 top: 0,
-                child: Visibility(
-                  visible: _showObject,
-                  child: Image.asset(
-                    "assets/avanza-gray-(1)_optimized.png",
-                    width: 170,
-                    height: 300,
-                  ),
+                child: Image.asset(
+                  "assets/avanza-gray-(1)_optimized.png",
+                  width: 170,
+                  height: 300,
                 ),
               ),
               Positioned(
@@ -184,40 +88,45 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                         ),
                       ],
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-                      child: TextFormField(
-                        onTap: _handleTap,
-                        onEditingComplete: () {
-                          _handleTap();
-                          FocusScopeNode currentFocus = FocusScope.of(context);
-
-                          if (!currentFocus.hasPrimaryFocus) {
-                            currentFocus.unfocus();
-                          }
-                        },
-                        decoration: InputDecoration(
-                          icon: Icon(Icons.search, color: Colors.black),
-                          contentPadding: EdgeInsets.zero,
-                          hintText: 'Cari',
-                          border: InputBorder.none,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _showOptions = !_showOptions;
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: _showOptions ? Colors.white : Colors.grey[200],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 2,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
                         ),
-                        onChanged: (value) {
-                          // TODO: Implement location search
-                        },
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        child: Row(
+                          children: [
+                            Icon(Icons.search, color: Colors.black),
+                            SizedBox(width: 10),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                hintText: 'Cari',
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                // TODO: Implement location search
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -225,7 +134,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ]),
           ),
-
           // AnimatedPositioned(
           //   duration: const Duration(milliseconds: 300),
           //   curve: Curves.easeInOut,
@@ -260,203 +168,9 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
           //     ),
           //   ),
           // ),
-          Column(
-            children: [
-              ListTile(
-                visualDensity: VisualDensity.compact,
-                // leading: Icon(Icons.person),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      // '$_userData',
-                      'Personal Information',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 10,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  // TODO: Navigate to personal information screen.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TokecScreen()),
-                  );
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Ubah kata sandi',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChangePasswordScreen()),
-                  );
 
-                  // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Riwayat pesanan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RiwayatPesananScreen()),
-                  );
-                  // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pusat bantuan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) =>
-                  //             PusatBantuanScreen(userName: _userName)));
-                  // // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pengaturan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => PengaturanScreen()),
-                  // );
-                  // // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Alamat',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AlamatScreen()));
-                  // TODO: Navigate to change password screen.
-                },
-              ),
-              ListTile(
-                // leading: Icon(Icons.exit_to_app),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Keluar',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                onTap: () async {
-                  // final prefs = await SharedPreferences.getInstance();
-                  // // final SharedPreferences? prefs = await _prefs;
-                  // // print(prefs?.get('message'));
-                  // final token = prefs.getString('token');
-                  // print(token);
-                  // logout(context, token!);
-                  // // TODO: Log out the user and navigate to the login screen.
-                },
-              ),
-            ],
-          ),
-          
-          
           Visibility(
-            visible: _showObject,
+            visible: _showOptions,
             child: Expanded(
               flex: 1,
               child: Container(
