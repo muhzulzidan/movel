@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:movel/screens/home/token.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import '../profile/alamat.dart';
+import '../profile/change_password.dart';
+import '../profile/riwayat_pesanan.dart';
+import 'ChooseDepartureDateScreen.dart';
+// import 'ChooseDestination.dart';
 
 class ChooseDestinationScreen extends StatefulWidget {
   @override
@@ -7,10 +17,64 @@ class ChooseDestinationScreen extends StatefulWidget {
       _ChooseDestinationScreenState();
 }
 
+FocusNode _searchFocusNode = FocusNode();
+
+Future<Map<String, dynamic>> _fetchData() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final headers = {'Authorization': 'Bearer $token'};
+
+  final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
+      headers: headers);
+
+  if (response.statusCode == 200) {
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<void> setKotaAsal(int kotaAsalId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final headers = {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json'
+  };
+
+  final body = {'kota_asal_id': kotaAsalId};
+  final response = await http.post(
+      Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal'),
+      headers: headers,
+      body: jsonEncode(body));
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    print(
+        'Set kota asal successfull with kota_asal_id: ${data['kota_asal_id']}');
+    // Do something with the response data if needed
+  } else {
+    throw Exception('Failed to set kota asal');
+  }
+}
+
 class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
   String _selectedLocation = '';
   bool _isLoading = false;
   bool _showOptions = false;
+  bool _showObject = true;
+
+  FocusNode _searchFocusNode = FocusNode();
+
+  void _handleTap() {
+    print('onTap');
+    setState(() {
+      _showObject = !_showObject;
+      print(_showObject);
+    });
+  }
 
   var login;
   @override
@@ -27,45 +91,44 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
         backgroundColor: HexColor("#60009A"),
       ),
       body: Column(
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-
         children: [
           Container(
-            decoration: BoxDecoration(color: HexColor("#60009A")),
-            height: MediaQuery.of(context).size.height * 0.45,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/tujuan.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            height: _showObject
+                ? MediaQuery.of(context).size.height * 0.45
+                : MediaQuery.of(context).size.height * 0.1,
             child: Stack(children: [
               Positioned(
-                left: 90,
+                right: 30,
                 top: 80,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'MO',
-                      style: TextStyle(
-                          color: HexColor("#FFD12E"),
-                          height: .8,
-                          fontSize: 100,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    Text(
-                      'Vel',
-                      style: TextStyle(
-                          color: HexColor("#FFD12E"),
-                          height: .8,
-                          fontSize: 110,
-                          fontWeight: FontWeight.w700),
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: Image.asset(
-                  "assets/avanza-gray-(1)_optimized.png",
-                  width: 170,
-                  height: 300,
+                child: Visibility(
+                  visible: _showObject,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'MO',
+                        style: TextStyle(
+                            color: HexColor("#FFD12E"),
+                            height: .8,
+                            fontSize: 100,
+                            fontWeight: FontWeight.w700),
+                      ),
+                      Text(
+                        'VEL',
+                        style: TextStyle(
+                            color: HexColor("#FFD12E"),
+                            height: .8,
+                            fontSize: 110,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Positioned(
@@ -88,45 +151,40 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                         ),
                       ],
                     ),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _showOptions = !_showOptions;
-                        });
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: _showOptions ? Colors.white : Colors.grey[200],
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 2,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+                      child: TextFormField(
+                        onTap: _handleTap,
+                        onEditingComplete: () {
+                          _handleTap();
+                          FocusScopeNode currentFocus = FocusScope.of(context);
+
+                          if (!currentFocus.hasPrimaryFocus) {
+                            currentFocus.unfocus();
+                          }
+                        },
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.search, color: Colors.black),
+                          contentPadding: EdgeInsets.zero,
+                          hintText: 'Cari',
+                          border: InputBorder.none,
                         ),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        child: Row(
-                          children: [
-                            Icon(Icons.search, color: Colors.black),
-                            SizedBox(width: 10),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.zero,
-                                hintText: 'Cari',
-                                border: InputBorder.none,
-                              ),
-                              onChanged: (value) {
-                                // TODO: Implement location search
-                              },
-                            ),
-                          ],
-                        ),
+                        onChanged: (value) {
+                          // TODO: Implement location search
+                        },
                       ),
                     ),
                   ),
@@ -134,43 +192,81 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
               ),
             ]),
           ),
-          // AnimatedPositioned(
-          //   duration: const Duration(milliseconds: 300),
-          //   curve: Curves.easeInOut,
-          //   top: _showOptions ? 80 : 0,
-          //   left: 0,
-          //   right: 0,
-          //   child: AnimatedOpacity(
-          //     opacity: _showOptions ? 1.0 : 0.0,
-          //     duration: const Duration(milliseconds: 300),
-          //     child: Container(
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.vertical(
-          //           bottom: Radius.circular(20),
-          //         ),
-          //         color: Colors.white,
-          //       ),
-          //       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //       child: ListView.builder(
-          //         shrinkWrap: true,
-          //         itemCount: 10,
-          //         itemBuilder: (BuildContext context, int index) {
-          //           return ListTile(
-          //             title: Text('Option $index'),
-          //             onTap: () {
-          //               setState(() {
-          //                 _showOptions = false;
-          //               });
-          //             },
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ),
-          // ),
-
           Visibility(
-            visible: _showOptions,
+            visible: !_showObject,
+            child: Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: FutureBuilder<Map<String, dynamic>>(
+                      future: _fetchData(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final data = snapshot.data;
+                            if (data!.containsKey('status')) {
+                              // Check if the response has 'status' key
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Cek Kotak Email Anda!",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800),
+                                    ),
+                                    Text(
+                                      data['status'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              // Otherwise, it's a response with all cities data
+                              final cities = data['data'] as List<dynamic>;
+                              return ListView.builder(
+                                itemCount: cities.length,
+                                itemBuilder: (context, index) {
+                                  final city = cities[index];
+
+                                  return ListTile(
+                                      title: Text(city['nama_kota']),
+                                      onTap:
+                                          // Do something when   a city is tapped
+                                          () async {
+                                        try {
+                                          await setKotaAsal(city['id']);
+                                          // Do something after successfully setting kota asal
+                                        } catch (e) {
+                                          // Handle the error if setting kota asal fails
+                                        }
+                                      });
+                                },
+                              );
+                              // Process the cities data and return a widget tree
+                            }
+                          }
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return Center(child: CircularProgressIndicator());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Visibility(
+            visible: _showObject,
             child: Expanded(
               flex: 1,
               child: Container(
@@ -178,16 +274,6 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                 width: double.infinity,
                 child: Row(
                   children: [
-                    // Image cut in half
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: ClipRect(
-                        child: Image.asset(
-                          "assets/buntutMobil.png",
-                        ),
-                      ),
-                    ),
-
                     // Text and Buttons
                     Expanded(
                       child: Padding(
@@ -199,7 +285,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                             Container(
                                 alignment: Alignment.topRight,
                                 child: RichText(
-                                  textAlign: TextAlign.end,
+                                  textAlign: TextAlign.start,
                                   text: TextSpan(
                                     text: 'Atau pilih ',
                                     style: DefaultTextStyle.of(context).style,
@@ -211,141 +297,129 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                                       TextSpan(text: ' di bawah ini!'),
                                     ],
                                   ),
-                                )
-                                // Text(
-                                //   textAlign: TextAlign.end,
-                                //   "Atau pilih kota asalmu di bawah ini",
-                                //   style: TextStyle(),
-                                // )
-
-                                ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisAlignment: MainAxisAlignment.end,
+                                )),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  height: 45,
-                                  width: 150,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 2,
-                                        offset: Offset(0, 4),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 45,
+                                      width: 150,
+                                      alignment: Alignment.center,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 4),
+                                          ),
+                                        ],
+                                        color: Colors.grey[100],
                                       ),
-                                    ],
-                                    color: Colors.grey[100],
-                                  ),
-                                  child: ListTile(
-                                    // leading: Icon(Icons.place),
+                                      child: ListTile(
+                                        // leading: Icon(Icons.place),
 
-                                    title: Text(
-                                      'Makassar',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          height: .1),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedLocation = 'Makassar';
-                                      });
-                                    },
-                                    selected: _selectedLocation == 'Makassar',
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-
-                                Container(
-                                  height: 45,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 2,
-                                        offset: Offset(0, 4),
+                                        title: Text(
+                                          'Makassar',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              height: .1),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedLocation = 'Makassar';
+                                          });
+                                        },
+                                        selected:
+                                            _selectedLocation == 'Makassar',
                                       ),
-                                    ],
-                                    color: Colors.grey[100],
-                                  ),
-                                  child: ListTile(
-                                    // leading: Icon(Icons.place),
-
-                                    title: Text(
-                                      'Sengkang',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          height: .1),
-                                      textAlign: TextAlign.center,
                                     ),
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedLocation = 'Sengkang';
-                                      });
-                                    },
-                                    selected: _selectedLocation == 'Sengkang',
-                                  ),
-                                ),
-
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  height: 45,
-                                  width: 150,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(100),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 2,
-                                        offset: Offset(0, 4),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 45,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 4),
+                                          ),
+                                        ],
+                                        color: Colors.grey[100],
                                       ),
-                                    ],
-                                    color: Colors.grey[100],
-                                  ),
-                                  child: ListTile(
-                                    // leading: Icon(Icons.place),
+                                      child: ListTile(
+                                        // leading: Icon(Icons.place),
 
-                                    title: Text(
-                                      'Sengkang',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          height: .1),
-                                      textAlign: TextAlign.center,
+                                        title: Text(
+                                          'Sengkang',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              height: .1),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedLocation = 'Sengkang';
+                                          });
+                                        },
+                                        selected:
+                                            _selectedLocation == 'Sengkang',
+                                      ),
                                     ),
-                                    onTap: () {
-                                      setState(() {
-                                        _selectedLocation = 'Sengkang';
-                                      });
-                                    },
-                                    selected: _selectedLocation == 'Sengkang',
-                                  ),
-                                ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Container(
+                                      height: 45,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.grey.withOpacity(0.5),
+                                            spreadRadius: 1,
+                                            blurRadius: 2,
+                                            offset: Offset(0, 4),
+                                          ),
+                                        ],
+                                        color: Colors.grey[100],
+                                      ),
+                                      child: ListTile(
+                                        // leading: Icon(Icons.place),
 
-                                SizedBox(
-                                  height: 10,
+                                        title: Text(
+                                          'Sengkang',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w800,
+                                              height: .1),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedLocation = 'Sengkang';
+                                          });
+                                        },
+                                        selected:
+                                            _selectedLocation == 'Sengkang',
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
                                 ),
-
-                                // ListTile(
-                                //   leading: Icon(Icons.place),
-                                //   title: Text('Work'),
-                                //   onTap: () {
-                                //     setState(() {
-                                //       _selectedLocation = 'Work';
-                                //     });
-                                //   },
-                                //   selected: _selectedLocation == 'Work',
-                                // ),
                               ],
                             ),
                             Container(
@@ -371,7 +445,15 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                 ),
-                                onPressed: _isLoading ? null : login,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChooseDepartureDateScreen()),
+                                  );
+                                },
+                                // onPressed: _isLoading ? null : login,
                                 child: _isLoading
                                     ? const CircularProgressIndicator()
                                     : const Text(
@@ -387,21 +469,20 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                         ),
                       ),
                     ),
+                    // Image cut in half
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.4,
+                      child: ClipRect(
+                        child: Image.asset(
+                          "assets/tujuanCar.png",
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
           ),
-
-          // SizedBox(height: 20.0),
-          // ElevatedButton(
-          //   child: Text('Next'),
-          //   onPressed: _selectedLocation.isEmpty
-          //       ? null
-          //       : () {
-          //           // TODO: Navigate to next screen with selected location
-          //         },
-          // ),
         ],
       ),
     );

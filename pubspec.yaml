@@ -47,6 +47,7 @@ dependencies:
   hexcolor: ^3.0.1
   flutter_native_splash: ^2.2.19
   url_launcher: ^6.1.11
+  intl: ^0.18.1
 
 
 dev_dependencies:
