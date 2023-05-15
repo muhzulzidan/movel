@@ -365,10 +365,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      // final SharedPreferences? prefs = await _prefs;
-                      // print(prefs?.get('message'));
-                      final token = prefs.getString('token');
+                        final prefs = await SharedPreferences.getInstance();
+                        // final SharedPreferences? prefs = await _prefs;
+                        // print(prefs?.get('message'));
+                        final token = prefs.getString('token');
                       print(token);
                       logout(context, token!);
                       // TODO: Log out the user and navigate to the login screen.
