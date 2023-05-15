@@ -2,73 +2,120 @@ import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/home/token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../profile/alamat.dart';
 import '../profile/change_password.dart';
 import '../profile/riwayat_pesanan.dart';
+import 'ChooseDestination.dart';
 
 class ChooseLocationScreen extends StatefulWidget {
   @override
   _ChooseLocationScreenState createState() => _ChooseLocationScreenState();
 }
 
-final List<Map<String, dynamic>> listData = [
-  {
-    "title": "Personal Information",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => TokecScreen()),
-      );
-    },
-  },
-  {
-    "title": "Ubah kata sandi",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
-      );
-    },
-  },
-  {
-    "title": "Riwayat pesanan",
-    "onTap": () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RiwayatPesananScreen()),
-      );
-    },
-  },
-  {
-    "title": "Pusat bantuan",
-    "onTap": () {
-      // TODO: Navigate to pusat bantuan screen.
-    },
-  },
-  {
-    "title": "Pengaturan",
-    "onTap": () {
-      // TODO: Navigate to pengaturan screen.
-    },
-  },
-  {
-    "title": "Alamat",
-    "onTap": () {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => AlamatScreen()));
-    },
-  },
-  {
-    "title": "Keluar",
-    "onTap": () async {
-      // TODO: Log out the user and navigate to the login screen.
-    },
-  },
-];
+FocusNode _searchFocusNode = FocusNode();
 
+Future<Map<String, dynamic>> _fetchData() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final headers = {'Authorization': 'Bearer $token'};
 
+  final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
+      headers: headers);
 
+  if (response.statusCode == 200) {
+    print(response.body);
+    return jsonDecode(response.body);
+  } else {
+    throw Exception('Failed to load data');
+  }
+}
+
+Future<void> setKotaAsal(int kotaAsalId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  final headers = {
+    'Authorization': 'Bearer $token',
+    'Content-Type': 'application/json'
+  };
+
+  final body = {'kota_asal_id': kotaAsalId};
+  final response = await http.post(
+      Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal'),
+      headers: headers,
+      body: jsonEncode(body));
+
+  if (response.statusCode == 200) {
+    final data = jsonDecode(response.body)['data'];
+    print(
+        'Set kota asal successfull with kota_asal_id: ${data['kota_asal_id']}');
+    // Do something with the response data if needed
+  } else {
+    throw Exception('Failed to set kota asal');
+  }
+}
+
+List<Map<String, dynamic>> buildListData(BuildContext context) {
+  return [
+    {
+      "title": "Makassar",
+      "onTap": () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => TokecScreen()),
+        );
+      },
+    },
+    {
+      "title": "Bone",
+      "onTap": () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ChangePasswordScreen()),
+        );
+      },
+    },
+    {
+      "title": "Riwayat pesanan",
+      "onTap": () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => RiwayatPesananScreen()),
+        );
+      },
+    },
+    {
+      "title": "Pusat bantuan",
+      "onTap": () {
+        // TODO: Navigate to pusat bantuan screen.
+      },
+    },
+    {
+      "title": "Pengaturan",
+      "onTap": () {
+        // TODO: Navigate to pengaturan screen.
+      },
+    },
+    {
+      "title": "Alamat",
+      "onTap": () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AlamatScreen()),
+        );
+      },
+    },
+    {
+      "title": "Keluar",
+      "onTap": () async {
+        // TODO: Log out the user and navigate to the login screen.
+      },
+    },
+  ];
+}
 
 class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
   String _selectedLocation = '';
@@ -94,15 +141,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         iconTheme: IconThemeData(
           color: Colors.white, //change your color here
         ),
-        // title: _showOptions
-        //     ? Text(
-        //         'benar',
-        //         style: TextStyle(color: Colors.white),
-        //       )
-        //     : Text(
-        //         'salah',
-        //         style: TextStyle(color: Colors.white),
-        //       ),
         title: Text(
           'Pilih Lokasi Asal Anda',
           style: TextStyle(color: Colors.white),
@@ -110,14 +148,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         backgroundColor: HexColor("#60009A"),
       ),
       body: Column(
-        // crossAxisAlignment: CrossAxisAlignment.stretch,
-
         children: [
-          // Visibility(
-          //   visible: _showObject,
-          //   child: Text('Object that needs to be hidden'),
-          // ),
-
           Container(
             decoration: BoxDecoration(color: HexColor("#60009A")),
             height: _showObject
@@ -225,236 +256,119 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ]),
           ),
+          Visibility(
+            visible: !_showObject,
+            child: Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: FutureBuilder<Map<String, dynamic>>(
+                      future: _fetchData(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<Map<String, dynamic>> snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            final data = snapshot.data;
+                            if (data!.containsKey('status')) {
+                              // Check if the response has 'status' key
+                              return Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Cek Kotak Email Anda!",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800),
+                                    ),
+                                    Text(
+                                      data['status'],
+                                      style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              // Otherwise, it's a response with all cities data
+                              final cities = data['data'] as List<dynamic>;
+                              return ListView.builder(
+                                itemCount: cities.length,
+                                itemBuilder: (context, index) {
+                                  final city = cities[index];
 
-          // AnimatedPositioned(
-          //   duration: const Duration(milliseconds: 300),
-          //   curve: Curves.easeInOut,
-          //   top: _showOptions ? 80 : 0,
-          //   left: 0,
-          //   right: 0,
-          //   child: AnimatedOpacity(
-          //     opacity: _showOptions ? 1.0 : 0.0,
-          //     duration: const Duration(milliseconds: 300),
-          //     child: Container(
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.vertical(
-          //           bottom: Radius.circular(20),
-          //         ),
-          //         color: Colors.white,
-          //       ),
-          //       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          //       child: ListView.builder(
-          //         shrinkWrap: true,
-          //         itemCount: 10,
-          //         itemBuilder: (BuildContext context, int index) {
-          //           return ListTile(
-          //             title: Text('Option $index'),
-          //             onTap: () {
-          //               setState(() {
-          //                 _showOptions = false;
-          //               });
-          //             },
-          //           );
-          //         },
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          Column(
-            children: [
-              ListTile(
-                visualDensity: VisualDensity.compact,
-                // leading: Icon(Icons.person),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      // '$_userData',
-                      'Personal Information',
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                                  return ListTile(
+                                      title: Text(city['nama_kota']),
+                                      onTap:
+                                          // Do something when   a city is tapped
+                                          () async {
+                                        try {
+                                          await setKotaAsal(city['id']);
+                                          // Do something after successfully setting kota asal
+                                        } catch (e) {
+                                          // Handle the error if setting kota asal fails
+                                        }
+                                      });
+                                },
+                              );
+                              // Process the cities data and return a widget tree
+                            }
+                          }
+                        } else {
+                          return Center(child: CircularProgressIndicator());
+                        }
+                        return Center(child: CircularProgressIndicator());
+                      },
                     ),
-                    Divider(
-                      height: 10,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward_ios),
-                onTap: () {
-                  // TODO: Navigate to personal information screen.
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => TokecScreen()),
-                  );
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Ubah kata sandi',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ChangePasswordScreen()),
-                  );
+                    // child: FutureBuilder<Map<String, dynamic>>(
+                    //   future: _fetchData(),
+                    //   builder: (BuildContext context,
+                    //       AsyncSnapshot<List<dynamic>> snapshot) {
+                    //     if (snapshot.hasData) {
+                    //       // Render the list of locations
+                    //       final data = snapshot.data!;
+                    //       return ListView.builder(
+                    //         itemCount: data.length,
+                    //         itemBuilder: (BuildContext context, int index) {
+                    //           return ListTile(
+                    //             title: Text(data[index]["title"]),
+                    //             onTap: () {
+                    //               // Handle location selection
+                    //             },
+                    //           );
+                    //         },
+                    //       );
+                    //     } else if (snapshot.hasError) {
+                    //       // Render the error message
+                    //       return Text('${snapshot.error}');
+                    //     } else {
+                    //       // Render a loading spinner
+                    //       return Center(child: CircularProgressIndicator());
+                    //     }
+                    //   },
+                    // ),
+                  ),
 
-                  // TODO: Navigate to change password screen.
-                },
+                  // for (final data in buildListData(context))
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //     itemCount: buildListData(context).length,
+                  //     itemBuilder: (BuildContext context, int index) {
+                  //       return ListTile(
+                  //         title: Text(buildListData(context)[index]["title"]),
+                  //         onTap: buildListData(context)[index]["onTap"],
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
+                ],
               ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Riwayat pesanan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => RiwayatPesananScreen()),
-                  );
-                  // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pusat bantuan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) =>
-                  //             PusatBantuanScreen(userName: _userName)));
-                  // // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Pengaturan',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //       builder: (context) => PengaturanScreen()),
-                  // );
-                  // // TODO: Navigate to change password screen.
-                },
-              ),
-              Divider(
-                height: 1,
-              ),
-              ListTile(
-                // leading: Icon(Icons.lock),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Alamat',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                // trailing: Icon(Icons.arrow_forward),
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AlamatScreen()));
-                  // TODO: Navigate to change password screen.
-                },
-              ),
-              ListTile(
-                // leading: Icon(Icons.exit_to_app),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Keluar',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Divider(
-                      height: 30,
-                      color: Colors.black54,
-                    ),
-                  ],
-                ),
-                onTap: () async {
-                  // final prefs = await SharedPreferences.getInstance();
-                  // // final SharedPreferences? prefs = await _prefs;
-                  // // print(prefs?.get('message'));
-                  // final token = prefs.getString('token');
-                  // print(token);
-                  // logout(context, token!);
-                  // // TODO: Log out the user and navigate to the login screen.
-                },
-              ),
-            ],
+            ),
           ),
-          
-          
           Visibility(
             visible: _showObject,
             child: Expanded(
@@ -546,7 +460,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                 SizedBox(
                                   height: 10,
                                 ),
-
                                 Container(
                                   height: 45,
                                   width: 150,
@@ -580,7 +493,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                     selected: _selectedLocation == 'Sengkang',
                                   ),
                                 ),
-
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -617,21 +529,9 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                     selected: _selectedLocation == 'Sengkang',
                                   ),
                                 ),
-
                                 SizedBox(
                                   height: 10,
                                 ),
-
-                                // ListTile(
-                                //   leading: Icon(Icons.place),
-                                //   title: Text('Work'),
-                                //   onTap: () {
-                                //     setState(() {
-                                //       _selectedLocation = 'Work';
-                                //     });
-                                //   },
-                                //   selected: _selectedLocation == 'Work',
-                                // ),
                               ],
                             ),
                             Container(
@@ -657,7 +557,15 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                 ),
-                                onPressed: _isLoading ? null : login,
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            ChooseDestinationScreen()),
+                                  );
+                                },
+                                // onPressed: _isLoading ? null : login,
                                 child: _isLoading
                                     ? const CircularProgressIndicator()
                                     : const Text(
@@ -678,16 +586,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ),
           ),
-
-          // SizedBox(height: 20.0),
-          // ElevatedButton(
-          //   child: Text('Next'),
-          //   onPressed: _selectedLocation.isEmpty
-          //       ? null
-          //       : () {
-          //           // TODO: Navigate to next screen with selected location
-          //         },
-          // ),
         ],
       ),
     );
