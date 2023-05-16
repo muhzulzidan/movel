@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'home/home.dart';
+import '../home/home.dart';
+import 'ChatScreen.dart';
 
 class InboxScreen extends StatefulWidget {
   @override
@@ -26,40 +27,46 @@ class _InboxScreenState extends State<InboxScreen> {
           Container(
             width: double.infinity,
             child: ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatScreen()),
+                  );
+                },
                 title: Row(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Colors.white,
-                  child: ClipOval(
-                    child: Image.asset(
-                      "assets/driverProfile.png",
-                      fit: BoxFit.cover,
-                      width: 70,
-                      height: 70,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      Text(
-                          "Halo Zidan, \nKami ingin memberitahu Anda bahwa perjalanan Anda dengan sopir kami sudah berhasil diatur.",
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.bold)),
-                      Divider(
-                        color: Colors.grey,
-                        thickness: 1,
-                        height: 30,
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.white,
+                      child: ClipOval(
+                        child: Image.asset(
+                          "assets/driverProfile.png",
+                          fit: BoxFit.cover,
+                          width: 70,
+                          height: 70,
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
-            )),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text(
+                              "Halo Zidan, \nKami ingin memberitahu Anda bahwa perjalanan Anda dengan sopir kami sudah berhasil diatur.",
+                              style: TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.bold)),
+                          Divider(
+                            color: Colors.grey,
+                            thickness: 1,
+                            height: 30,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )),
           ),
           Container(
             width: double.infinity,

@@ -165,7 +165,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: Colors.purple[900],
+                              color: HexColor("#60009A"),
                             ),
                             onPressed: () {
                               setState(() {
@@ -207,7 +207,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: Colors.purple[900],
+                              color: HexColor("#60009A"),
                             ),
                             onPressed: () {
                               setState(() {
@@ -389,7 +389,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
-            backgroundColor: Colors.deepPurple[800],
+            backgroundColor: HexColor("#60009A"),
             content: Text('Registration Success')),
       );
       Navigator.push(
@@ -415,7 +415,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
-            backgroundColor: Colors.deepPurple[800],
+            backgroundColor: HexColor("#60009A"),
             content: Text(
               'Registration Failed',
               style: TextStyle(color: Colors.white),

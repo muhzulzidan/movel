@@ -15,48 +15,7 @@ class ChooseLocationScreen extends StatefulWidget {
   _ChooseLocationScreenState createState() => _ChooseLocationScreenState();
 }
 
-FocusNode _searchFocusNode = FocusNode();
-
-Future<Map<String, dynamic>> _fetchData() async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  final headers = {'Authorization': 'Bearer $token'};
-
-  final response = await http.get(
-      Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
-      headers: headers);
-
-  if (response.statusCode == 200) {
-    print(response.body);
-    return jsonDecode(response.body);
-  } else {
-    throw Exception('Failed to load data');
-  }
-}
-
-Future<void> setKotaAsal(int kotaAsalId) async {
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  final headers = {
-    'Authorization': 'Bearer $token',
-    'Content-Type': 'application/json'
-  };
-
-  final body = {'kota_asal_id': kotaAsalId};
-  final response = await http.post(
-      Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal'),
-      headers: headers,
-      body: jsonEncode(body));
-
-  if (response.statusCode == 200) {
-    final data = jsonDecode(response.body)['data'];
-    print(
-        'Set kota asal successfull with kota_asal_id: ${data['kota_asal_id']}');
-    // Do something with the response data if needed
-  } else {
-    throw Exception('Failed to set kota asal');
-  }
-}
+final _formKey = GlobalKey<FormState>();
 
 List<Map<String, dynamic>> buildListData(BuildContext context) {
   return [
@@ -118,20 +77,161 @@ List<Map<String, dynamic>> buildListData(BuildContext context) {
 }
 
 class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
+  final TextEditingController _searchController = TextEditingController();
   String _selectedLocation = '';
   bool _isLoading = false;
   bool _showOptions = false;
   bool _showObject = true;
+  List<dynamic> _kotaAsal = [];
+  List<dynamic> _filteredKotaAsal = [];
+  int? _selectedKotaAsalId;
+  String? _selectedKotaAsalNama;
+
+  @override
+  void initState() {
+    super.initState();
+    // _fetchData();
+    _fetchData().then((data) {
+      if (data != null) {
+        setState(() {
+          _filteredKotaAsal = data;
+          _kotaAsal = data;
+        });
+      }
+    }).catchError((error) {
+      print('Error: $error');
+    });
+  }
 
   FocusNode _searchFocusNode = FocusNode();
 
+// Declare a function to handle state update
+  // void updateFilteredKotaAsal(List<dynamic> data) {
+  //   setState(() {
+  //     _filteredKotaAsal = data;
+  //   });
+  // }
+
   void _handleTap() {
     print('onTap');
+    FocusScopeNode currentFocus = FocusScope.of(context);
+
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
     setState(() {
       _showObject = !_showObject;
       print(_showObject);
     });
   }
+
+  Future<List<dynamic>> _fetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final headers = {'Authorization': 'Bearer $token'};
+
+    final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data.containsKey('status')) {
+        // Handle response with 'status' key
+        throw Exception(data['status']);
+      } else {
+        final cities = data['data'];
+        print('Request URL: ${response.request?.url}');
+        print('Response Status Code: ${response.statusCode}');
+        print(data);
+        return cities;
+      }
+    } else {
+      throw Exception(
+          'Failed to load data, Status Code: ${response.statusCode}');
+    }
+  }
+
+//   Future<Map<String, dynamic>> _fetchData() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final token = prefs.getString('token');
+//     final headers = {'Authorization': 'Bearer $token'};
+
+//     final response = await http.get(
+//         Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
+//         headers: headers);
+
+//     if (response.statusCode == 200) {
+//       final data = jsonDecode(response.body);
+// if (data != null) {
+//         final dataList = List<dynamic>.from(data['data']);
+//         setState(() {
+//           _filteredKotaAsal = dataList;
+//         });
+//       }
+//       print(data);
+//       return jsonDecode(response.body);
+//     } else {
+//       throw Exception('Failed to load data');
+//     }
+//   }
+
+  Future<void> setKotaAsal(
+    int kotaAsalId,
+  ) async {
+    _isLoading = true;
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json'
+    };
+
+    final body = {'kota_asal_id': kotaAsalId};
+    final response = await http.post(
+        Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal'),
+        headers: headers,
+        body: jsonEncode(body));
+
+    _isLoading = false;
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body)['data'];
+      final responseData = jsonDecode(response.body);
+
+      print(responseData);
+      // print( 'Set kota asal successfull with kota_asal_id: ${data['kota_asal_id']}');
+      // Do something with the response data if needed
+    } else {
+      throw Exception('Failed to set kota asal');
+    }
+  }
+
+  void _handleSearch(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredKotaAsal = _kotaAsal;
+      } else {
+        _filteredKotaAsal = _kotaAsal.where((city) {
+          final name = city['nama_kota'].toString().toLowerCase();
+          final searchQuery = query.toLowerCase();
+          return name.contains(searchQuery);
+        }).toList();
+      }
+    });
+  }
+
+  // void _handleSearch(String query) {
+  //   setState(() {
+  //     _filteredKotaAsal = _filteredKotaAsal.where((city) {
+  //       final name = city['nama_kota'].toString().toLowerCase();
+  //       final searchQuery = query.toLowerCase();
+  //       return name.contains(searchQuery);
+  //     }).toList();
+  //   });
+  // }
 
   var login;
   @override
@@ -231,14 +331,11 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                       padding:
                           EdgeInsets.symmetric(horizontal: 20, vertical: 0),
                       child: TextFormField(
+                        controller: _searchController,
+                        // controller: TextEditingController(text: _selectedKotaAsalNama),
                         onTap: _handleTap,
                         onEditingComplete: () {
                           _handleTap();
-                          FocusScopeNode currentFocus = FocusScope.of(context);
-
-                          if (!currentFocus.hasPrimaryFocus) {
-                            currentFocus.unfocus();
-                          }
                         },
                         decoration: InputDecoration(
                           icon: Icon(Icons.search, color: Colors.black),
@@ -248,6 +345,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                         ),
                         onChanged: (value) {
                           // TODO: Implement location search
+                          _handleSearch(value);
                         },
                       ),
                     ),
@@ -262,106 +360,97 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               child: Column(
                 children: [
                   Expanded(
-                    child: FutureBuilder<Map<String, dynamic>>(
-                      future: _fetchData(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<Map<String, dynamic>> snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else {
-                            final data = snapshot.data;
-                            if (data!.containsKey('status')) {
-                              // Check if the response has 'status' key
-                              return Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "Cek Kotak Email Anda!",
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w800),
-                                    ),
-                                    Text(
-                                      data['status'],
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            } else {
-                              // Otherwise, it's a response with all cities data
-                              final cities = data['data'] as List<dynamic>;
-                              return ListView.builder(
-                                itemCount: cities.length,
-                                itemBuilder: (context, index) {
-                                  final city = cities[index];
+                    child: _filteredKotaAsal != null
+                        ? ListView.builder(
+                            itemCount: _filteredKotaAsal.length,
+                            itemBuilder: (context, index) {
+                              final city = _filteredKotaAsal[index];
+                              // print(city);
 
-                                  return ListTile(
-                                      title: Text(city['nama_kota']),
-                                      onTap:
-                                          // Do something when   a city is tapped
-                                          () async {
-                                        try {
-                                          await setKotaAsal(city['id']);
-                                          // Do something after successfully setting kota asal
-                                        } catch (e) {
-                                          // Handle the error if setting kota asal fails
-                                        }
-                                      });
+                              return ListTile(
+                                title: Text(city['nama_kota'] as String),
+                                onTap: () {
+                                  setState(() {
+                                    _selectedKotaAsalNama = city['nama_kota'];
+                                    _selectedKotaAsalId = city['id'];
+                                    _searchController.text =
+                                        _selectedKotaAsalNama!;
+                                  });
+                                  _handleTap();
+                                  print(_selectedKotaAsalNama);
                                 },
                               );
-                              // Process the cities data and return a widget tree
-                            }
-                          }
-                        } else {
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        return Center(child: CircularProgressIndicator());
-                      },
-                    ),
-                    // child: FutureBuilder<Map<String, dynamic>>(
-                    //   future: _fetchData(),
-                    //   builder: (BuildContext context,
-                    //       AsyncSnapshot<List<dynamic>> snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       // Render the list of locations
-                    //       final data = snapshot.data!;
-                    //       return ListView.builder(
-                    //         itemCount: data.length,
-                    //         itemBuilder: (BuildContext context, int index) {
-                    //           return ListTile(
-                    //             title: Text(data[index]["title"]),
-                    //             onTap: () {
-                    //               // Handle location selection
-                    //             },
-                    //           );
-                    //         },
-                    //       );
-                    //     } else if (snapshot.hasError) {
-                    //       // Render the error message
-                    //       return Text('${snapshot.error}');
-                    //     } else {
-                    //       // Render a loading spinner
-                    //       return Center(child: CircularProgressIndicator());
-                    //     }
-                    //   },
-                    // ),
-                  ),
-
-                  // for (final data in buildListData(context))
+                            },
+                          )
+                        : Center(child: CircularProgressIndicator()),
+                  )
                   // Expanded(
-                  //   child: ListView.builder(
-                  //     itemCount: buildListData(context).length,
-                  //     itemBuilder: (BuildContext context, int index) {
-                  //       return ListTile(
-                  //         title: Text(buildListData(context)[index]["title"]),
-                  //         onTap: buildListData(context)[index]["onTap"],
-                  //       );
+                  //   child: FutureBuilder<List<dynamic>>(
+                  //     future: _fetchData(),
+                  //     builder: (BuildContext context,
+                  //         AsyncSnapshot<List<dynamic>> snapshot) {
+                  //       if (snapshot.connectionState == ConnectionState.done) {
+                  //         if (snapshot.hasError) {
+                  //           print('Error: ${snapshot.error}');
+                  //           return Text('Error: ${snapshot.error}');
+                  //         } else {
+                  //           final data = snapshot.data;
+                  //           // if (data != null) {
+                  //           //   updateFilteredKotaAsal(data);
+                  //           // }
+                  //           if (snapshot.hasError) {
+                  //             print('Error: ${snapshot.error}');
+                  //             return Center(
+                  //               child: Column(
+                  //                 mainAxisAlignment: MainAxisAlignment.center,
+                  //                 crossAxisAlignment: CrossAxisAlignment.center,
+                  //                 children: [
+                  //                   Text(
+                  //                     "Cek Kotak Email Anda!",
+                  //                     style: TextStyle(
+                  //                         fontSize: 20,
+                  //                         fontWeight: FontWeight.w800),
+                  //                   ),
+                  //                   Text(
+                  //                     snapshot.error.toString(),
+                  //                     style: TextStyle(
+                  //                         fontSize: 15,
+                  //                         fontWeight: FontWeight.w600),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //             );
+                  //           } else {
+                  //             // Otherwise, it's a response with all cities data
+                  //             // final cities = data['data'] as List<dynamic>;
+                  //             return _filteredKotaAsal != null
+                  //                 ? ListView.builder(
+                  //                     // itemCount: cities.length,
+                  //                     itemCount: _filteredKotaAsal.length,
+                  //                     itemBuilder: (context, index) {
+                  //                       // final city = cities[index];
+                  //                       final city = _filteredKotaAsal[index];
+                  //                       return ListTile(
+                  //                           title: Text(
+                  //                               city['nama_kota'] as String),
+                  //                           onTap: () {
+                  //                             setState(() {
+                  //                               _selectedKotaAsalNama =
+                  //                                   city['nama_kota'];
+                  //                               _selectedKotaAsalId =
+                  //                                   city['id'];
+                  //                             });
+                  //                           });
+                  //                     },
+                  //                   )
+                  //                 : Center(child: CircularProgressIndicator());
+                  //             // Process the cities data and return a widget tree
+                  //           }
+                  //         }
+                  //       } else {
+                  //         return Center(child: CircularProgressIndicator());
+                  //       }
+                  //       return Center(child: CircularProgressIndicator());
                   //     },
                   //   ),
                   // ),
@@ -558,6 +647,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                   ),
                                 ),
                                 onPressed: () {
+                                  setKotaAsal(_selectedKotaAsalId!);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

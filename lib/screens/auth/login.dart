@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               _passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: Colors.purple[900],
+                              color: HexColor("#60009A"),
                             ),
                             onPressed: () {
                               setState(() {
@@ -255,6 +255,12 @@ class _LoginScreenState extends State<LoginScreen> {
       final roleId = await prefs.getInt('roleId');
       print(result);
       print('role id from login is : ${roleId}');
+      SnackBar(
+        content: Text("Login berhasil"),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.red,
+        // behavior: SnackBarBehavior.floating,
+      );
       if (roleId == 3) {
         Navigator.of(context).pop();
         Navigator.of(context).pushReplacement(MaterialPageRoute(

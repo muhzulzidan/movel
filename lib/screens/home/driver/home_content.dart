@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class DriverHomeContent extends StatefulWidget {
   const DriverHomeContent({super.key});
@@ -21,7 +22,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.deepPurple[800],
+            color: HexColor("#60009A"),
           ),
           child: Column(
             children: [
@@ -81,7 +82,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: Colors.deepPurple[800],
+                          backgroundColor: HexColor("#60009A"),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(100),
                           ),
@@ -184,7 +185,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 20),
-                                  backgroundColor: Colors.deepPurple[800],
+                                  backgroundColor: HexColor("#60009A"),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
