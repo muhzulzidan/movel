@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 
 import 'AvailableDriversScreen.dart';
@@ -33,12 +34,12 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
           textAlign: TextAlign.center,
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.deepPurple[800],
+        backgroundColor: HexColor("#60009A"),
       ),
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(color: Colors.deepPurple[800]),
+            decoration: BoxDecoration(color: HexColor("#60009A")),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

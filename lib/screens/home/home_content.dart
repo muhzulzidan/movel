@@ -6,11 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../trx/ChooseDestination.dart';
 import '../trx/ChooseLocationScreen.dart';
-import '../trx/cari-sopir.dart';
 
-// import './auth/auth_screens.dart';
 
-// import '../main.dart';
 
 var items = [
   {
