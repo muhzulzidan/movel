@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AvailableDriversScreen.dart';
 
@@ -15,6 +18,120 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
   late TimeOfDay _selectedTime;
   TextEditingController _selectedDateController = TextEditingController();
   TextEditingController _selectedTimeController = TextEditingController();
+
+  String _getTimeCategory(TimeOfDay time) {
+    // Define time ranges for each category
+    final morningTime = TimeOfDay(hour: 5, minute: 0);
+    final afternoonTime = TimeOfDay(hour: 11, minute: 0);
+    final eveningTime = TimeOfDay(hour: 15, minute: 0);
+    final nightTime = TimeOfDay(hour: 18, minute: 0);
+
+    // Compare the selected time with the time ranges
+    if (_isTimeInRange(time, morningTime, afternoonTime)) {
+      return "1";
+    } else if (_isTimeInRange(time, afternoonTime, eveningTime)) {
+      return '2';
+    } else if (_isTimeInRange(time, eveningTime, nightTime)) {
+      return '3';
+    } else {
+      return '4';
+    }
+  }
+
+  bool _isTimeInRange(
+    TimeOfDay time,
+    TimeOfDay startTime,
+    TimeOfDay endTime,
+  ) {
+    final currentTimeInMinutes = time.hour * 60 + time.minute;
+    final startTimeInMinutes = startTime.hour * 60 + startTime.minute;
+    final endTimeInMinutes = endTime.hour * 60 + endTime.minute;
+
+    return currentTimeInMinutes >= startTimeInMinutes &&
+        currentTimeInMinutes < endTimeInMinutes;
+  }
+
+  void _setDateTime() async {
+    if (_selectedDate == null || _selectedTime == null) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('Please select both date and time of departure.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Convert TimeOfDay to category
+    String timeCategory = _getTimeCategory(_selectedTime);
+
+    final url =
+        Uri.parse('https://api.movel.id/api/user/rute_jadwal/date_time');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final headers = {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final body = {
+      'date_departure': DateFormat('yyyy-MM-dd').format(_selectedDate),
+      'time_departure_id': timeCategory,
+      // 'time_departure_id': '${_selectedTime.hour}:${_selectedTime.minute}',
+    };
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print(data);
+        // Date and time successfully set, navigate to the next screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => AvailableDriversScreen()),
+        );
+      } else {
+        // Handle the error response
+        final errorMessage = jsonDecode(response.body)['message'];
+        final errorMessageraw = jsonDecode(response.body);
+        print(errorMessageraw);
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text(errorMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle the network error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An error occurred. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -164,13 +281,7 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AvailableDriversScreen()),
-                );
-              },
+              onPressed: _setDateTime,
               // onPressed: _submitForm,
               child: Text(
                 'Simpan',

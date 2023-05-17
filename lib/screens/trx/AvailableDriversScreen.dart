@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'DriverProfileScreen.dart';
 
 class AvailableDriversScreen extends StatefulWidget {
@@ -9,24 +12,64 @@ class AvailableDriversScreen extends StatefulWidget {
 }
 
 class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
-  List<String> _availableDrivers = [
-    'Sopir 1',
-    'Sopir 2',
-    'Sopir 3',
-    'Sopir 4',
-    'Sopir 5',
-    'Sopir 6',
-    'Sopir 7',
-    'Sopir 8',
-    'Sopir 9',
-    'Sopir 10',
-    'Sopir 11',
-    'Sopir 12',
-    'Sopir 13',
-    'Sopir 14',
-    'Sopir 15',
-    'Sopir 16',
-  ];
+  List<dynamic> _availableDrivers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAvailableDrivers();
+  }
+
+  Future<void> fetchAvailableDrivers() async {
+    final url = Uri.parse('https://api.movel.id/api/user/drivers/available');
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final headers = {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    try {
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        setState(() {
+          _availableDrivers = data['drivers'];
+        });
+      } else {
+        // Handle the error response
+        final errorMessage = jsonDecode(response.body)['message'];
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text(errorMessage),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (error) {
+      // Handle the network error
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Error'),
+          content: Text('An error occurred. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
