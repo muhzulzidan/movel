@@ -41,6 +41,8 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
     print(token);
     final headers = {
       'Authorization': 'Bearer $token',
+      // 'Content-Type': 'application/json',
+      // "Connection": 'keep-alive'
     };
     final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
     final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');

@@ -295,7 +295,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
-                              
                             ),
                             child: InkWell(
                               onTap: () {

@@ -191,7 +191,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                       child: TextField(
-                        obscureText: !_passwordVisible,
+                        obscureText: !_passwordVisible2,
                         controller: _passwordConfirmationController,
                         decoration: InputDecoration(
                           hintStyle:
@@ -202,14 +202,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 21, vertical: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _passwordVisible
+                              _passwordVisible2
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: Colors.deepPurple.shade700,
                             ),
                             onPressed: () {
                               setState(() {
-                                _passwordVisible = !_passwordVisible;
+                                _passwordVisible2 = !_passwordVisible2;
                               });
                             },
                           ),

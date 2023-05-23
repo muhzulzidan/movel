@@ -119,6 +119,13 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
     // Add the CookieJar to Dio's HttpClientAdapter
 
     final prefs = await SharedPreferences.getInstance();
+    final cookies = prefs.getString('cookies');
+    // Use the cookie jar to send the cookies with the request
+    // final cookieJar = CookieJar(cookies);
+    // print("before headers : $cookies");
+    // final cookieJar = CookieJar.fromString(cookies);
+    // dio.interceptors.add(CookieManager());
+
     final token = prefs.getString('token');
 
     // final options = Options(
@@ -380,6 +387,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ),
           ),
+         
+         
           Visibility(
             visible: _showObject,
             child: Expanded(

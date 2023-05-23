@@ -14,7 +14,7 @@ class ChooseSeatScreen extends StatefulWidget {
 }
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
-List<String> _seats = [];
+  List<String> _seats = [];
   Set<String> _selectedSeats = <String>{};
   bool _isLoading = true;
   @override
