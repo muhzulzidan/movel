@@ -228,10 +228,13 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final email = emailController.text;
-    final password = _passwordController.text;
+    // final email = emailController.text;
+    // final password = _passwordController.text;
     // final email = "zulzdn@gmail.com";
-    // final password = "zidan100";
+    final email = "zulzdn@sopir.com";
+    final password = "zidan100";
+    // final email = "zidan@movel.id";
+    // final password = "password";
     // final email = "sopirbaru@gmail.com";
     // final password = "123456";
 
@@ -241,20 +244,20 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
-    Future<String> getToken() async {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';
-      // print(token);
-      return token;
-    }
+    // Future<String> getToken() async {
+    //   final prefs = await SharedPreferences.getInstance();
+    //   final token = prefs.getString('token') ?? '';
+    //   print(token);
+    //   return token;
+    // }
 
     if (result) {
-      final accessToken = await getToken();
+      // final accessToken = await getToken();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool("isLoggedIn", true);
       final roleId = await prefs.getInt('roleId');
       print(result);
-      print('role id from login is : ${roleId}');
+      print('loginscren role id from login is : ${roleId}');
       SnackBar(
         content: Text("Login berhasil"),
         duration: Duration(seconds: 2),

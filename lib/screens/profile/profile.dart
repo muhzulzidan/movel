@@ -1,3 +1,6 @@
+// import 'package:cookie_jar/cookie_jar.dart';
+// import 'package:dio/dio.dart';
+// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:movel/screens/auth/intro.dart';
 import 'package:movel/controller/auth/auth_state.dart';
@@ -7,7 +10,7 @@ import 'package:movel/screens/profile/pengaturan.dart';
 import 'package:movel/screens/profile/pusat_bantuan.dart';
 import 'package:movel/screens/profile/riwayat_pesanan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 import 'dart:convert';
 
 import '../home/token.dart';
@@ -20,10 +23,19 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
-    final url = Uri.parse('https://api.movel.id/api/user/logout');
+    // final dio = Dio();
+    // var cookieJar = CookieJar();
 
-    final response = await http.post(
-      url,
+    // Add the CookieJar to Dio's HttpClientAdapter
+
+    // final options = Options(
+    //   headers: {
+    //     'Authorization': 'Bearer $token',
+    //   },
+    // );
+
+    final response = await Requests.post(
+      'https://api.movel.id/api/user/logout',
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -31,12 +43,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (response.statusCode == 200) {
       // Logout was successful
-      final responseData = jsonDecode(response.body);
+      final responseData = response.json();
       print(responseData);
+      print(response.headers);
       Navigator.of(context, rootNavigator: true).pushReplacement(
-          MaterialPageRoute(builder: (context) => IntroScreen()));
+        MaterialPageRoute(builder: (context) => IntroScreen()),
+      );
     } else {
-      print(response.body);
+      print(response);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Logout failed')),
@@ -51,6 +65,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late Map<String, dynamic> _userData = {};
 
   Future<void> _loadUserData() async {
+    late String token;
+
+    Future<void> _getSharedPrefrences() async {
+      final prefs = await SharedPreferences.getInstance();
+      token = prefs.getString('token') ?? '';
+    }
+
     try {
       final userService = UserService();
       final user = await userService.getUser();
@@ -60,21 +81,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         _userData = user[0];
       });
-      print('testtt');
+      print('profile testtt');
       print(_userName);
     } catch (e) {
-      print(e);
+      print("dari profil : $e");
     }
   }
 
   @override
   void initState() {
     super.initState();
+    _anjay();
     try {
       _loadUserData();
     } catch (e) {
-      print('Caught exception: $e');
+      print('Caught profilscren exception: $e');
     }
+  }
+
+  _anjay() async {
+    final prefs = await SharedPreferences.getInstance();
+    // final SharedPreferences? prefs = await _prefs;
+    // print(prefs?.get('message'));
+    final token = prefs.getString('token');
+    // tokenText = token;
+    print("ini profile token get : $token");
   }
 
   @override
@@ -335,10 +366,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        // final SharedPreferences? prefs = await _prefs;
-                        // print(prefs?.get('message'));
-                        final token = prefs.getString('token');
+                      final prefs = await SharedPreferences.getInstance();
+                      // final SharedPreferences? prefs = await _prefs;
+                      // print(prefs?.get('message'));
+                      final token = prefs.getString('token');
                       print(token);
                       logout(context, token!);
                       // TODO: Log out the user and navigate to the login screen.

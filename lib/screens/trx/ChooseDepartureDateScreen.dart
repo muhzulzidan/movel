@@ -1,8 +1,9 @@
+// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'AvailableDriversScreen.dart';
@@ -14,6 +15,8 @@ class ChooseDepartureDateScreen extends StatefulWidget {
 }
 
 class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
+  // final dio = Dio();
+
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
   TextEditingController _selectedDateController = TextEditingController();
@@ -72,25 +75,29 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
     // Convert TimeOfDay to category
     String timeCategory = _getTimeCategory(_selectedTime);
 
-    final url =
-        Uri.parse('https://api.movel.id/api/user/rute_jadwal/date_time');
+    final url = 'https://api.movel.id/api/user/rute_jadwal/date_time';
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final headers = {
-      'Accept': 'application/json',
       'Authorization': 'Bearer $token',
+      // 'Content-Type': 'application/json',
+      // "Connection": 'keep-alive'
     };
     final body = {
-      'date_departure': DateFormat('yyyy-MM-dd').format(_selectedDate),
-      'time_departure_id': timeCategory,
+      // 'date_departure': DateFormat('yyyy-MM-dd').format(_selectedDate),
+      // 'time_departure_id': timeCategory,
+      "date_departure": "2023-05-20",
+      "time_departure_id": "1"
       // 'time_departure_id': '${_selectedTime.hour}:${_selectedTime.minute}',
     };
 
     try {
-      final response = await http.post(url, headers: headers, body: body);
+      final response = await Requests.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final data = response.json();
         print(data);
+        print(response.headers);
+        print(response.request);
         // Date and time successfully set, navigate to the next screen
         Navigator.push(
           context,
@@ -98,9 +105,10 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
         );
       } else {
         // Handle the error response
-        final errorMessage = jsonDecode(response.body)['message'];
-        final errorMessageraw = jsonDecode(response.body);
+        final errorMessage = (response.json())['message'];
+        final errorMessageraw = (response.json());
         print(errorMessageraw);
+        print(response.headers);
         showDialog(
           context: context,
           builder: (context) => AlertDialog(

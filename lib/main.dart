@@ -11,14 +11,18 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'screens/trx/ChooseSeatScreen.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  print(isLoggedIn);
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  // final prefs = await SharedPreferences.getInstance();
+  // final token = prefs.getString('token');
+  // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  // print(isLoggedIn);
+  runApp(MyApp(
+      // isLoggedIn: isLoggedIn
+      ));
   // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
     // Remove the splash screen
@@ -28,9 +32,9 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   // const MyApp({super.key});
-  final bool isLoggedIn;
+  // final bool isLoggedIn;
 
-  const MyApp({required this.isLoggedIn});
+  // const MyApp({required this.isLoggedIn});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -70,9 +74,10 @@ class MyApp extends StatelessWidget {
           ),
           // home: LoginScreen(),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/login',
+          initialRoute: '/',
           // home: isLoggedIn ? IntroScreen() : MyHomePage(),
           routes: {
+            // '/seat': (context) => ChooseSeatScreen(),
             '/': (context) => IntroScreen(),
             // '/': (context) => MyHomePage(),
             '/home': (context) => MyHomePage(),

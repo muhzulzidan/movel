@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:http/http.dart' as http;
+
 import 'package:movel/screens/auth/login.dart';
 
 import '../../controller/auth/auth_state.dart';
@@ -29,6 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   bool _isLoading = false;
   bool _passwordVisible = false;
+  bool _passwordVisible2 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ],
                       ),
                       child: TextField(
-                        obscureText: !_passwordVisible,
+                        obscureText: !_passwordVisible2,
                         controller: _passwordConfirmationController,
                         decoration: InputDecoration(
                           hintStyle:
@@ -204,14 +206,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               horizontal: 21, vertical: 10),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _passwordVisible
+                              _passwordVisible2
                                   ? Icons.visibility
                                   : Icons.visibility_off,
                               color: HexColor("#60009A"),
                             ),
                             onPressed: () {
                               setState(() {
-                                _passwordVisible = !_passwordVisible;
+                                _passwordVisible2 = !_passwordVisible2;
                               });
                             },
                           ),
@@ -221,23 +223,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () => {},
-                          style: ElevatedButton.styleFrom(
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            minimumSize: Size.zero,
-                            padding: EdgeInsets.zero,
-                            backgroundColor: Colors.transparent,
-                          ),
-                          child: Text(
-                            "Lupa kata sandi ?",
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     TextButton(
+                    //       onPressed: () => {},
+                    //       style: ElevatedButton.styleFrom(
+                    //         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    //         minimumSize: Size.zero,
+                    //         padding: EdgeInsets.zero,
+                    //         backgroundColor: Colors.transparent,
+                    //       ),
+                    //       child: Text(
+                    //         "Lupa kata sandi ?",
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     SizedBox(height: 20),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
@@ -297,6 +299,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
   }
+
+  final dio = Dio();
 
   Future<void> register() async {
     setState(() {
@@ -362,20 +366,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Send the registration data to your backend server
     // and wait for the response
-    final response = await http
-        .post(Uri.parse('https://api.movel.id/api/user/register'), body: {
-      'name': "zidan",
-      'role_id': "2",
-      'no_hp': "08111111111",
-      'email': "zidan3@gmail.com",
-      'password': "zidan100",
-      'password_confirmation': "zidan100",
-      // 'name': name,
+    final response =
+        await dio.post('https://api.movel.id/api/user/register', data: {
+      // 'name': "zidan",
       // 'role_id': "2",
-      // 'no_hp': phoneNumber,
-      // 'email': email,
-      // 'password': password,
-      // 'password_confirmation': password_confirmation,
+      // 'no_hp': "08111111111",
+      // 'email': "zidan3@gmail.com",
+      // 'password': "zidan100",
+      // 'password_confirmation': "zidan100",
+      'name': name,
+      'role_id': "2",
+      'no_hp': phoneNumber,
+      'email': email,
+      'password': password,
+      'password_confirmation': password_confirmation,
     });
 
     String message = '';
@@ -383,7 +387,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (response.statusCode == 201) {
       // Registration was successful
       print("success");
-      final jsonResponse = jsonDecode(response.body);
+      final jsonResponse = (response.data);
       print(jsonResponse);
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -452,10 +456,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // }
 
     // if (response.statusCode == 200) {
-    //   final jsonResponse = jsonDecode(response.body);
+    //   final jsonResponse = (response.body);
 
     // } else {
-    //   final jsonResponse = jsonDecode(response.body);
+    //   final jsonResponse = (response.body);
     //   print(jsonResponse);
     //   print(response.body);
     //   print("gagal hhttpnya");
@@ -471,7 +475,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     // Check the response status code
     // if (response.statusCode == 200) {
-    //   final jsonResponse = jsonDecode(response.body);
+    //   final jsonResponse = (response.body);
     //   // ScaffoldMessenger.of(context).showSnackBar(
     //   //   SnackBar(content: Text('${jsonResponse['message']}')),
     //   // );
@@ -504,7 +508,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     //     );
     //   }
     // } else {
-    //   final jsonResponse = jsonDecode(response.body);
+    //   final jsonResponse = (response.body);
     //   ScaffoldMessenger.of(context).showSnackBar(
     //     SnackBar(content: Text('${jsonResponse}')),
     //   );
