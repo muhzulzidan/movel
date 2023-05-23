@@ -74,11 +74,20 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 // String _userData = '';
 
-//   @override
-//   void initState() {
-//     super.initState();
-//     _fetchUserData();
-//   }
+  @override
+  void initState() {
+    super.initState();
+    _anjay();
+  }
+
+  _anjay() async {
+    final prefs = await SharedPreferences.getInstance();
+    // final SharedPreferences? prefs = await _prefs;
+    // print(prefs?.get('message'));
+    final token = prefs.getString('token');
+    // tokenText = token;
+    print("ini home token get : $token");
+  }
 
 //     Future<void> _fetchUserData() async {
 //     final response = await http.get(
@@ -87,13 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
 //     );
 
 //     if (response.statusCode == 200) {
-//       final data = jsonDecode(response.body);
+//       final data = (response.body);
 //       setState(() {
 //         _userData = data.toString();
 //       });
 //     }
 //   }
-
 
   void onTabTapped(int index) {
     setState(() {
@@ -104,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  IndexedStack(
+      body: IndexedStack(
         index: _currentIndex,
         children: [
           Navigator(

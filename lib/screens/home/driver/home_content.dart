@@ -3,6 +3,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:hexcolor/hexcolor.dart';
 
+import 'trx/jadwal.dart';
+
 class DriverHomeContent extends StatefulWidget {
   const DriverHomeContent({super.key});
 
@@ -12,7 +14,10 @@ class DriverHomeContent extends StatefulWidget {
 
 class _DriverHomeContentState extends State<DriverHomeContent> {
   int saldo = 900000;
-
+  List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
+  Set<String> _selectedSeats = Set<String>(); // Keep track of selected seats
+  bool _isButtonPressed = false;
+  bool _isBerangkat = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,31 +47,50 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            _isButtonPressed = !_isButtonPressed;
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: Colors.grey,
+                          backgroundColor: _isButtonPressed
+                              ? Colors.amberAccent
+                              : Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(100),
                           ),
                           elevation: 4,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.power_settings_new, color: Colors.white),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Tidak Aktif',
-                              style: TextStyle(
-                                  color: Colors.white,
+                        child: Padding(
+                          padding: EdgeInsetsDirectional.only(
+                            end: _isButtonPressed ? 20 : 0,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.power_settings_new,
+                                color: _isButtonPressed
+                                    ? Colors.black
+                                    : Colors.white,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                '${_isButtonPressed ? 'Aktif' : "Tidak Aktif"}',
+                                style: TextStyle(
+                                  color: _isButtonPressed
+                                      ? Colors.black
+                                      : Colors.white,
                                   fontWeight: FontWeight.w700,
-                                  fontSize: 20),
-                            ),
-                          ],
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -79,7 +103,13 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => JadwalScreen()),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
                           backgroundColor: HexColor("#60009A"),
@@ -218,7 +248,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
               Column(
                 children: [
                   SizedBox(
-                    height: 20,
+                    height: 15,
                   ),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.6,
@@ -235,187 +265,167 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                   SizedBox(
                     height: 15,
                   ),
-                  Stack(
-                    children: [
-                      Container(
-                        width: 300,
-                        height: 200,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            topRight: Radius.circular(20),
+                  Container(
+                    // constraints: BoxConstraints.expand(),
+                    width: 280,
+                    height: 200,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(29),
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(
+                            'assets/otoWhite.png'), // Replace with your desired background image
+                        // fit: BoxFit.cover,
+                      ),
+                      borderRadius: BorderRadius.circular(
+                          10.0), // Adjust the border radius as needed
+                    ),
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: GridView.builder(
+                        itemCount: _seats.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 15,
+                          crossAxisSpacing: 7,
+                          childAspectRatio: .7,
+                        ),
+                        itemBuilder: (context, index) {
+                          final seat = _seats[index];
+                          final isSelected = _selectedSeats.contains(seat);
+                          return Card(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              // side: BorderSide(
+                              //   color: Colors.purple,
+                              //   width: 2.0,
+                              // ),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                // TODO: Select the seat
+                                setState(() {
+                                  if (isSelected) {
+                                    _selectedSeats.remove(seat);
+                                  } else {
+                                    _selectedSeats.add(seat);
+                                  }
+                                });
+                              },
+                              splashColor: Colors.amber,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  color: isSelected
+                                      ? Colors.amberAccent
+                                      : Colors.transparent,
+                                  // color: Colors.yellow, // Set the background color when the seat is selected
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? Colors.amberAccent
+                                        : Colors.white, // Set the border color
+                                    width: 2,
+                                  ),
+                                ),
+                                child: RotatedBox(
+                                  quarterTurns: 3,
+                                  child: Center(
+                                    child: Text(
+                                      _seats[index],
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: isSelected
+                                            ? HexColor("#60009A")
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Pesanan Dibatalkan",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        left: 10,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
+                        SizedBox(
+                          width: 15,
+                        ),
+                        ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
+                            primary: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
                           ),
+                          onPressed: () {
+                            // to do
+                          },
                           child: Text(
-                            '1',
+                            "Lihat",
                             style: TextStyle(
-                              color: Colors.white,
                               fontWeight: FontWeight.w700,
-                              fontSize: 16,
+                              color: Colors.black,
                             ),
                           ),
                         ),
-                      ),
-                      Positioned(
-                        top: 10,
-                        right: 10,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            '2',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  SizedBox(
+                    width: 180,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            _isBerangkat ? Colors.amberAccent : Colors.grey,
+                        padding: EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-                      Positioned(
-                        top: 40,
-                        left: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
+                      onPressed: () {
+                        // TODO: Add your logic here
+                        setState(() {
+                          _isBerangkat = !_isBerangkat;
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.check_circle,
+                            color: _isBerangkat ? Colors.black : Colors.white,
                           ),
-                          child: Text(
-                            '3',
+                          SizedBox(width: 8.0),
+                          Text(
+                            "Berangkat",
                             style: TextStyle(
-                              color: Colors.white,
                               fontWeight: FontWeight.w700,
-                              fontSize: 16,
+                              color: _isBerangkat ? Colors.black : Colors.white,
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                      Positioned(
-                        top: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            '4',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 40,
-                        right: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            '5',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 10,
-                        left: 10,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            '6',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            // TODO: Implement seat functionality
-                          },
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            backgroundColor: Colors.grey[800],
-                            shape: CircleBorder(),
-                            elevation: 4,
-                          ),
-                          child: Text(
-                            '7',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   )
                 ],
               ),

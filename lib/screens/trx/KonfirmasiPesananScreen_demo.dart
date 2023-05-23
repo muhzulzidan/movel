@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 
 import 'OrderProgressScreen.dart';
 
@@ -8,17 +7,7 @@ class KonfirmasiPesananScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        backgroundColor: HexColor("#60009A"),
-        centerTitle: true,
-        title: Text(
-          'Konfirmasi Pesanan',
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
+        title: Text('Konfirmasi Pesanan'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -119,8 +108,7 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                 // TODO: Implement payment and confirmation logic
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) => OrderProgressScreen()),
+                  MaterialPageRoute(builder: (context) => OrderProgressScreen()),
                 );
               },
               child: Text('Konfirmasi Pesanan'),

@@ -1,16 +1,18 @@
+// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/home/token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 
-import '../profile/alamat.dart';
-import '../profile/change_password.dart';
-import '../profile/riwayat_pesanan.dart';
+// import '../profile/alamat.dart';
+// import '../profile/change_password.dart';
+// import '../profile/riwayat_pesanan.dart';
+// import 'ChooseDestination.dart';
+
 import 'ChooseDepartureDateScreen.dart';
-import 'ChooseDestination.dart';
-
 class ChooseDestinationScreen extends StatefulWidget {
   @override
   _ChooseDestinationScreenState createState() =>
@@ -27,13 +29,26 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
   bool _showObject = true;
   List<dynamic> _kotaTujuan = [];
   List<dynamic> _filteredKotaTujuan = [];
-  int? _selectedKotaTujuanId;
+  List<dynamic> _kotaThree = [];
+  int? _selectedKotaTujuanId = 18;
   String? _selectedKotaTujuanNama;
 
   @override
   void initState() {
     super.initState();
     // _fetchData();
+    _fetchDatathree()
+        .then((data) => {
+              if (data != null)
+                {
+                  setState(() {
+                    _kotaThree = data;
+                  })
+                }
+            })
+        .catchError((error) {
+      print('Error: $error');
+    });
     _fetchData().then((data) {
       if (data != null) {
         setState(() {
@@ -57,30 +72,35 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
     }
     setState(() {
       _showObject = !_showObject;
-      print(_showObject);
+      // print(_showObject);
     });
   }
+
+  // final dio = Dio();
 
   Future<List<dynamic>> _fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final headers = {'Authorization': 'Bearer $token'};
 
-    final response = await http.get(
-      Uri.parse('https://api.movel.id/api/user/kota_kab/search'),
-      headers: headers,
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/kota_kab/search',
+      headers: {'Authorization': 'Bearer $token'},
+      // options: Options(
+      //   headers: headers,
+      // )
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final data = (response.json());
       if (data.containsKey('status')) {
         // Handle response with 'status' key
         throw Exception(data['status']);
       } else {
         final cities = data['data'];
-        print('Request URL: ${response.request?.url}');
-        print('Response Status Code: ${response.statusCode}');
-        print(data);
+        // print('Request URL: ${response.request?.url}');
+        // print('Response Status Code: ${response.statusCode}');
+        // print(data);
         return cities;
       }
     } else {
@@ -89,37 +109,75 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
     }
   }
 
-  Future<void> setKotaDestinasi(
-    int kotaTujuanId,
-  ) async {
+  Future<List<dynamic>> _fetchDatathree() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final headers = {'Authorization': 'Bearer $token'};
+
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/kota_kab/three',
+      // options: Options(
+      headers: headers,
+      // )
+    );
+
+    if (response.statusCode == 200) {
+      final data = (response.json());
+      if (data.containsKey('status')) {
+        // Handle response with 'status' key
+        throw Exception(data['status']);
+      } else {
+        final cities = data['data'];
+        // print("three : $cities");
+        return cities;
+      }
+    } else {
+      throw Exception(
+          'Failed to load data, Status Code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> setKotaDestinasi( int kotaTujuanId ) async {
     _isLoading = true;
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    final headers = {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json'
-    };
+    // final headers = {
+    //   'Authorization': 'Bearer $token',
+    //   // 'Content-Type': 'application/json',
+    //   // "Connection": 'keep-alive'
+    // };
 
-    final body = {'kota_tujuan_id': kotaTujuanId};
-    final response = await http.post(
-        Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_tujuan'),
-        headers: headers,
-        body: jsonEncode(body));
+    final body = {
+      // 'kota_tujuan_id': kotaTujuanId
+      "kota_tujuan_id": 18
+    };
+    final response = await Requests.post(
+      'https://api.movel.id/api/user/rute_jadwal/kota_tujuan',
+      body: body,
+        headers: {
+          'Authorization': 'Bearer $token',
+        }
+      // options: Options(headers: headers),
+    );
 
     _isLoading = false;
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body)['data'];
-      final responseData = jsonDecode(response.body);
-
-      print(responseData);
-      // print( 'Set kota asal successfull with kota_tujuan_id: ${data['kota_tujuan_id']}');
-      // Do something with the response data if needed
+      final data = response.json();
+      print(data);
+      print(response.headers);
+      // print(response.requestOptions);
+      // print(response.extra);
+      // print(await cookieJar.loadForRequest(
+      // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
     } else {
-      throw Exception('Failed to set kota asal');
+      throw Exception('Failed to set kota destinasi');
     }
   }
+
+
+  
 
   void _handleSearch(String query) {
     setState(() {
@@ -134,16 +192,6 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
       }
     });
   }
-
-  // void _handleSearch(String query) {
-  //   setState(() {
-  //     _filteredKotaAsal = _filteredKotaAsal.where((city) {
-  //       final name = city['nama_kota'].toString().toLowerCase();
-  //       final searchQuery = query.toLowerCase();
-  //       return name.contains(searchQuery);
-  //     }).toList();
-  //   });
-  // }
 
   var login;
   @override
@@ -313,7 +361,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                             Container(
                                 alignment: Alignment.topRight,
                                 child: RichText(
-                                  textAlign: TextAlign.end,
+                                  textAlign: TextAlign.start,
                                   text: TextSpan(
                                     text: 'Atau pilih ',
                                     style: DefaultTextStyle.of(context).style,
@@ -336,126 +384,69 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Container(
-                                      height: 45,
-                                      width: 150,
-                                      alignment: Alignment.centerLeft,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 1,
-                                            blurRadius: 2,
-                                            offset: Offset(0, 4),
-                                          ),
-                                        ],
-                                        color: Colors.grey[100],
-                                      ),
-                                      child: ListTile(
-                                        // leading: Icon(Icons.place),
+                                SizedBox(
+                                  height: 160,
+                                  width: 150,
+                                  child: _kotaThree != null
+                                      ? ListView.builder(
+                                          itemCount: _kotaThree.length,
+                                          itemBuilder: (context, index) {
+                                            final city = _kotaThree[index];
+                                            // print(city);
 
-                                        title: Text(
-                                          'Makassar',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              height: .1),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedLocation = 'Makassar';
-                                          });
-                                        },
-                                        selected:
-                                            _selectedLocation == 'Makassar',
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      height: 45,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 1,
-                                            blurRadius: 2,
-                                            offset: Offset(0, 4),
-                                          ),
-                                        ],
-                                        color: Colors.grey[100],
-                                      ),
-                                      child: ListTile(
-                                        // leading: Icon(Icons.place),
+                                            return SizedBox(
+                                              width: 20,
+                                              child: Container(
+                                                height: 40,
+                                                width: 10,
+                                                margin:
+                                                    EdgeInsets.only(bottom: 10),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.grey
+                                                          .withOpacity(0.5),
+                                                      spreadRadius: 1,
+                                                      blurRadius: 2,
+                                                      offset: Offset(0, 4),
+                                                    ),
+                                                  ],
+                                                  color: Colors.grey[100],
+                                                ),
+                                                child: ListTile(
+                                                  // leading: Icon(Icons.place),
 
-                                        title: Text(
-                                          'Sengkang',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              height: .1),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedLocation = 'Sengkang';
-                                          });
-                                        },
-                                        selected:
-                                            _selectedLocation == 'Sengkang',
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Container(
-                                      height: 45,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.grey.withOpacity(0.5),
-                                            spreadRadius: 1,
-                                            blurRadius: 2,
-                                            offset: Offset(0, 4),
-                                          ),
-                                        ],
-                                        color: Colors.grey[100],
-                                      ),
-                                      child: ListTile(
-                                        // leading: Icon(Icons.place),
-
-                                        title: Text(
-                                          'Sengkang',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w800,
-                                              height: .1),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        onTap: () {
-                                          setState(() {
-                                            _selectedLocation = 'Sengkang';
-                                          });
-                                        },
-                                        selected:
-                                            _selectedLocation == 'Sengkang',
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
+                                                  title: Text(
+                                                    city['nama_kota'] as String,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        height: .1),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  onTap: () {
+                                                    setState(() {
+                                                      _selectedKotaTujuanNama =
+                                                          city['nama_kota'];
+                                                      _selectedKotaTujuanId =
+                                                          city['id'];
+                                                      _searchController.text =
+                                                          _selectedKotaTujuanNama!;
+                                                    });
+                                                    // _handleTap();
+                                                    print(
+                                                        _selectedKotaTujuanNama);
+                                                  },
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        )
+                                      : Center(
+                                          child: CircularProgressIndicator()),
                                 ),
                               ],
                             ),

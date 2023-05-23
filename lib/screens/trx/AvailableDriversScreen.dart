@@ -1,9 +1,10 @@
 import 'dart:convert';
-
+import 'package:requests/requests.dart';
+// import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+
 import 'DriverProfileScreen.dart';
 
 class AvailableDriversScreen extends StatefulWidget {
@@ -12,49 +13,92 @@ class AvailableDriversScreen extends StatefulWidget {
 }
 
 class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
-  List<dynamic> _availableDrivers = [];
-
+  // List<dynamic> _availableDrivers = [];
+  // final dio = Dio();
   @override
   void initState() {
     super.initState();
-    fetchAvailableDrivers();
+    // fetchAvailableDrivers();
   }
 
   Future<void> fetchAvailableDrivers() async {
-    final url = Uri.parse('https://api.movel.id/api/user/drivers/available');
+    final url = 'https://api.movel.id/api/user/drivers/available';
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    print(token);
     final headers = {
-      'Accept': 'application/json',
       'Authorization': 'Bearer $token',
+      // 'Content-Type': 'application/json',
+      // "Connection": 'keep-alive'
     };
-
+    // final sessionData = {
+    //   'date_time': {
+    //     'date_departure': '2023-04-29',
+    //     'time_departure_id': 1,
+    //   },
+    //   'kota_asal_id': 6,
+    //   'kota_tujuan_id': 18,
+    // };
     try {
-      final response = await http.get(url, headers: headers);
+      final response = await Requests.get(
+        url,
+        // options: Options(
+        headers: headers,
+        // validateStatus: (status) =>
+        // status! < 500, // Treat 4xx status codes as successful
+        // ),
+      );
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        // Handle successful response
+        final data = response.json();
+        print(data);
         setState(() {
           _availableDrivers = data['drivers'];
         });
       } else {
         // Handle the error response
-        final errorMessage = jsonDecode(response.body)['message'];
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text(errorMessage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
+        if (response.statusCode == 400) {
+          final errorMessage = response.json()['message'];
+          final data = response.json();
+          print(data);
+          print(response.headers);
+          print(response.statusCode);
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text(errorMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        } else {
+          final errorMessage = (response.json())['message'];
+          final data = (response.json());
+          print(data);
+          print(response.statusCode);
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Error'),
+              content: Text(errorMessage),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } catch (error) {
-      // Handle the network error
+      print(error);
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -71,6 +115,14 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
     }
   }
 
+  List<dynamic> _availableDrivers = [
+    'Driver 1',
+    'Driver 2',
+    'Driver 3',
+    'Driver 4',
+    'Driver 5',
+    'Driver 6',
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
