@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:hexcolor/hexcolor.dart';
 
 import 'package:movel/screens/auth/login.dart';
 
-import '../../controller/auth/auth_state.dart';
 
 class RegisterScreen extends StatefulWidget {
   // final AuthService _authService = AuthService();
@@ -44,7 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           child: Column(
             // mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
+              SizedBox(
                 height: MediaQuery.of(context).size.height * 0.7,
                 child: Column(
                   children: [
@@ -311,7 +309,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final String phoneNumber = _phoneNumberController.text.trim();
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
-    final String password_confirmation = _passwordController.text.trim();
+    final String passwordConfirmation = _passwordController.text.trim();
 
     // final result = await _authService.login(email, password);
 
@@ -379,7 +377,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       'no_hp': phoneNumber,
       'email': email,
       'password': password,
-      'password_confirmation': password_confirmation,
+      'password_confirmation': passwordConfirmation,
     });
 
     String message = '';

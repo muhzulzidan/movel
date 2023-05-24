@@ -1,9 +1,7 @@
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:movel/screens/home/token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 // import 'package:http/http.dart' as http;
 import 'package:requests/requests.dart';
 
@@ -13,6 +11,7 @@ import 'package:requests/requests.dart';
 // import 'ChooseDestination.dart';
 
 import 'ChooseDepartureDateScreen.dart';
+
 class ChooseDestinationScreen extends StatefulWidget {
   @override
   _ChooseDestinationScreenState createState() =>
@@ -50,12 +49,10 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
       print('Error: $error');
     });
     _fetchData().then((data) {
-      if (data != null) {
-        setState(() {
-          _filteredKotaTujuan = data;
-          _kotaTujuan = data;
-        });
-      }
+      setState(() {
+        _filteredKotaTujuan = data;
+        _kotaTujuan = data;
+      });
     }).catchError((error) {
       print('Error: $error');
     });
@@ -137,47 +134,44 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
     }
   }
 
-  Future<void> setKotaDestinasi( int kotaTujuanId ) async {
-    _isLoading = true;
+  // Future<void> setKotaDestinasi( int kotaTujuanId ) async {
+  //   _isLoading = true;
 
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    // final headers = {
-    //   'Authorization': 'Bearer $token',
-    //   // 'Content-Type': 'application/json',
-    //   // "Connection": 'keep-alive'
-    // };
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   // final headers = {
+  //   //   'Authorization': 'Bearer $token',
+  //   //   // 'Content-Type': 'application/json',
+  //   //   // "Connection": 'keep-alive'
+  //   // };
 
-    final body = {
-      // 'kota_tujuan_id': kotaTujuanId
-      "kota_tujuan_id": 18
-    };
-    final response = await Requests.post(
-      'https://api.movel.id/api/user/rute_jadwal/kota_tujuan',
-      body: body,
-        headers: {
-          'Authorization': 'Bearer $token',
-        }
-      // options: Options(headers: headers),
-    );
+  //   final body = {
+  //     // 'kota_tujuan_id': kotaTujuanId
+  //     "kota_tujuan_id": 18
+  //   };
+  //   final response = await Requests.post(
+  //     'https://api.movel.id/api/user/rute_jadwal/kota_tujuan',
+  //     body: body,
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //       }
+  //     // options: Options(headers: headers),
+  //   );
 
-    _isLoading = false;
+  //   _isLoading = false;
 
-    if (response.statusCode == 200) {
-      final data = response.json();
-      print(data);
-      print(response.headers);
-      // print(response.requestOptions);
-      // print(response.extra);
-      // print(await cookieJar.loadForRequest(
-      // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
-    } else {
-      throw Exception('Failed to set kota destinasi');
-    }
-  }
-
-
-  
+  //   if (response.statusCode == 200) {
+  //     final data = response.json();
+  //     print(data);
+  //     print(response.headers);
+  //     // print(response.requestOptions);
+  //     // print(response.extra);
+  //     // print(await cookieJar.loadForRequest(
+  //     // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
+  //   } else {
+  //     throw Exception('Failed to set kota destinasi');
+  //   }
+  // }
 
   void _handleSearch(String query) {
     setState(() {
@@ -345,7 +339,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
             visible: _showObject,
             child: Expanded(
               flex: 1,
-              child: Container(
+              child: SizedBox(
                 // height: MediaQuery.of(context).size.height * 0.3,
                 width: double.infinity,
                 child: Row(
@@ -474,7 +468,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  setKotaDestinasi(_selectedKotaTujuanId!);
+                                  // setKotaDestinasi(_selectedKotaTujuanId!);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

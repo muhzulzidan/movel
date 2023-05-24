@@ -1,13 +1,9 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
-import 'dart:io';
 
 import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
 
-import '../../main.dart';
-import './widget/input_fields.dart';
-import './widget/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -65,7 +61,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 items: items.map((i) {
                   return Builder(
                     builder: (BuildContext context) {
-                      return Container(
+                      return SizedBox(
                           width: double.infinity,
                           height: VisualDensity.maximumDensity,
                           // padding: EdgeInsets.symmetric(vertical: 40),

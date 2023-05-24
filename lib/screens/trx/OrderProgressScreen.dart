@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class OrderProgressScreen extends StatelessWidget {
@@ -28,20 +30,8 @@ class OrderProgressScreen extends StatelessWidget {
                 SizedBox(height: 16),
                 buildDriverProfile(),
                 SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement chat functionality
-                  },
-                  child: Text("Chat dengan Sopir"),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement cancel order functionality
-                  },
-                  child: Text("Batalkan Pesanan"),
-                ),
-                SizedBox(height: 16),
+
+                // SizedBox(height: 16),
               ],
             ),
           ),
@@ -59,18 +49,49 @@ class OrderProgressScreen extends StatelessWidget {
   }
 
   Widget buildDriverProfile() {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 50,
-          backgroundImage: AssetImage("assets/driver.png"),
-        ),
-        SizedBox(height: 16),
-        Text(
-          "John Doe",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.deepPurple.shade500,
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            // decoration: BoxDecoration(
+            //   color: Colors.deepPurple.shade500,
+            //   borderRadius: BorderRadius.circular(10.0),
+            // ),
+            child: Image.asset(
+              "assets/driver.png",
+              fit: BoxFit.cover,
+            ),
+          ),
+          SizedBox(width: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "John Doe",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Implement chat functionality
+                },
+                child: Text("Chat dengan Sopir"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  // TODO: Implement cancel order functionality
+                },
+                child: Text("Batalkan Pesanan"),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

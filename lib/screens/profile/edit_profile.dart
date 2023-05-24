@@ -39,7 +39,7 @@ class EditProfileScreen extends StatelessWidget {
           ),
           Divider(),
           Column(
-            children: [Text('${userData}')],
+            children: [Text('$userData')],
           ),
           ListTile(
             title: Row(

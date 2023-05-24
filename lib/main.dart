@@ -1,17 +1,13 @@
-import 'package:english_words/english_words.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
 import 'package:movel/screens/home/home.dart';
 import 'package:movel/screens/auth/intro.dart';
-import 'package:movel/screens/profile/profile.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import 'screens/trx/ChooseSeatScreen.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

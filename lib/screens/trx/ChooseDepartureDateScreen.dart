@@ -1,8 +1,6 @@
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,92 +52,92 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
         currentTimeInMinutes < endTimeInMinutes;
   }
 
-  void _setDateTime() async {
-    if (_selectedDate == null || _selectedTime == null) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Please select both date and time of departure.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-      return;
-    }
+  // void _setDateTime() async {
+  //   if (_selectedTime == null) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Text('Error'),
+  //         content: Text('Please select both date and time of departure.'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: Text('OK'),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //     return;
+  //   }
 
-    // Convert TimeOfDay to category
-    String timeCategory = _getTimeCategory(_selectedTime);
+  //   // Convert TimeOfDay to category
+  //   String timeCategory = _getTimeCategory(_selectedTime);
 
-    final url = 'https://api.movel.id/api/user/rute_jadwal/date_time';
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
-    final headers = {
-      'Authorization': 'Bearer $token',
-      // 'Content-Type': 'application/json',
-      // "Connection": 'keep-alive'
-    };
-    final body = {
-      // 'date_departure': DateFormat('yyyy-MM-dd').format(_selectedDate),
-      // 'time_departure_id': timeCategory,
-      "date_departure": "2023-05-20",
-      "time_departure_id": "1"
-      // 'time_departure_id': '${_selectedTime.hour}:${_selectedTime.minute}',
-    };
+  //   const url = 'https://api.movel.id/api/user/rute_jadwal/date_time';
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString('token');
+  //   final headers = {
+  //     'Authorization': 'Bearer $token',
+  //     // 'Content-Type': 'application/json',
+  //     // "Connection": 'keep-alive'
+  //   };
+  //   final body = {
+  //     // 'date_departure': DateFormat('yyyy-MM-dd').format(_selectedDate),
+  //     // 'time_departure_id': timeCategory,
+  //     "date_departure": "2023-05-20",
+  //     "time_departure_id": "1"
+  //     // 'time_departure_id': '${_selectedTime.hour}:${_selectedTime.minute}',
+  //   };
 
-    try {
-      final response = await Requests.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final data = response.json();
-        print(data);
-        print(response.headers);
-        print(response.request);
-        // Date and time successfully set, navigate to the next screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => AvailableDriversScreen()),
-        );
-      } else {
-        // Handle the error response
-        final errorMessage = (response.json())['message'];
-        final errorMessageraw = (response.json());
-        print(errorMessageraw);
-        print(response.headers);
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Error'),
-            content: Text(errorMessage),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (error) {
-      // Handle the network error
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Error'),
-          content: Text('An error occurred. Please try again.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-  }
+  //   try {
+  //     final response = await Requests.post(url, headers: headers, body: body);
+  //     if (response.statusCode == 200) {
+  //       final data = response.json();
+  //       print(data);
+  //       print(response.headers);
+  //       print(response.request);
+  //       // Date and time successfully set, navigate to the next screen
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => AvailableDriversScreen()),
+  //       );
+  //     } else {
+  //       // Handle the error response
+  //       final errorMessage = (response.json())['message'];
+  //       final errorMessageraw = (response.json());
+  //       print(errorMessageraw);
+  //       print(response.headers);
+  //       showDialog(
+  //         context: context,
+  //         builder: (context) => AlertDialog(
+  //           title: Text('Error'),
+  //           content: Text(errorMessage),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () => Navigator.of(context).pop(),
+  //               child: Text('OK'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     }
+  //   } catch (error) {
+  //     // Handle the network error
+  //     showDialog(
+  //       context: context,
+  //       builder: (context) => AlertDialog(
+  //         title: Text('Error'),
+  //         content: Text('An error occurred. Please try again.'),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.of(context).pop(),
+  //             child: Text('OK'),
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   }
+  // }
 
   @override
   void initState() {
@@ -289,7 +287,13 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              onPressed: _setDateTime,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => AvailableDriversScreen()),
+                );
+              },
               // onPressed: _submitForm,
               child: Text(
                 'Simpan',
@@ -327,9 +331,10 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
       firstDate: DateTime.now(),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _selectedDate)
+    if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
       });
+    }
   }
 }

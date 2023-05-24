@@ -26,7 +26,7 @@ class DriverProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
+            SizedBox(
               height: MediaQuery.of(context).size.height * 0.38,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -99,7 +99,7 @@ class DriverProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Stack(children: [
-                    Container(
+                    SizedBox(
                       height: 200,
                       width: 150,
                     ),

@@ -49,14 +49,11 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         .catchError((error) {
       print('Error: $error');
     });
-    ;
     _fetchData().then((data) {
-      if (data != null) {
-        setState(() {
-          _filteredKotaAsal = data;
-          _kotaAsal = data;
-        });
-      }
+      setState(() {
+        _filteredKotaAsal = data;
+        _kotaAsal = data;
+      });
     }).catchError((error) {
       print('Error: $error');
     });
@@ -154,55 +151,55 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
     }
   }
 
-  Future<void> setKotaAsal(int kotaAsalId) async {
-    _isLoading = true;
-    // final dio = Dio();
-    // Get cookies from SharedPreferences
-    final prefs = await SharedPreferences.getInstance();
-    final cookies = prefs.getString('cookies');
-    // Use the cookie jar to send the cookies with the request
-    // final cookieJar = CookieJar(cookies);
-    // print("before headers : $cookies");
-    // final cookieJar = CookieJar.fromString(cookies);
-    // dio.interceptors.add(CookieManager());
+  // Future<void> setKotaAsal(int kotaAsalId) async {
+  //   _isLoading = true;
+  //   // final dio = Dio();
+  //   // Get cookies from SharedPreferences
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final cookies = prefs.getString('cookies');
+  //   // Use the cookie jar to send the cookies with the request
+  //   // final cookieJar = CookieJar(cookies);
+  //   // print("before headers : $cookies");
+  //   // final cookieJar = CookieJar.fromString(cookies);
+  //   // dio.interceptors.add(CookieManager());
 
-    final token = prefs.getString('token');
+  //   final token = prefs.getString('token');
 
-    final headers = {
-      'Authorization': 'Bearer $token',
-      'Content-Type': 'application/json',
-      "Connection": 'keep-alive',
-      "sendCookies": true,
-      "set-cookie": cookies
-    };
+  //   final headers = {
+  //     'Authorization': 'Bearer $token',
+  //     'Content-Type': 'application/json',
+  //     "Connection": 'keep-alive',
+  //     "sendCookies": true,
+  //     "set-cookie": cookies
+  //   };
 
-    final body = {"kota_asal_id": kotaAsalId};
+  //   final body = {"kota_asal_id": kotaAsalId};
 
-    final response = await Requests.post(
-        'https://api.movel.id/api/user/rute_jadwal/kota_asal',
-        body: body,
-        // options: Options(
-        //   headers: headers,
-        //   persistentConnection: true,
-        // ),
-        headers: {
-          'Authorization': 'Bearer $token',
-        });
+  //   final response = await Requests.post(
+  //       'https://api.movel.id/api/user/rute_jadwal/kota_asal',
+  //       body: body,
+  //       // options: Options(
+  //       //   headers: headers,
+  //       //   persistentConnection: true,
+  //       // ),
+  //       headers: {
+  //         'Authorization': 'Bearer $token',
+  //       });
 
-    _isLoading = false;
+  //   _isLoading = false;
 
-    if (response.statusCode == 200) {
-      final data = (response.json());
-      print(data);
-      print(response.headers);
-      // print(response.requestOptions);
-      // print(response.extra);
-      // print(await cookieJar.loadForRequest(
-      // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
-    } else {
-      throw Exception('Failed to set kota asal');
-    }
-  }
+  //   if (response.statusCode == 200) {
+  //     final data = (response.json());
+  //     print(data);
+  //     print(response.headers);
+  //     // print(response.requestOptions);
+  //     // print(response.extra);
+  //     // print(await cookieJar.loadForRequest(
+  //     // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
+  //   } else {
+  //     throw Exception('Failed to set kota asal');
+  //   }
+  // }
 
   void _handleSearch(String query) {
     setState(() {
@@ -383,13 +380,11 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ),
           ),
-         
-         
           Visibility(
             visible: _showObject,
             child: Expanded(
               flex: 1,
-              child: Container(
+              child: SizedBox(
                 // height: MediaQuery.of(context).size.height * 0.3,
                 width: double.infinity,
                 child: Row(
@@ -521,7 +516,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  setKotaAsal(_selectedKotaAsalId!);
+                                  // setKotaAsal(_selectedKotaAsalId!);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

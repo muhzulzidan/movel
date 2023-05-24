@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // import './auth/auth_screens.dart';
@@ -48,7 +47,7 @@ class _TokecScreenState extends State<TokecScreen> {
                   });
                 },
                 child: Text('print token')),
-            Center(child: Text('Ini Tokennya : ${tokenText}')),
+            Center(child: Text('Ini Tokennya : $tokenText')),
           ],
         ),
       ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../home/home.dart';
 import 'ChatScreen.dart';
 
 class InboxScreen extends StatefulWidget {
@@ -24,7 +23,7 @@ class _InboxScreenState extends State<InboxScreen> {
           )),
       body: Column(
         children: [
-          Container(
+          SizedBox(
             width: double.infinity,
             child: ListTile(
                 onTap: () {
@@ -68,7 +67,7 @@ class _InboxScreenState extends State<InboxScreen> {
                   ],
                 )),
           ),
-          Container(
+          SizedBox(
             width: double.infinity,
             child: ListTile(
                 title: Row(
