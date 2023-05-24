@@ -387,8 +387,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
               ),
             ),
           ),
-         
-         
           Visibility(
             visible: _showObject,
             child: Expanded(
