@@ -230,9 +230,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
     // final email = emailController.text;
     // final password = _passwordController.text;
-    // final email = "zulzdn@gmail.com";
-    final email = "zulzdn@sopir.com";
-    final password = "zidan100";
+    final email = "zulzdn@gmail.com";
+    // const email = "zulzdn@sopir.com";
+    const password = "zidan100";
     // final email = "zidan@movel.id";
     // final password = "password";
     // final email = "sopirbaru@gmail.com";
@@ -255,9 +255,9 @@ class _LoginScreenState extends State<LoginScreen> {
       // final accessToken = await getToken();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool("isLoggedIn", true);
-      final roleId = await prefs.getInt('roleId');
+      final roleId = prefs.getInt('roleId');
       print(result);
-      print('loginscren role id from login is : ${roleId}');
+      print('loginscren role id from login is : $roleId');
       SnackBar(
         content: Text("Login berhasil"),
         duration: Duration(seconds: 2),

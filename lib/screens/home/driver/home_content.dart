@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import 'trx/jadwal.dart';
@@ -15,7 +13,7 @@ class DriverHomeContent extends StatefulWidget {
 class _DriverHomeContentState extends State<DriverHomeContent> {
   int saldo = 900000;
   List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
-  Set<String> _selectedSeats = Set<String>(); // Keep track of selected seats
+  Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
   bool _isButtonPressed = false;
   bool _isBerangkat = false;
   @override
@@ -80,7 +78,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                 width: 10,
                               ),
                               Text(
-                                '${_isButtonPressed ? 'Aktif' : "Tidak Aktif"}',
+                                _isButtonPressed ? 'Aktif' : "Tidak Aktif",
                                 style: TextStyle(
                                   color: _isButtonPressed
                                       ? Colors.black
@@ -250,7 +248,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                   SizedBox(
                     height: 15,
                   ),
-                  Container(
+                  SizedBox(
                     width: MediaQuery.of(context).size.width * 0.6,
                     child: Text(
                       "Cek Jumlah dan kursi penumpangmu hari ini ",
@@ -369,7 +367,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0),
                             ),

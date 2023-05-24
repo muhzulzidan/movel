@@ -1,14 +1,10 @@
 // import 'dart:html';
-import 'dart:io';
 
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:requests/requests.dart';
-
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 
 class AuthState with ChangeNotifier {
   String _token = '';
@@ -70,8 +66,8 @@ class AuthService {
         // Save authentication data here, such as a JWT token
         final responseData = response.json();
         print(" autstte $responseData");
-        final token = responseData['token'];
-        final roleId = responseData['role_id'];
+        final token = responseData['data']['token'];
+        final roleId = responseData['data']['role_id'];
         print("ini token di authstate : $token");
         print("ini roleid di authstate : $roleId");
         AuthState().token =
@@ -188,7 +184,7 @@ class UserService {
     //   },
     // );
 
-    final roleId = await prefs.getInt('roleId');
+    final roleId = prefs.getInt('roleId');
     String url;
     if (roleId == 3) {
       url = 'https://api.movel.id/api/user/driver';

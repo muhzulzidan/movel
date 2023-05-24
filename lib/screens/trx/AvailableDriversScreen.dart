@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:requests/requests.dart';
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +21,7 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
   }
 
   Future<void> fetchAvailableDrivers() async {
-    final url = 'https://api.movel.id/api/user/drivers/available';
+    const url = 'https://api.movel.id/api/user/drivers/available';
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     print(token);

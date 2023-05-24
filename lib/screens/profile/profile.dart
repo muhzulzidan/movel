@@ -11,7 +11,6 @@ import 'package:movel/screens/profile/pusat_bantuan.dart';
 import 'package:movel/screens/profile/riwayat_pesanan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:requests/requests.dart';
-import 'dart:convert';
 
 import '../home/token.dart';
 import 'change_password.dart';
@@ -135,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Text(
                               // "${_userData["user"]["name"]}",
-                              "${_userName}",
+                              _userName,
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 25,

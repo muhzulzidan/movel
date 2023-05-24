@@ -1,11 +1,7 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
-import 'dart:io';
 
-import './widget/input_fields.dart';
-import './widget/submit_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 class AuthScreen extends StatefulWidget {
   @override
   State<AuthScreen> createState() => _AuthScreenState();

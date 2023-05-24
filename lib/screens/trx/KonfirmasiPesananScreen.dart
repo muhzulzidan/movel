@@ -3,130 +3,186 @@ import 'package:hexcolor/hexcolor.dart';
 
 import 'OrderProgressScreen.dart';
 
+class CustomRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const CustomRow({
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class KonfirmasiPesananScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
-          color: Colors.white,
+          color: Colors.black,
         ),
-        backgroundColor: HexColor("#60009A"),
+        // backgroundColor: Colors.deepPurple.shade500,
         centerTitle: true,
         title: Text(
           'Konfirmasi Pesanan',
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black,
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Rincian Pesanan',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
+      body: Stack(
+        children: [
+          SizedBox(
+            height: double.infinity,
+          ),
+          Positioned(
+            right: -30,
+            bottom: -30,
+            child: Image.asset(
+              'assets/konfirmasiCars.png',
+              // fit: BoxFit.,
             ),
-            SizedBox(height: 16.0),
-            Card(
+          ),
+          Expanded(
+            child: Container(
+              margin: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                // color: Colors.purple,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(5),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Tanggal',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    // SizedBox(
+                    //   height: 50,
+                    // ),
+                    Card(
+                      color: Colors.deepPurple.shade500,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(30),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomRow(
+                              label: 'Nama Sopir',
+                              value: ': John Doe',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Umur',
+                              value: ': 30',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Type Mobil',
+                              value: ': Sedan',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Merokok',
+                              value: ': Tidak',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Kode Kursi',
+                              value: ': A1',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Asal Kota',
+                              value: ': City A',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Kota Tujuan',
+                              value: ': City B',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Tanggal',
+                              value: ': 10 Mei 2023',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Pukul',
+                              value: ': 09:00 - 12:00',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Harga',
+                              value: ': Rp. 300.000',
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    SizedBox(height: 8.0),
-                    Text('10 Mei 2023'),
-                    SizedBox(height: 16.0),
-                    Text(
-                      'Waktu',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text('09:00 - 12:00'),
-                    SizedBox(height: 16.0),
-                    Text(
-                      'Jumlah Kursi',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text('4'),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
-            Text(
-              'Rincian Harga',
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Harga 4 Kursi'),
-                        Text('Rp 400,000'),
-                      ],
-                    ),
-                    SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Biaya Tambahan'),
-                        Text('Rp 0'),
-                      ],
-                    ),
-                    SizedBox(height: 8.0),
-                    Divider(),
-                    SizedBox(height: 8.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total Harga',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          'Rp 400,000',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ],
+          ),
+          Positioned(
+            bottom: 170,
+            left: 80,
+            right: 80,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(vertical: 13),
+                backgroundColor: Colors.amber,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100),
                 ),
               ),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
               onPressed: () {
                 // TODO: Implement payment and confirmation logic
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => OrderProgressScreen()),
+                    builder: (context) => OrderProgressScreen(),
+                  ),
                 );
               },
-              child: Text('Konfirmasi Pesanan'),
+              child: Text(
+                'Konfirmasi Pesanan',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

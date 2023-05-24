@@ -12,7 +12,7 @@ class ChooseSeatScreen extends StatefulWidget {
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
   List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
-  Set<String> _selectedSeats = Set<String>(); // Keep track of selected seats
+  Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
 
   @override
   Widget build(BuildContext context) {
@@ -137,20 +137,20 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(
-          height: 20,
-        ),
+        // SizedBox(
+        //   height: 20,
+        // ),
         Stack(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.34,
+              height: MediaQuery.of(context).size.height * 0.292,
             ),
             Positioned(
               bottom: 0, // Position the image at the bottom of the stack
               left: 0,
               right: 0,
               child: Container(
-                height: 300,
+                height: 230,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(
@@ -162,7 +162,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
               ),
             ),
             Positioned(
-                top: 10,
+                top: 25,
                 left: 0,
                 right: 0,
                 child: Column(
