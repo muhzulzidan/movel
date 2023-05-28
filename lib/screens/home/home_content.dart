@@ -65,18 +65,7 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(actions: [
-      //   TextButton(
-      //       onPressed: () async {
-      //         final SharedPreferences prefs = await _prefs;
-      //         await prefs.clear();
-      //         // Get.offAll(() => MyApp());
-      //       },
-      //       child: Text(
-      //         'logout',
-      //         style: TextStyle(color: Colors.black),
-      //       ))
-      // ]),
+
       body: SafeArea(
         child: Column(
           children: [
@@ -88,11 +77,10 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 Image.asset(
                   'assets/Hero.png',
                   fit: BoxFit.cover,
-                  // width: double.infinity,
-                  // height: double.infinity,
+
                 ),
                 Positioned(
-                  // height: double.infinity,
+
                   bottom: 15,
                   left: 70,
                   right: 70,
@@ -143,70 +131,7 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 )
               ],
             ),
-            //         Padding(
-            //           padding: const EdgeInsets.symmetric(horizontal: 25),
-            //           child: Column(
-            //             children: [
-            //               CarouselSlider(
-            //                 options: CarouselOptions(
-            //                   height: 400,
-            //                   viewportFraction: 1,
-            //                   onPageChanged: (index, reason) {
-            //                     setState(() {
-            //                       _current = index;
-            //                     });
-            //                   }),
-            //               items: items.map((i) {
-            //                 return Builder(
-            //                   builder: (BuildContext context) {
-            //                   Card(
-            //                     color: Colors.white,
-            //                     shape: RoundedRectangleBorder(
-            //                       borderRadius: BorderRadius.circular(20),
-            //                     ),
-            //                     child: Column(
-            //                       children: [
-            //                         ClipRRect(
-            //                           borderRadius: BorderRadius.only(
-            //                             topLeft: Radius.circular(20),
-            //                             topRight: Radius.circular(20),
-            //                           ),
-            //                           child: Image(
-            //                             image: AssetImage('assets/ardi.png'),
-            //                           ),
-            //                         ),
-            //                         Padding(
-            //                           padding: const EdgeInsets.all(10),
-            //                           child: Row(
-            //                             children: [
-            //                               Text(
-            //                                 'Ardi',
-            //                                 style: TextStyle(
-            //                                   color: Colors.black,
-            //                                   fontSize: 24.0,
-            //                                   fontWeight: FontWeight.bold,
-            //                                 ),
-            //                               ),
-            //                               Text("Alphard 2022")
-            //                             ],
-            //                           ),
-            //                         ),
-            //                         Padding(
-            //                           padding: const EdgeInsets.all(16.0),
-            //                           child: Text(
-            //                             'Description',
-            //                             style: TextStyle(
-            //                               color: Colors.black,
-            //                               fontSize: 16.0,
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   );,
-            // });}))],
-            //               ),
-            //         )
+            
             SizedBox(
               height: 10,
             ),
@@ -390,79 +315,7 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
               ),
             ),
 
-            // Padding(
-            //   padding: EdgeInsets.symmetric(vertical: 0),
-            //   child: CarouselSlider(
-            //     options: CarouselOptions(
-            //         height: 200,
-            //         viewportFraction: .4,
-            //         initialPage: 0,
-            //         onPageChanged: (index, reason) {
-            //           setState(() {
-            //             _current = index;
-            //           });
-            //         }),
-            //     items: items.map((i) {
-            //       return Builder(
-            //         builder: (BuildContext context) {
-            //           return Padding(
-            //             padding: EdgeInsets.symmetric(horizontal: 3),
-            //             child: Card(
-            //               shadowColor: Colors.black,
-            //               color: Colors.white,
-            //               shape: RoundedRectangleBorder(
-            //                 borderRadius: BorderRadius.circular(20),
-            //               ),
-            //               child: Column(
-            //                 mainAxisAlignment: MainAxisAlignment.center,
-            //                 children: [
-            //                   Container(
-            //                     width: MediaQuery.of(context).size.width,
-            //                     // height: 300,
-            //                     child: Image(
-            //                       image: AssetImage(
-            //                         '${i["foto"]}',
-            //                       ),
-            //                     ),
-            //                   ),
-            //                   Padding(
-            //                     padding:
-            //                         const EdgeInsets.symmetric(horizontal: 0),
-            //                     child: Column(
-            //                       children: [
-            //                         Text(
-            //                           '${i["heading"]}',
-            //                           textAlign: TextAlign.center,
-            //                           style: TextStyle(
-            //                               fontSize: 15,
-            //                               fontWeight: FontWeight.w900),
-            //                         ),
-            //                         SizedBox(
-            //                           height: 10,
-            //                         ),
-            //                         SizedBox(
-            //                           width:
-            //                               MediaQuery.of(context).size.width * 0.7,
-            //                           child: Text(
-            //                             textAlign: TextAlign.center,
-            //                             '${i["desc"]}',
-            //                             style: TextStyle(
-            //                               fontSize: 12,
-            //                             ),
-            //                           ),
-            //                         ),
-            //                       ],
-            //                     ),
-            //                   ),
-            //                 ],
-            //               ),
-            //             ),
-            //           );
-            //         },
-            //       );
-            //     }).toList(),
-            //   ),
-            // ),
+           
           ],
         ),
       ),

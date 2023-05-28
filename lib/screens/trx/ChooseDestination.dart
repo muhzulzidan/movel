@@ -35,7 +35,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
   @override
   void initState() {
     super.initState();
-    // _fetchData();
+    fetchDataSharedpreference();
     _fetchDatathree()
         .then((data) => {
               if (data != null)
@@ -56,6 +56,15 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
     }).catchError((error) {
       print('Error: $error');
     });
+  }
+
+  Future<void> fetchDataSharedpreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
+    // final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');
+
+    print(_selectedKotaAsalId);
+    // print(_selectedKotaTujuanId);
   }
 
   FocusNode _searchFocusNode = FocusNode();
@@ -199,7 +208,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
           'Pilih Destinasi Anda',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
       ),
       body: Column(
         children: [
@@ -467,8 +476,12 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
                                   // setKotaDestinasi(_selectedKotaTujuanId!);
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setInt(
+                                      'selectedKotaTujuanId', 18);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

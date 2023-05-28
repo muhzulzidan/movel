@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'KonfirmasiPesananScreen.dart';
 
@@ -11,14 +14,49 @@ class ChooseSeatScreen extends StatefulWidget {
 }
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
-  List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
-  Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
+List<String> _seats = [];
+  Set<String> _selectedSeats = <String>{};
+  bool _isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    fetchSeatData();
+  }
+
+  Future<void> fetchSeatData() async {
+    final String url = 'https://api.movel.id/api/user/drivers/list_seat_car';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> seats = data['data'];
+
+      setState(() {
+        _seats = seats
+            .where((seat) => seat['is_filled'] == 0)
+            .map((seat) => seat['label_seat'] as String)
+            .toList();
+      });
+    } else {
+      throw Exception('Failed to fetch seat data');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
         centerTitle: true,
         title: Text(
           'Pilih Kursi Anda',
@@ -32,7 +70,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
           width: double.infinity,
           padding: EdgeInsets.only(top: 0, left: 30, right: 30, bottom: 20),
           decoration: BoxDecoration(
-            color: HexColor("#60009A"),
+            color: Colors.deepPurple.shade700,
           ),
           child: Text(
             "Pilih kursi sesuai keinginan Anda \n untuk kenyamanan maksimal",
@@ -81,13 +119,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
               final isSelected = _selectedSeats.contains(seat);
               return Card(
                 color: Colors.white,
-                shape: RoundedRectangleBorder(
-                    // borderRadius: BorderRadius.circular(20),
-                    // side: BorderSide(
-                    //   color: Colors.purple,
-                    //   width: 2.0,
-                    // ),
-                    ),
+                shape: RoundedRectangleBorder(),
                 child: InkWell(
                   onTap: () {
                     // TODO: Select the seat
@@ -103,11 +135,13 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color:
-                          isSelected ? HexColor("#60009A") : Colors.transparent,
+                      color: isSelected
+                          ? Colors.deepPurple.shade700
+                          : Colors.transparent,
                       // color: Colors.yellow, // Set the background color when the seat is selected
                       border: Border.all(
-                        color: HexColor("#60009A"), // Set the border color
+                        color:
+                            Colors.deepPurple.shade700, // Set the border color
                         width: 2,
                       ),
                     ),

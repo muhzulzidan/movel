@@ -83,7 +83,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
         centerTitle: true,
         iconTheme: IconThemeData(
           color: Colors.white,
@@ -100,7 +100,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-          color: HexColor("#60009A"),
+          color: Colors.deepPurple.shade700,
           child: Column(
             children: [
               Visibility(
@@ -108,7 +108,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                 child: Column(
                   children: [
                     Container(
-                      // color: HexColor("#60009A"),
+                      // color: Colors.deepPurple.shade700,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 25, vertical: 15),

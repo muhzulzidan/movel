@@ -237,12 +237,12 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
           'Pilih Lokasi Asal Anda',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
       ),
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(color: HexColor("#60009A")),
+            decoration: BoxDecoration(color: Colors.deepPurple.shade700),
             height: _showObject
                 ? MediaQuery.of(context).size.height * 0.45
                 : MediaQuery.of(context).size.height * 0.1,
@@ -515,7 +515,10 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                     borderRadius: BorderRadius.circular(100),
                                   ),
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  await prefs.setInt('selectedKotaAsalId', 6);
                                   // setKotaAsal(_selectedKotaAsalId!);
                                   Navigator.push(
                                     context,

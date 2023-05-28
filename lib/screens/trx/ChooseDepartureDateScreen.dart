@@ -20,37 +20,37 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
   TextEditingController _selectedDateController = TextEditingController();
   TextEditingController _selectedTimeController = TextEditingController();
 
-  String _getTimeCategory(TimeOfDay time) {
-    // Define time ranges for each category
-    final morningTime = TimeOfDay(hour: 5, minute: 0);
-    final afternoonTime = TimeOfDay(hour: 11, minute: 0);
-    final eveningTime = TimeOfDay(hour: 15, minute: 0);
-    final nightTime = TimeOfDay(hour: 18, minute: 0);
+  // String _getTimeCategory(TimeOfDay time) {
+  //   // Define time ranges for each category
+  //   final morningTime = TimeOfDay(hour: 5, minute: 0);
+  //   final afternoonTime = TimeOfDay(hour: 11, minute: 0);
+  //   final eveningTime = TimeOfDay(hour: 15, minute: 0);
+  //   final nightTime = TimeOfDay(hour: 18, minute: 0);
 
-    // Compare the selected time with the time ranges
-    if (_isTimeInRange(time, morningTime, afternoonTime)) {
-      return "1";
-    } else if (_isTimeInRange(time, afternoonTime, eveningTime)) {
-      return '2';
-    } else if (_isTimeInRange(time, eveningTime, nightTime)) {
-      return '3';
-    } else {
-      return '4';
-    }
-  }
+  //   // Compare the selected time with the time ranges
+  //   if (_isTimeInRange(time, morningTime, afternoonTime)) {
+  //     return "1";
+  //   } else if (_isTimeInRange(time, afternoonTime, eveningTime)) {
+  //     return '2';
+  //   } else if (_isTimeInRange(time, eveningTime, nightTime)) {
+  //     return '3';
+  //   } else {
+  //     return '4';
+  //   }
+  // }
 
-  bool _isTimeInRange(
-    TimeOfDay time,
-    TimeOfDay startTime,
-    TimeOfDay endTime,
-  ) {
-    final currentTimeInMinutes = time.hour * 60 + time.minute;
-    final startTimeInMinutes = startTime.hour * 60 + startTime.minute;
-    final endTimeInMinutes = endTime.hour * 60 + endTime.minute;
+  // bool _isTimeInRange(
+  //   TimeOfDay time,
+  //   TimeOfDay startTime,
+  //   TimeOfDay endTime,
+  // ) {
+  //   final currentTimeInMinutes = time.hour * 60 + time.minute;
+  //   final startTimeInMinutes = startTime.hour * 60 + startTime.minute;
+  //   final endTimeInMinutes = endTime.hour * 60 + endTime.minute;
 
-    return currentTimeInMinutes >= startTimeInMinutes &&
-        currentTimeInMinutes < endTimeInMinutes;
-  }
+  //   return currentTimeInMinutes >= startTimeInMinutes &&
+  //       currentTimeInMinutes < endTimeInMinutes;
+  // }
 
   // void _setDateTime() async {
   //   if (_selectedTime == null) {
@@ -143,8 +143,23 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
   void initState() {
     super.initState();
     // Set the default selected date to today
+    fetchDataSharedpreference();
+
     _selectedDate = DateTime.now();
     _selectedTime = TimeOfDay.now();
+
+    // _selectedDateController.text =
+    //     "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
+    // _selectedTimeController.text =
+    //     "${_selectedTime.hour}:${_selectedTime.minute}";
+  }
+
+  Future<void> fetchDataSharedpreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
+    final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');
+    print(_selectedKotaAsalId);
+    print(_selectedKotaTujuanId);
   }
 
   @override
@@ -157,12 +172,12 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
           textAlign: TextAlign.center,
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
       ),
       body: Column(
         children: [
           Container(
-            decoration: BoxDecoration(color: HexColor("#60009A")),
+            decoration: BoxDecoration(color: Colors.deepPurple.shade700),
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,20 +216,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                             child: Icon(Icons.calendar_month_outlined),
                           ),
                         ),
-                        onTap: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime.now().add(Duration(days: 365)),
-                          );
-                          if (picked != null && picked != _selectedDate) {
-                            setState(() {
-                              _selectedDate = picked;
-                              _selectedDateController.text =
-                                  "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
-                            });
-                          }
+                        onTap: () {
+                          _showDatePicker(context);
                         },
                       ),
                     ),
@@ -250,18 +253,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                             child: Icon(Icons.schedule),
                           ),
                         ),
-                        onTap: () async {
-                          final TimeOfDay? picked = await showTimePicker(
-                            context: context,
-                            initialTime: TimeOfDay.now(),
-                          );
-                          if (picked != null && picked != _selectedTime) {
-                            setState(() {
-                              _selectedTime = picked;
-                              _selectedTimeController.text =
-                                  "${_selectedTime.hour}:${_selectedTime.minute}";
-                            });
-                          }
+                        onTap: () {
+                          _showTimePicker(context);
                         },
                       ),
                     ),
@@ -287,7 +280,11 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              onPressed: () {
+              onPressed: () async {
+                // String timeCategory = _getTimeCategory(_selectedTime);
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setString('selectedDate', "2023-05-20");
+                prefs.setString('selectedTime', "1");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -329,11 +326,27 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
       context: context,
       initialDate: _selectedDate,
       firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
+      lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        _selectedDateController.text =
+            "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
+      });
+    }
+  }
+
+  Future<void> _showTimePicker(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+        _selectedTimeController.text =
+            "${_selectedTime.hour}:${_selectedTime.minute}";
       });
     }
   }

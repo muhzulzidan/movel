@@ -1,10 +1,8 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
 import 'package:movel/screens/auth/login.dart';
-
 
 class RegisterScreen extends StatefulWidget {
   // final AuthService _authService = AuthService();
@@ -165,7 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _passwordVisible
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: HexColor("#60009A"),
+                              color: Colors.deepPurple.shade700,
                             ),
                             onPressed: () {
                               setState(() {
@@ -207,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               _passwordVisible2
                                   ? Icons.visibility
                                   : Icons.visibility_off,
-                              color: HexColor("#60009A"),
+                              color: Colors.deepPurple.shade700,
                             ),
                             onPressed: () {
                               setState(() {
@@ -391,7 +389,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
-            backgroundColor: HexColor("#60009A"),
+            backgroundColor: Colors.deepPurple.shade700,
             content: Text('Registration Success')),
       );
       Navigator.push(
@@ -404,7 +402,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
-            backgroundColor: HexColor("#60009A"),
+            backgroundColor: Colors.deepPurple.shade700,
             content: Text(
               'Registration Failed',
               style: TextStyle(color: Colors.white),
