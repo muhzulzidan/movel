@@ -1,66 +1,12 @@
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-
-// // import './auth/auth_screens.dart';
-
-// import '../main.dart';
-
-// class HomeScreen extends StatefulWidget {
-//   const HomeScreen({Key? key}) : super(key: key);
-
-//   @override
-//   State<HomeScreen> createState() => _HomeScreenState();
-// }
-
-// class _HomeScreenState extends State<HomeScreen> {
-//   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-//   var tokenText;
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(actions: [
-//         TextButton(
-//             onPressed: () async {
-//               final SharedPreferences prefs = await _prefs;
-//               await prefs.clear();
-//               Get.offAll(() => MyApp());
-//             },
-//             child: Text(
-//               'logout',
-//               style: TextStyle(color: Colors.black),
-//             ))
-//       ]),
-//       body: Center(
-//         child: Column(
-//           children: [
-//             Text('Welcome home sayang'),
-//             ElevatedButton(
-//                 onPressed: () async {
-//                   final prefs = await SharedPreferences.getInstance();
-//                   // final SharedPreferences? prefs = await _prefs;
-//                   // print(prefs?.get('message'));
-//                   final token = prefs.getString('token');
-//                   // tokenText = token;
-//                   print(token);
-//                   setState(() {
-//                     tokenText = token ?? 'Token not found';
-//                   });
-//                 },
-//                 child: Text('print token')),
-//             Center(child: Text('Ini Tokennya : ${tokenText}')),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:movel/screens/home/home_content.dart';
 import 'package:movel/screens/chat/inbox.dart';
 import 'package:movel/screens/pesanan.dart';
 import 'package:movel/screens/profile/profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:movel/controller/auth/current_index_provider.dart';
 
 class MyHomePage extends StatefulWidget {
   // final String userAccessToken;
@@ -71,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _currentIndex = 0;
+  // int _currentIndex = 0;
 // String _userData = '';
 
   @override
@@ -89,28 +35,16 @@ class _MyHomePageState extends State<MyHomePage> {
     print("ini home token get : $token");
   }
 
-//     Future<void> _fetchUserData() async {
-//     final response = await http.get(
-//       Uri.parse('https://admin.movel.id/api/user'),
-//       headers: {'Authorization': 'Bearer ${widget.userAccessToken}'},
-//     );
-
-//     if (response.statusCode == 200) {
-//       final data = (response.body);
-//       setState(() {
-//         _userData = data.toString();
-//       });
-//     }
-//   }
-
   void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
+    final currentIndexProvider =
+        Provider.of<CurrentIndexProvider>(context, listen: false);
+    currentIndexProvider.setIndex(index);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentIndexProvider = Provider.of<CurrentIndexProvider>(context);
+    final int _currentIndex = currentIndexProvider.currentIndex;
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,

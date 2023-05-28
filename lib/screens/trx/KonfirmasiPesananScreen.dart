@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
+import '../pesanan.dart';
 import 'OrderProgressScreen.dart';
+import 'package:movel/controller/auth/current_index_provider.dart';
 
 class CustomRow extends StatelessWidget {
   final String label;
@@ -72,7 +76,6 @@ class KonfirmasiPesananScreen extends StatelessWidget {
             child: Container(
               margin: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                // color: Colors.purple,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Padding(
@@ -165,11 +168,16 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                 ),
               ),
               onPressed: () {
+                // Update the bottom navigation index by calling the function with the desired index
+                final currentIndexProvider =
+                    Provider.of<CurrentIndexProvider>(context, listen: false);
+                currentIndexProvider.setIndex(2);
                 // TODO: Implement payment and confirmation logic
-                Navigator.push(
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OrderProgressScreen(),
+                    builder: (context) => PesananScreen(),
                   ),
                 );
               },

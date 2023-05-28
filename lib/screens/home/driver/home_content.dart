@@ -25,7 +25,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
-            color: HexColor("#60009A"),
+            color: Colors.deepPurple.shade700,
           ),
           child: Column(
             children: [
@@ -110,7 +110,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
-                          backgroundColor: HexColor("#60009A"),
+                          backgroundColor: Colors.deepPurple.shade700,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(100),
                           ),
@@ -213,7 +213,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                 style: ElevatedButton.styleFrom(
                                   padding: EdgeInsets.symmetric(
                                       vertical: 12, horizontal: 20),
-                                  backgroundColor: HexColor("#60009A"),
+                                  backgroundColor: Colors.deepPurple.shade700,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -295,10 +295,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                             color: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
-                              // side: BorderSide(
-                              //   color: Colors.purple,
-                              //   width: 2.0,
-                              // ),
+                              
                             ),
                             child: InkWell(
                               onTap: () {
@@ -335,7 +332,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                         fontSize: 15,
                                         fontWeight: FontWeight.bold,
                                         color: isSelected
-                                            ? HexColor("#60009A")
+                                            ? Colors.deepPurple.shade700
                                             : Colors.black,
                                       ),
                                     ),

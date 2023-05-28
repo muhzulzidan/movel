@@ -64,11 +64,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-          // color: Colors.purple.shade900,
+
           child: Column(
             children: [
               Container(
-                color: Colors.purple.shade900,
+                color: Colors.deepPurple.shade700,
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 25, vertical: 15),

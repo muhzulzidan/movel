@@ -12,12 +12,26 @@ class AvailableDriversScreen extends StatefulWidget {
 }
 
 class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
-  // List<dynamic> _availableDrivers = [];
+  List<Map<String, dynamic>> _availableDrivers = [];
   // final dio = Dio();
   @override
   void initState() {
     super.initState();
-    // fetchAvailableDrivers();
+    fetchAvailableDrivers();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
+    final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');
+    final _selectedDate = prefs.getString('selectedDate');
+    final _selectedTime = prefs.getString('selectedTime');
+
+    print("date : $_selectedDate");
+    print("time: ${_selectedTime}");
+    print("asal : $_selectedKotaAsalId");
+    print("tujuan : $_selectedKotaTujuanId");
   }
 
   Future<void> fetchAvailableDrivers() async {
@@ -27,33 +41,36 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
     print(token);
     final headers = {
       'Authorization': 'Bearer $token',
-      // 'Content-Type': 'application/json',
-      // "Connection": 'keep-alive'
     };
-    // final sessionData = {
-    //   'date_time': {
-    //     'date_departure': '2023-04-29',
-    //     'time_departure_id': 1,
-    //   },
-    //   'kota_asal_id': 6,
-    //   'kota_tujuan_id': 18,
-    // };
+    final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
+    final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');
+    final _selectedDate = prefs.getString('selectedDate');
+    final _selectedTime = prefs.getString('selectedTime');
+
+    final body = {
+      "kota_asal_id": _selectedKotaAsalId,
+      "kota_tujuan_id": _selectedKotaTujuanId,
+      "date_departure": _selectedDate,
+      "time_departure_id": _selectedTime
+    };
     try {
-      final response = await Requests.get(
+      final response = await Requests.post(
         url,
-        // options: Options(
+        body: body,
         headers: headers,
-        // validateStatus: (status) =>
-        // status! < 500, // Treat 4xx status codes as successful
-        // ),
       );
 
       if (response.statusCode == 200) {
         // Handle successful response
         final data = response.json();
-        print(data);
+        final dataRequest = response.request;
+        print(dataRequest);
+        print("data : $data");
+        print("headhers : ${response.headers}");
+        final List<Map<String, dynamic>> driverDataList =
+            List<Map<String, dynamic>>.from(data['data']);
         setState(() {
-          _availableDrivers = data['drivers'];
+          _availableDrivers = driverDataList;
         });
       } else {
         // Handle the error response
@@ -114,20 +131,20 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
     }
   }
 
-  List<dynamic> _availableDrivers = [
-    'Driver 1',
-    'Driver 2',
-    'Driver 3',
-    'Driver 4',
-    'Driver 5',
-    'Driver 6',
-  ];
+  // List<dynamic> _availableDrivers = [
+  //   'Driver 1',
+  //   'Driver 2',
+  //   'Driver 3',
+  //   'Driver 4',
+  //   'Driver 5',
+  //   'Driver 6',
+  // ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: HexColor("#60009A"),
+        backgroundColor: Colors.deepPurple.shade700,
         title: Text(
           'Sopir yang Tersedia',
           style: TextStyle(color: Colors.white),
@@ -167,47 +184,14 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
               ),
             ),
             SizedBox(height: 16.0),
-            // Expanded(
-            //   child: ListView.builder(
-            //     itemCount: _availableDrivers.length,
-            //     itemBuilder: (context, index) {
-            //       return Card(
-            //         elevation: 2.0,
-            //         shadowColor: Colors.grey[200],
-            //         child: ListTile(
-            //           leading: CircleAvatar(
-            //             backgroundImage: AssetImage('assets/driver.png'),
-            //           ),
-            //           title: Text(
-            //             _availableDrivers[index],
-            //             style: TextStyle(fontWeight: FontWeight.bold),
-            //           ),
-            //           subtitle: Column(
-            //             crossAxisAlignment: CrossAxisAlignment.start,
-            //             children: [
-            //               Text('Tidak merokok'),
-            //               Text('Kursi: 4'),
-            //               Text('Mobil: Honda Jazz'),
-            //             ],
-            //           ),
-            //           // trailing: Icon(Icons.arrow_forward_ios),
-            //           onTap: () {
-            //             // TODO: Navigate to driver details screen
-            //           },
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-
             Expanded(
               child: GridView.builder(
                 itemCount: _availableDrivers.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.8,
-                  crossAxisSpacing: 16.0,
-                  mainAxisSpacing: 16.0,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
                 ),
                 itemBuilder: (context, index) {
                   return Card(
@@ -227,7 +211,9 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => DriverProfileScreen()),
+                              builder: (context) => DriverProfileScreen(
+                                    driverData: _availableDrivers[index],
+                                  )),
                         );
                       },
                       child: Column(
@@ -245,36 +231,88 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
                                   top: Radius.circular(16.0)),
                             ),
                           ),
-                          SizedBox(height: 16.0),
+                          SizedBox(height: 10),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  _availableDrivers[index],
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Tidak merokok',
-                                  style: TextStyle(color: Colors.black),
-                                ),
                                 Row(
                                   children: [
                                     Text(
-                                      '4 kursi',
-                                      style: TextStyle(color: Colors.black),
+                                      _availableDrivers[index]['driver_name']
+                                          as String,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 5,
                                     ),
+
+                                    _availableDrivers[index]['is_smoking'] ==
+                                            'Merokok'
+                                        ? Icon(
+                                            Icons.smoking_rooms_rounded,
+                                            color: Colors.black,
+                                          )
+                                        : _availableDrivers[index]
+                                                    ['is_smoking'] ==
+                                                'Tidak Merokok'
+                                            ? Icon(
+                                                Icons.smoke_free,
+                                                color: Colors.black,
+                                              )
+                                            : SizedBox(), // Placeholder if none of the conditions are met
+                                  ],
+                                ),
+                                SizedBox(height: 5),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.directions_car,
+                                      color: Colors.black45,
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 2,
+                                    ),
                                     Text(
-                                      'Honda Jazz',
-                                      style: TextStyle(color: Colors.black),
+                                      _availableDrivers[index]['car_merk'] +
+                                          ' (' +
+                                          _availableDrivers[index]
+                                              ['car_prod_year'] +
+                                          ')',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        // fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.airline_seat_recline_normal,
+                                      color: Colors.black45,
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 2,
+                                    ),
+                                    Text(
+                                      _availableDrivers[index]
+                                                  ["car_seat_capacity"]
+                                              .toString() +
+                                          " kursi",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        // fontSize: 10,
+                                      ),
                                     ),
                                   ],
                                 ),

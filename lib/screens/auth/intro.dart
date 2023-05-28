@@ -134,7 +134,7 @@ class _IntroScreenState extends State<IntroScreen> {
             //               shape: BoxShape.circle,
             //               color: (Theme.of(context).brightness == Brightness.dark
             //                       ? Colors.white
-          //                       : HexColor("#60009A"))
+            //                       : Colors.deepPurple.shade700)
             //                   ?.withOpacity(_current == entry.key ? 1 : 0.1)),
             //         ),
             //       );
@@ -162,7 +162,7 @@ class _IntroScreenState extends State<IntroScreen> {
                           color: (Theme.of(context).brightness ==
                                       Brightness.dark
                                   ? Colors.white
-                                  : HexColor("#60009A"))
+                                  : Colors.deepPurple.shade700)
                               .withOpacity(_current == entry.key ? 1 : 0.1)),
                     ),
                   );

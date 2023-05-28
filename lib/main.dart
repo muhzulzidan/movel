@@ -7,7 +7,7 @@ import 'package:movel/screens/auth/intro.dart';
 import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
+import 'package:movel/controller/auth/current_index_provider.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -16,9 +16,16 @@ void main() async {
   // final token = prefs.getString('token');
   // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   // print(isLoggedIn);
-  runApp(MyApp(
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => CurrentIndexProvider(),
+      child: MyApp(),
+    ),
+  );
+  // runApp(MyApp(
       // isLoggedIn: isLoggedIn
-      ));
+  //     ));
   // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
     // Remove the splash screen
@@ -66,7 +73,7 @@ class MyApp extends StatelessWidget {
             ),
             // scaffoldBackgroundColor: HexColor("#F2F2F2"),
             colorScheme:
-                ColorScheme.fromSeed(seedColor: Colors.purple.shade900),
+                ColorScheme.fromSeed(seedColor: Colors.deepPurple.shade700),
           ),
           // home: LoginScreen(),
           debugShowCheckedModeBanner: false,

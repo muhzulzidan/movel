@@ -52,6 +52,7 @@ dependencies:
   cookie_jar: ^4.0.2
   dio: ^5.1.2
   dio_cookie_manager: ^3.0.0
+  flutter_rating_bar: ^4.0.1
 
 
 

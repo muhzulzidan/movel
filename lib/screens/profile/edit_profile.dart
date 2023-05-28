@@ -16,13 +16,13 @@ class EditProfileScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.purple.shade700,
+        backgroundColor: Colors.deepPurple.shade700,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Container(
-            decoration: BoxDecoration(color: Colors.purple.shade700),
+            decoration: BoxDecoration(color: Colors.deepPurple.shade700),
             child: Column(
               children: [
                 Padding(
