@@ -16,7 +16,7 @@ class DriverProfileScreen extends StatefulWidget {
 class _DriverProfileScreenState extends State<DriverProfileScreen> {
   Map<String, dynamic> driverData = {};
   bool isLoading = true;
-
+  late int id = widget.driverData["id"];
   @override
   void initState() {
     super.initState();
@@ -68,8 +68,9 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     final int seatsAvailable = driverData.containsKey('car_seat_capacity')
         ? driverData['car_seat_capacity'] as int
         : 0;
-    final String rating =
-        driverData.containsKey('rating') ? driverData['rating'] : 0.0;
+    final double rating = driverData.containsKey('rating')
+        ? double.parse(driverData['rating'])
+        : 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -236,7 +237,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            ChooseSeatScreen()),
+                                            ChooseSeatScreen(driverId: id)),
                                   );
                                 },
                                 child: Text(

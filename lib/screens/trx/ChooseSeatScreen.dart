@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,14 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'KonfirmasiPesananScreen.dart';
 
 class ChooseSeatScreen extends StatefulWidget {
-  const ChooseSeatScreen({Key? key}) : super(key: key);
+  final int driverId;
 
+  const ChooseSeatScreen({Key? key, required this.driverId}) : super(key: key);
   @override
   _ChooseSeatScreenState createState() => _ChooseSeatScreenState();
 }
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
-List<String> _seats = [];
+  List<Map<String, dynamic>> _seats = [];
   Set<String> _selectedSeats = <String>{};
   bool _isLoading = true;
   @override
@@ -24,13 +26,17 @@ List<String> _seats = [];
   }
 
   Future<void> fetchSeatData() async {
-    final String url = 'https://api.movel.id/api/user/drivers/list_seat_car';
+    setState(() {
+      _isLoading = true;
+    });
+    final String url =
+        'https://api.movel.id/api/user/drivers/available/${widget.driverId}/seat_cars';
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    final response = await http.get(
-      Uri.parse(url),
+    final response = await Requests.get(
+      url,
       headers: {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
@@ -38,18 +44,25 @@ List<String> _seats = [];
     );
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      final List<dynamic> seats = data['data'];
+      final Map<String, dynamic> data = response.json();
+      final List<dynamic> seats = data['data']['label_seats'];
 
       setState(() {
-        _seats = seats
-            .where((seat) => seat['is_filled'] == 0)
-            .map((seat) => seat['label_seat'] as String)
-            .toList();
+        _seats = seats.map((seat) {
+          final bool isFilled = seat['is_filled'] == 1;
+          return {
+            'label_seat': seat['label_seat'] as String,
+            'is_filled': isFilled,
+          };
+        }).toList();
       });
     } else {
       throw Exception('Failed to fetch seat data');
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -65,137 +78,110 @@ List<String> _seats = [];
         ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Column(children: [
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.only(top: 0, left: 30, right: 30, bottom: 20),
-          decoration: BoxDecoration(
-            color: Colors.deepPurple.shade700,
-          ),
-          child: Text(
-            "Pilih kursi sesuai keinginan Anda \n untuk kenyamanan maksimal",
-            style: TextStyle(
-              // fontSize: 19,
-              color: Colors.white,
+      body: Column(
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.only(top: 0, left: 30, right: 30, bottom: 20),
+            decoration: BoxDecoration(
+              color: Colors.deepPurple.shade700,
             ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 15),
-          child: Text(
-            "Depan",
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        Container(
-          // constraints: BoxConstraints.expand(),
-          width: 200,
-          height: 280,
-          alignment: Alignment.center,
-          padding: EdgeInsets.all(29),
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  'assets/car.png'), // Replace with your desired background image
-              // fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.circular(
-                10.0), // Adjust the border radius as needed
-          ),
-          child: GridView.builder(
-            itemCount: _seats.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 15,
-              crossAxisSpacing: 7,
-              childAspectRatio: .7,
-            ),
-            itemBuilder: (context, index) {
-              final seat = _seats[index];
-              final isSelected = _selectedSeats.contains(seat);
-              return Card(
+            child: Text(
+              "Pilih kursi sesuai keinginan Anda \n untuk kenyamanan maksimal",
+              style: TextStyle(
                 color: Colors.white,
-                shape: RoundedRectangleBorder(),
-                child: InkWell(
-                  onTap: () {
-                    // TODO: Select the seat
-                    setState(() {
-                      if (isSelected) {
-                        _selectedSeats.remove(seat);
-                      } else {
-                        _selectedSeats.add(seat);
-                      }
-                    });
-                  },
-                  splashColor: Colors.amber,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: isSelected
-                          ? Colors.deepPurple.shade700
-                          : Colors.transparent,
-                      // color: Colors.yellow, // Set the background color when the seat is selected
-                      border: Border.all(
-                        color:
-                            Colors.deepPurple.shade700, // Set the border color
-                        width: 2,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        _seats[index],
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Text("Pastikan kursi yang kamu pilih sudah"),
-        Text(
-          "sesuai keinginan kamu",
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        // SizedBox(
-        //   height: 20,
-        // ),
-        Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.292,
+              ),
+              textAlign: TextAlign.center,
             ),
-            Positioned(
-              bottom: 0, // Position the image at the bottom of the stack
-              left: 0,
-              right: 0,
-              child: Container(
-                height: 230,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                        'assets/grayCars.png'), // Replace with your desired background image
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                // child: Image.asset("assets/grayCars.png")
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 15),
+            child: Text(
+              "Depan",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
             ),
-            Positioned(
+          ),
+          Container(
+            width: 200,
+            height: 280,
+            alignment: Alignment.center,
+            padding: EdgeInsets.all(29),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/car.png'),
+              ),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: _isLoading
+                ? Center(child: CircularProgressIndicator())
+                : Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildSeatCard(_seats[0]),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          buildSeatCard(_seats[1]),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          buildSeatCard(_seats[2]),
+                          buildSeatCard(_seats[3]),
+                          buildSeatCard(_seats[4]),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          buildSeatCard(_seats[5]),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          buildSeatCard(_seats[6]),
+                        ],
+                      ),
+                    ],
+                  ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Text("Pastikan kursi yang kamu pilih sudah"),
+          Text(
+            "sesuai keinginan kamu",
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          Stack(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.292,
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 230,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/grayCars.png'),
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
                 top: 25,
                 left: 0,
                 right: 0,
@@ -216,42 +202,119 @@ List<String> _seats = [];
                       ],
                     ),
                   ],
-                )),
-            Positioned(
-              bottom: 60, // Adjust the position of the button as needed
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 60),
-                    backgroundColor: Colors.amber,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+              Positioned(
+                bottom: 60,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 60),
+                      backgroundColor: Colors.amber,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      elevation: 4,
                     ),
-                    elevation: 4,
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => KonfirmasiPesananScreen()),
-                    );
-                  },
-                  child: Text(
-                    "Oke",
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => KonfirmasiPesananScreen(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Oke",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ]),
+            ],
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget buildSeatCard(Map<String, dynamic> seat) {
+    final String labelSeat = seat['label_seat'] as String;
+    final bool isSelected = _selectedSeats.contains(labelSeat);
+    final bool isFilled = seat['is_filled'] as bool;
+    final Color backgroundColor =
+        isSelected ? Colors.deepPurple.shade700 : Colors.transparent;
+    final TextStyle textStyle = TextStyle(
+      fontSize: labelSeat == 'Sopir' ? 10 : 15,
+      fontWeight: FontWeight.bold,
+      color: isFilled
+          ? Colors.white
+          : isSelected
+              ? Colors.white
+              : Colors.black,
+    );
+
+    return isFilled
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
+            child: Container(
+              width: 40,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.deepPurple.shade700,
+                border: Border.all(
+                  color: Colors.deepPurple.shade700,
+                  width: 2,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  labelSeat,
+                  style: textStyle,
+                ),
+              ),
+            ),
+          )
+        : InkWell(
+            onTap: () {
+              setState(() {
+                if (isSelected) {
+                  _selectedSeats.remove(labelSeat);
+                } else {
+                  _selectedSeats.add(labelSeat);
+                }
+              });
+            },
+            splashColor: Colors.amber,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
+              child: Container(
+                width: 40,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: backgroundColor,
+                  border: Border.all(
+                    color: Colors.deepPurple.shade700,
+                    width: 2,
+                  ),
+                ),
+                child: Center(
+                  child: Text(
+                    labelSeat,
+                    style: textStyle,
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }

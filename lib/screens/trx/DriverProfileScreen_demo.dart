@@ -9,6 +9,8 @@ class DriverProfileScreen extends StatelessWidget {
   final String carColor = 'Silver';
   final int seatsAvailable = 4;
   final bool isSmokingAllowed = false;
+  
+  get id => null;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +87,7 @@ class DriverProfileScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => ChooseSeatScreen()),
+                    MaterialPageRoute(builder: (context) => ChooseSeatScreen(driverId: id,)),
                   );
                 },
                 child: Text("Pilih"))
