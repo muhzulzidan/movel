@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../pesanan.dart';
 import 'OrderProgressScreen.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CustomRow extends StatelessWidget {
   final String label;
@@ -43,8 +46,13 @@ class CustomRow extends StatelessWidget {
 }
 
 class KonfirmasiPesananScreen extends StatelessWidget {
+  final Map<String, dynamic> responseData;
+
+  KonfirmasiPesananScreen({required this.responseData});
+
   @override
   Widget build(BuildContext context) {
+    print("konfirmasi pesanan : $responseData");
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
@@ -94,59 +102,45 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(30),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomRow(
-                              label: 'Nama Sopir',
-                              value: ': John Doe',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Umur',
-                              value: ': 30',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Type Mobil',
-                              value: ': Sedan',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Merokok',
-                              value: ': Tidak',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Kode Kursi',
-                              value: ': A1',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Asal Kota',
-                              value: ': City A',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Kota Tujuan',
-                              value: ': City B',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Tanggal',
-                              value: ': 10 Mei 2023',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Pukul',
-                              value: ': 09:00 - 12:00',
-                            ),
-                            SizedBox(height: 16.0),
-                            CustomRow(
-                              label: 'Harga',
-                              value: ': Rp. 300.000',
-                            ),
-                          ],
-                        ),
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomRow(
+                                label: 'Nama Sopir',
+                                value: ': ${responseData['driver_name']}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Umur',
+                                value: ': ${responseData['driver_age']}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Merokok',
+                                value: ': ${responseData['is_smoking']}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Type Mobil',
+                                value: ': ${responseData['car_merk']}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Tahun Mobil',
+                                value: ': ${responseData['car_prod_year']}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Kode Kursi',
+                                value:
+                                    ': ${responseData['seat_car_choices'].toString()}',
+                              ),
+                              SizedBox(height: 16.0),
+                              CustomRow(
+                                label: 'Harga',
+                                value:
+                                    ': ${responseData['price_order'].toString()}',
+                              ),
+                            ]),
                       ),
                     ),
                   ],
@@ -167,19 +161,47 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              onPressed: () {
-                // Update the bottom navigation index by calling the function with the desired index
-                final currentIndexProvider =
-                    Provider.of<CurrentIndexProvider>(context, listen: false);
-                currentIndexProvider.setIndex(2);
-                // TODO: Implement payment and confirmation logic
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PesananScreen(),
-                  ),
+              onPressed: () async {
+                final String apiUrl = 'https://api.movel.id/api/user/orders';
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token');
+
+                final requestBody = '''
+{
+"driver_departure_id": 3,
+"seat_car_choices": [11, 10, 6]
+}
+''';
+
+                final response = await http.post(
+                  Uri.parse(apiUrl),
+                  headers: {
+                    'Authorization': 'Bearer $token',
+                    'Content-Type': 'application/json',
+                  },
+                  body: requestBody,
                 );
+
+                if (response.statusCode == 200) {
+                  // Handle successful response here
+
+                  // Update the bottom navigation index by calling the function with the desired index
+                  final currentIndexProvider =
+                      Provider.of<CurrentIndexProvider>(context, listen: false);
+                  currentIndexProvider.setIndex(2);
+
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PesananScreen(),
+                    ),
+                  );
+                } else {
+                  // Handle error response here
+                  print(
+                      'Request failed with status code ${response.statusCode}');
+                }
               },
               child: Text(
                 'Konfirmasi Pesanan',

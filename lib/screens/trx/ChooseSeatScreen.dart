@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 import 'package:requests/requests.dart';
 import 'dart:convert';
 
@@ -17,7 +17,8 @@ class ChooseSeatScreen extends StatefulWidget {
 
 class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
   List<Map<String, dynamic>> _seats = [];
-  Set<String> _selectedSeats = <String>{};
+  Set<Map<String, dynamic>> _selectedSeats = <Map<String, dynamic>>{};
+
   bool _isLoading = true;
   @override
   void initState() {
@@ -29,9 +30,9 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
     setState(() {
       _isLoading = true;
     });
+
     final String url =
         'https://api.movel.id/api/user/drivers/available/${widget.driverId}/seat_cars';
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -51,6 +52,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
         _seats = seats.map((seat) {
           final bool isFilled = seat['is_filled'] == 1;
           return {
+            'id_label': seat['id_label'].toString(),
             'label_seat': seat['label_seat'] as String,
             'is_filled': isFilled,
           };
@@ -65,8 +67,70 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
     });
   }
 
+  Future<void> _submitOrder() async {
+    // Prepare the request body
+    final List<String> seatChoices =
+        _selectedSeats.map((seat) => seat['id_label'] as String).toList();
+
+    print(seatChoices);
+    print(widget.driverId);
+
+    final requestBody = '''
+{
+"driver_departure_id": 3,
+"seat_car_choices": [11, 10, 6]
+}
+''';
+
+    // Make the API request
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final String url = 'https://api.movel.id/api/user/orders/resume';
+
+    final response = await http.post(
+      Uri.parse(url),
+      body: requestBody,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Handle successful response
+      // Navigate to the KonfirmasiPesananScreen
+      final responseData = json.decode(response.body);
+      
+      print(responseData);
+      print(response.body);
+Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              KonfirmasiPesananScreen(responseData: responseData['data']),
+        ),
+      );
+    } else {
+      // Handle error response
+      try {
+        final Map<String, dynamic> errorData = json.decode(response.content());
+        final errorMessage = errorData['message'];
+        print(response.request);
+        print(response.json());
+        print(response);
+        throw Exception('Failed to submit order: $errorMessage');
+      } catch (e) {
+        print(response.request);
+        print(response.headers);
+        // print(response.json());
+        throw Exception('Failed to submit order: Unknown error');
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(_seats);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade700,
@@ -220,12 +284,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
                       elevation: 4,
                     ),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => KonfirmasiPesananScreen(),
-                        ),
-                      );
+                      _submitOrder();
                     },
                     child: Text(
                       "Oke",
@@ -247,7 +306,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
 
   Widget buildSeatCard(Map<String, dynamic> seat) {
     final String labelSeat = seat['label_seat'] as String;
-    final bool isSelected = _selectedSeats.contains(labelSeat);
+    final bool isSelected = _selectedSeats.contains(seat);
     final bool isFilled = seat['is_filled'] as bool;
     final Color backgroundColor =
         isSelected ? Colors.deepPurple.shade700 : Colors.transparent;
@@ -287,9 +346,9 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
             onTap: () {
               setState(() {
                 if (isSelected) {
-                  _selectedSeats.remove(labelSeat);
+                  _selectedSeats.remove(seat);
                 } else {
-                  _selectedSeats.add(labelSeat);
+                  _selectedSeats.add(seat);
                 }
               });
             },
