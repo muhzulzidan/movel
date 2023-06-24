@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'trx/jadwal.dart';
 
 class DriverHomeContent extends StatefulWidget {
@@ -12,10 +15,58 @@ class DriverHomeContent extends StatefulWidget {
 
 class _DriverHomeContentState extends State<DriverHomeContent> {
   int saldo = 900000;
-  List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
+  List<Map<String, dynamic>> _seats = [];
+
+  // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
   Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
   bool _isButtonPressed = false;
   bool _isBerangkat = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchSeatData().then((seatData) {
+      setState(() {
+        _seats = seatData;
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      print('Error fetching seat data: $error');
+      setState(() {
+        _isLoading = false;
+      });
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> fetchSeatData() async {
+    final apiUrl = 'https://api.movel.id/api/user/drivers/seat_cars';
+
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(Uri.parse(apiUrl), headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer $token',
+    });
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+
+      // Extract the seat data from the response
+      final seatData = responseData['data'] as List<dynamic>;
+      final seatList =
+          seatData.map((seat) => seat as Map<String, dynamic>).toList();
+      print("home response data $responseData");
+      print("home seatdata driver : $seatData");
+      return seatList;
+    } else {
+      final responseData = jsonDecode(response.body);
+      print("error seatdata driver : ${responseData}");
+      throw Exception('Failed to fetch seat data');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +100,13 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                           setState(() {
                             _isButtonPressed = !_isButtonPressed;
                           });
+                          if (_isButtonPressed) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => JadwalScreen()),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -280,69 +338,48 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     ),
                     child: RotatedBox(
                       quarterTurns: 1,
-                      child: GridView.builder(
-                        itemCount: _seats.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 15,
-                          crossAxisSpacing: 7,
-                          childAspectRatio: .7,
-                        ),
-                        itemBuilder: (context, index) {
-                          final seat = _seats[index];
-                          final isSelected = _selectedSeats.contains(seat);
-                          return Card(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                // TODO: Select the seat
-                                setState(() {
-                                  if (isSelected) {
-                                    _selectedSeats.remove(seat);
-                                  } else {
-                                    _selectedSeats.add(seat);
-                                  }
-                                });
-                              },
-                              splashColor: Colors.amber,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: isSelected
-                                      ? Colors.amberAccent
-                                      : Colors.transparent,
-                                  // color: Colors.yellow, // Set the background color when the seat is selected
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Colors.amberAccent
-                                        : Colors.white, // Set the border color
-                                    width: 2,
-                                  ),
+                      child: _isLoading
+                          ? Center(child: CircularProgressIndicator())
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_seats.length > 0)
+                                      buildSeatCard(_seats[0]),
+                                    SizedBox(width: 4),
+                                    if (_seats.length > 1)
+                                      buildSeatCard(_seats[1]),
+                                  ],
                                 ),
-                                child: RotatedBox(
-                                  quarterTurns: 3,
-                                  child: Center(
-                                    child: Text(
-                                      _seats[index],
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? Colors.deepPurple.shade700
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
+                                SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_seats.length > 2)
+                                      buildSeatCard(_seats[2]),
+                                    if (_seats.length > 3) SizedBox(width: 4),
+                                    if (_seats.length > 3)
+                                      buildSeatCard(_seats[3]),
+                                    if (_seats.length > 4) SizedBox(width: 4),
+                                    if (_seats.length > 4)
+                                      buildSeatCard(_seats[4]),
+                                  ],
                                 ),
-                              ),
+                                SizedBox(height: 15),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    if (_seats.length > 5)
+                                      buildSeatCard(_seats[5]),
+                                    SizedBox(width: 4),
+                                    if (_seats.length > 6)
+                                      buildSeatCard(_seats[6]),
+                                  ],
+                                ),
+                              ],
                             ),
-                          );
-                        },
-                      ),
                     ),
                   ),
                   SizedBox(
@@ -430,5 +467,87 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
         ),
       ),
     );
+  }
+
+  Widget buildSeatCard(Map<String, dynamic> seat) {
+    final String labelSeat = seat['label_seat'] as String;
+    final bool isSelected = _selectedSeats.contains(labelSeat);
+
+    final int isFilled = seat['is_filled'] as int; // Update the casting to int
+    final Color backgroundColor = isSelected ? Colors.amber : Colors.white;
+    final TextStyle textStyle = TextStyle(
+      fontSize: labelSeat == 'Sopir' ? 10 : 15,
+      fontWeight: FontWeight.bold,
+      color: isFilled == 1
+          ? Colors.black
+          : isSelected
+              ? Colors.deepPurple.shade700
+              : Colors.black,
+    );
+
+    print("buildseattcard is sselected : $isSelected");
+
+    return isFilled == 1
+        ? Padding(
+            padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
+            child: Container(
+              width: 40,
+              height: 50,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: Colors.amber,
+                border: Border.all(
+                  color: Colors.amber,
+                  width: 2,
+                ),
+              ),
+              child: RotatedBox(
+                quarterTurns: 3,
+                child: Center(
+                  child: Text(
+                    labelSeat,
+                    style: textStyle,
+                  ),
+                ),
+              ),
+            ),
+          )
+        : InkWell(
+            onTap: () {
+              setState(() {
+                final String selectedSeat = seat['label_seat'] as String;
+                if (_selectedSeats.contains(selectedSeat)) {
+                  _selectedSeats.remove(selectedSeat);
+                } else {
+                  _selectedSeats.add(selectedSeat);
+                }
+              });
+            },
+            splashColor: Colors.amber,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
+              child: Container(
+                width: 40,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: backgroundColor,
+                  border: Border.all(
+                    color: isSelected ? Colors.amber : Colors.white,
+                    width: 2,
+                  ),
+                ),
+                child: RotatedBox(
+                  quarterTurns: 3,
+                  child: Center(
+                    child: Text(
+                      labelSeat,
+                      style: textStyle,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
   }
 }
