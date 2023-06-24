@@ -165,13 +165,17 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                 final String apiUrl = 'https://api.movel.id/api/user/orders';
                 final prefs = await SharedPreferences.getInstance();
                 final token = prefs.getString('token');
-
+                final driverid = responseData['id'];
+                final seatCarChices =
+                    responseData['seat_car_choices'].toString();
+                print("onpress driver id : $driverid");
+                print("onpress seatcarchoices $seatCarChices");
                 final requestBody = '''
-{
-"driver_departure_id": 3,
-"seat_car_choices": [11, 10, 6]
-}
-''';
+                  {
+                  "driver_departure_id": $driverid,
+                  "seat_car_choices": ${seatCarChices}
+                  }
+                  ''';
 
                 final response = await http.post(
                   Uri.parse(apiUrl),
