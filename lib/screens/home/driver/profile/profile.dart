@@ -4,23 +4,23 @@
 import 'package:flutter/material.dart';
 import 'package:movel/screens/auth/intro.dart';
 import 'package:movel/controller/auth/auth_state.dart';
-import 'package:movel/screens/profile/alamat.dart';
-import 'package:movel/screens/profile/edit_profile.dart';
-import 'package:movel/screens/profile/pengaturan.dart';
-import 'package:movel/screens/profile/pusat_bantuan.dart';
-import 'package:movel/screens/profile/riwayat_pesanan.dart';
+import 'package:movel/screens/home/driver/profile/alamat.dart';
+import 'package:movel/screens/home/driver/profile/edit_profile.dart';
+import 'package:movel/screens/home/driver/profile/pengaturan.dart';
+import 'package:movel/screens/home/driver/profile/pusat_bantuan.dart';
+import 'package:movel/screens/home/driver/profile/riwayat_pesanan.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:requests/requests.dart';
 
-import '../home/token.dart';
+// import '../home/token.dart';
 import 'change_password.dart';
 
-class ProfileScreen extends StatefulWidget {
+class DriverProfileScreen extends StatefulWidget {
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<DriverProfileScreen> createState() => _DriverProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _DriverProfileScreenState extends State<DriverProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
     // final dio = Dio();
     // var cookieJar = CookieJar();
@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               // SizedBox(height: 40),
               Container(
-                // decoration: BoxDecoration(color: Colors.),
+                decoration: BoxDecoration(color: Colors.deepPurple.shade700),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -142,7 +142,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 25,
-                                    color: Colors.black,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 // Text('Edit Profil'),
@@ -151,13 +151,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     Text(
                                       'Edit Profil',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: Colors.white),
                                     ),
                                     SizedBox(
                                       width: 3,
                                     ),
                                     Icon(Icons.arrow_forward_ios,
-                                        size: 12, color: Colors.black),
+                                        size: 12, color: Colors.white),
                                   ],
                                 ),
                               ])
@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.only(right: 15),
                         child: CircleAvatar(
                           radius: 40,
-                          backgroundColor: Colors.transparent,
+                          backgroundColor: Colors.deepPurple.shade700,
                           backgroundImage:
                               AssetImage('assets/placeholderPhoto.png'),
                         ),
@@ -208,12 +208,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       // trailing: Icon(Icons.arrow_forward_ios),
                       onTap: () {
-                        // TODO: Navigate to personal information screen.
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TokecScreen()),
-                        );
+                        // // TODO: Navigate to personal information screen.
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => TokecScreen()),
+                        // );
                       },
                     ),
                     Divider(
