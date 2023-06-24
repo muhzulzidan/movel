@@ -68,9 +68,11 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
     final int seatsAvailable = driverData.containsKey('car_seat_capacity')
         ? driverData['car_seat_capacity'] as int
         : 0;
-    final double rating = driverData.containsKey('rating')
-        ? double.parse(driverData['rating'])
-        : 0.0;
+    final int rating = driverData.containsKey('rating')
+        ? driverData['rating'] is int
+            ? driverData['rating']
+            : int.tryParse(driverData['rating']) ?? 0
+        : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -253,8 +255,11 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                 padding: const EdgeInsets.all(8),
                                 child: RatingBarIndicator(
                                   rating: driverData.containsKey('rating')
-                                      ? double.parse(
-                                          driverData['rating'] as String)
+                                      ? (driverData['rating'] is String
+                                          ? double.tryParse(
+                                                  driverData['rating']) ??
+                                              0.0
+                                          : driverData['rating'].toDouble())
                                       : 0.0,
                                   direction: Axis.horizontal,
                                   itemCount: 5,
@@ -268,7 +273,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                 ),
                               ),
                               Text(
-                                "Rating : $rating",
+                                "Rating : ${driverData['rating']}",
                                 style: TextStyle(
                                   color: Colors.white,
                                 ),
