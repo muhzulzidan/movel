@@ -9,6 +9,7 @@ import 'package:movel/screens/home/driver/profile/edit_profile.dart';
 import 'package:movel/screens/home/driver/profile/pengaturan.dart';
 import 'package:movel/screens/home/driver/profile/pusat_bantuan.dart';
 import 'package:movel/screens/home/driver/profile/riwayat_pesanan.dart';
+import 'package:movel/screens/home/driver/profile/LihatJenisMobilScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:requests/requests.dart';
 
@@ -214,6 +215,36 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         //   MaterialPageRoute(
                         //       builder: (context) => TokecScreen()),
                         // );
+                      },
+                    ),
+                    Divider(
+                      height: 1,
+                    ),
+                    ListTile(
+                      visualDensity: VisualDensity.compact,
+                      // leading: Icon(Icons.person),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            // '$_userData',
+                            'Lihat Jenis Mobil',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          Divider(
+                            height: 30,
+                            color: Colors.black54,
+                          ),
+                        ],
+                      ),
+                      // trailing: Icon(Icons.arrow_forward_ios),
+                      onTap: () {
+                        // // TODO: Navigate to personal information screen.
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LihatJenisMobilScreen()),
+                        );
                       },
                     ),
                     Divider(

@@ -77,8 +77,8 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
 
     final requestBody = '''
 {
-"driver_departure_id": 3,
-"seat_car_choices": [11, 10, 6]
+"driver_departure_id": ${widget.driverId},
+"seat_car_choices": $seatChoices
 }
 ''';
 
@@ -100,10 +100,10 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
       // Handle successful response
       // Navigate to the KonfirmasiPesananScreen
       final responseData = json.decode(response.body);
-      
+
       print(responseData);
       print(response.body);
-Navigator.push(
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) =>
@@ -120,7 +120,9 @@ Navigator.push(
         print(response);
         throw Exception('Failed to submit order: $errorMessage');
       } catch (e) {
+        print(response.json());
         print(response.request);
+        print(response.body);
         print(response.headers);
         // print(response.json());
         throw Exception('Failed to submit order: Unknown error');
@@ -182,35 +184,34 @@ Navigator.push(
             child: _isLoading
                 ? Center(child: CircularProgressIndicator())
                 : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildSeatCard(_seats[0]),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          buildSeatCard(_seats[1]),
-                        ],
-                      ),
-                      SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          buildSeatCard(_seats[2]),
-                          buildSeatCard(_seats[3]),
-                          buildSeatCard(_seats[4]),
+                          if (_seats.length > 0) buildSeatCard(_seats[0]),
+                          SizedBox(width: 4),
+                          if (_seats.length > 1) buildSeatCard(_seats[1]),
                         ],
                       ),
                       SizedBox(height: 15),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          buildSeatCard(_seats[5]),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          buildSeatCard(_seats[6]),
+                          if (_seats.length > 2) buildSeatCard(_seats[2]),
+                          SizedBox(width: 4),
+                          if (_seats.length > 3) buildSeatCard(_seats[3]),
+                          SizedBox(width: 4),
+                          if (_seats.length > 4) buildSeatCard(_seats[4]),
+                        ],
+                      ),
+                      SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (_seats.length > 5) buildSeatCard(_seats[5]),
+                          SizedBox(width: 4),
+                          if (_seats.length > 6) buildSeatCard(_seats[6]),
                         ],
                       ),
                     ],
@@ -376,4 +377,6 @@ Navigator.push(
             ),
           );
   }
+
+
 }

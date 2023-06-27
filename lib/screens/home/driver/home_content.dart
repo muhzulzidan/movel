@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'trx/PesananDibatalkanScreen.dart';
+import 'trx/TopUpScreen.dart';
 import 'trx/jadwal.dart';
 
 class DriverHomeContent extends StatefulWidget {
@@ -277,21 +281,30 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                   ),
                                   elevation: 4,
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(Icons.control_point,
-                                        color: Colors.white),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Top Up',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 16,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => TopUpScreen()),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.control_point,
+                                          color: Colors.white),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        'Top Up',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 )),
                           ],
                         ),
@@ -408,6 +421,12 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                           ),
                           onPressed: () {
                             // to do
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      PesananDibatalkanScreen()),
+                            );
                           },
                           child: Text(
                             "Lihat",
@@ -514,12 +533,106 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
           )
         : InkWell(
             onTap: () {
-              setState(() {
-                final String selectedSeat = seat['label_seat'] as String;
-                if (_selectedSeats.contains(selectedSeat)) {
-                  _selectedSeats.remove(selectedSeat);
-                } else {
-                  _selectedSeats.add(selectedSeat);
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Stack(
+                    children: [
+                      BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
+                        child: Container(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                      AlertDialog(
+                        // title: Text('Yakin ingin menambahkan penumpang?'),
+                        content: Text(
+                          'Yakin ingin menambahkan penumpang?',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        actions: <Widget>[
+                          Container(
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    backgroundColor: Colors.amber,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: Text(
+                                    "Tidak",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 30,
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    padding: EdgeInsets.symmetric(vertical: 8),
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100),
+                                    ),
+                                    elevation: 4,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  child: Text(
+                                    "ya",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+
+                                // TextButton(
+                                //   onPressed: () {
+                                //     Navigator.of(context).pop(false); // No
+                                //   },
+                                //   child: Text('Tidak'),
+                                // ),
+                                // TextButton(
+                                //   onPressed: () {
+                                //     Navigator.of(context).pop(true); // Yes
+                                //   },
+                                //   child: Text('Ya'),
+                                // ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ).then((confirmed) {
+                if (confirmed != null && confirmed) {
+                  setState(() {
+                    final String selectedSeat = seat['label_seat'] as String;
+                    if (_selectedSeats.contains(selectedSeat)) {
+                      _selectedSeats.remove(selectedSeat);
+                    } else {
+                      _selectedSeats.add(selectedSeat);
+                    }
+                  });
                 }
               });
             },

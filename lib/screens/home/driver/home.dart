@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:movel/screens/home/driver/home_content.dart';
 import 'package:movel/screens/chat/inbox.dart';
 import 'package:movel/screens/pesanan.dart';
-import 'package:movel/screens/profile/profile.dart';
+
+import './profile/profile.dart';
 
 class MyHomeDriverPage extends StatefulWidget {
   // final String userAccessToken;
@@ -51,7 +52,7 @@ class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
           Navigator(
             onGenerateRoute: (settings) {
               return MaterialPageRoute(
-                builder: (context) => ProfileScreen(),
+                builder: (context) => DriverProfileScreen(),
               );
             },
           ),

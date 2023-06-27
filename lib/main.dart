@@ -9,6 +9,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 
+import 'screens/home/driver/home.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -24,7 +26,7 @@ void main() async {
     ),
   );
   // runApp(MyApp(
-      // isLoggedIn: isLoggedIn
+  // isLoggedIn: isLoggedIn
   //     ));
   // runApp(MyApp());
   Future.delayed(Duration(seconds: 2), () {
@@ -77,7 +79,7 @@ class MyApp extends StatelessWidget {
           ),
           // home: LoginScreen(),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/',
+          initialRoute: '/login',
           // home: isLoggedIn ? IntroScreen() : MyHomePage(),
           routes: {
             // '/seat': (context) => ChooseSeatScreen(),
@@ -87,6 +89,8 @@ class MyApp extends StatelessWidget {
             //  "/home": isLoggedIn ? MyHomePage() : LoginScreen(),
             '/login': (context) => LoginScreen(),
             '/register': (context) => RegisterScreen(),
+            '/driver': (context) => MyHomeDriverPage(),
+
             // '/profile' : (context) => ProfileScreen(),
           },
         ),

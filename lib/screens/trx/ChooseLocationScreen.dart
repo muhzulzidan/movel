@@ -75,18 +75,9 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
   }
 
   Future<List<dynamic>> _fetchData() async {
-    // final dio = Dio();
-    // final cookieJar = CookieJar();
-    // Add the CookieJar to Dio's HttpClientAdapter
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-
-    // final options = Options(
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //   },
-    // );
 
     final response = await Requests.get(
       'https://api.movel.id/api/user/kota_kab/search',
