@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
+// import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:requests/requests.dart';
 
@@ -11,54 +11,41 @@ class JadwalScreen extends StatefulWidget {
 }
 
 class _JadwalScreenState extends State<JadwalScreen> {
-  late DateTime _selectedDate;
-  late TimeOfDay _selectedTime;
   TextEditingController _selectedDateController = TextEditingController();
   TextEditingController _selectedTimeController = TextEditingController();
 
   // color
   final TextEditingController colorController = TextEditingController();
   final TextEditingController iconController = TextEditingController();
-  ColorLabel? selectedColor;
-  JamLabel? selectedjam;
+  // ColorLabel? selectedColor;
+  // JamLabel? selectedjam;
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _lokasiAsalController = TextEditingController();
   final TextEditingController _destinasiController = TextEditingController();
-  final _newPasswordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
   final TextEditingController _searchController = TextEditingController();
-
-  String _selectedLocation = '';
 
   List<dynamic> _kotaAsal = [];
   List<dynamic> _filteredKotaAsal = [];
   List<dynamic> _filteredKotaTujuan = [];
   List<dynamic> _kotaTujuan = [];
+  String _selectedLocation = '';
+
   int? _selectedKotaTujuanId = 18;
   String? _selectedKotaTujuanNama;
   int? _selectedKotaAsalId = 6;
   String? _selectedKotaAsalNama;
 
+  bool _asalVisibility = true;
+  bool _showObject = true;
+
   double containerHeight = 0.0;
 
-  bool _showOldPassword = false;
-  bool _showNewPassword = false;
-  bool _showConfirmPassword = false;
-
-  bool _asalVisibility = true;
-  bool _tujuanVisibility = true;
-  bool _jadwalVisibility = true;
-  bool _jamVisibility = true;
-
-  String _selectedJam = "1"; // Variable to store the selected jam value
-
-  List<DropdownMenuItem<String>> _jamOptions = [
-    DropdownMenuItem(value: 'Pagi (1)', child: Text('Pagi (1)')), // 1
-    DropdownMenuItem(value: 'Siang (2)', child: Text('Siang (2)')), // 2
-    DropdownMenuItem(value: 'Malam (3)', child: Text('Malam (3)')), // 3
-  ];
+  late DateTime _selectedDate;
+  late TimeOfDay _selectedTime;
+  late String _pickedTime;
+  late String _pickedDate;
 
   List<String> _activeSections = [
     'tujuan',
@@ -66,20 +53,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
     'asal',
     'jadwal'
   ]; // Initialize it with an empty string
-  bool _showObject = true;
-
-  // List<Map<String, dynamic>> _filteredKotaAsal = [
-  //   {'id': 1, 'nama_kota': 'Bone'},
-  //   {'id': 2, 'nama_kota': 'Makassar'},
-  //   {'id': 3, 'nama_kota': 'Sengkang'},
-  // ];
-
-  List<Map<String, dynamic>> _searchResult = [];
-
-  // String? _selectedKotaAsalNama;
-  // int? _selectedKotaAsalId;
-
-  // TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -160,17 +133,48 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement password change logic.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Rute terjadwal!')),
-      );
-    }
-    await Future.delayed(Duration(seconds: 2)); // Add a 2-second delay
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+      final url = ('https://api.movel.id/api/user/drivers/rute_jadwal');
+      final headers = {
+        'Authorization': 'Bearer $token',
+      };
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => DriverHomeContent()),
-    );
+      final _time = _selectedTime.toString();
+      print("submitform asal $_selectedKotaAsalId");
+      print("submitform tujuan $_selectedKotaTujuanId");
+      print("submitform tujuan $_pickedDate");
+      print("submitform tujuan $_pickedTime");
+
+      final body = {
+        'kota_asal_id': _selectedKotaAsalId,
+        'kota_tujuan_id': _selectedKotaTujuanId,
+        'date_departure': _pickedDate,
+        'time_departure': _pickedTime.toString(),
+      };
+
+      final response = await Requests.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        // Request successful, handle the response
+        print(response.body);
+        await prefs.setBool('aktif', true); // Update with your desired value
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Rute terjadwal!')),
+        );
+        await Future.delayed(Duration(seconds: 2)); // Add a 2-second delay
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => DriverHomeContent()),
+        );
+      } else {
+        // Request failed, handle the error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Rute Gagal!')),
+        );
+        print('Request failed with status: ${response.statusCode}');
+      }
+    }
   }
 
   void _handleTap(String section) {
@@ -194,16 +198,16 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<DropdownMenuEntry<JamLabel>> jamEntries =
-        <DropdownMenuEntry<JamLabel>>[];
-    for (final JamLabel jam in JamLabel.values) {
-      jamEntries.add(
-        DropdownMenuEntry<JamLabel>(
-          value: jam, label: jam.label,
-          // enabled: jam.label != 'Pagi'
-        ),
-      );
-    }
+    // final List<DropdownMenuEntry<JamLabel>> jamEntries =
+    //     <DropdownMenuEntry<JamLabel>>[];
+    // for (final JamLabel jam in JamLabel.values) {
+    //   jamEntries.add(
+    //     DropdownMenuEntry<JamLabel>(
+    //       value: jam, label: jam.label,
+    //       // enabled: jam.label != 'Pagi'
+    //     ),
+    //   );
+    // }
 
     return Scaffold(
         appBar: AppBar(
@@ -428,61 +432,105 @@ class _JadwalScreenState extends State<JadwalScreen> {
                                     style: TextStyle(
                                         color: Colors.white, fontSize: 12),
                                   ),
-                                  SizedBox(height: 5),
+                                  SizedBox(height: 10),
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 21, vertical: 1),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(100),
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 0),
-                                      child: DropdownButtonFormField<String>(
-                                        onTap: () {},
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          // contentPadding: EdgeInsets.symmetric(
-                                          //     horizontal: 21, vertical: 10),
-                                          // hintText: 'tanggal/bulan/tahun',
-                                          // suffixIcon: Padding(
-                                          //   padding: const EdgeInsets.only(
-                                          //       right: 20),
-                                          //   child: Icon(
-                                          //       Icons.calendar_month_outlined),
-                                          // ),
+                                    child: TextFormField(
+                                      controller: _selectedTimeController,
+                                      decoration: InputDecoration(
+                                        labelStyle: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54),
+                                        hintStyle: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54),
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.symmetric(
+                                            horizontal: 21, vertical: 10),
+                                        hintText: 'Pilih Jam Keberangkatan',
+                                        suffixIcon: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 21),
+                                          child: Icon(Icons.schedule),
                                         ),
-                                        icon: Icon(Icons.schedule),
-                                        style: TextStyle(color: Colors.black54),
-                                        value: _selectedJam,
-                                        items: [
-                                          DropdownMenuItem<String>(
-                                            value: "1",
-                                            child: Text(
-                                              'Pagi',
-                                            ),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: "2",
-                                            child: Text('Siang'),
-                                          ),
-                                          DropdownMenuItem<String>(
-                                            value: "3",
-                                            child: Text('Malam'),
-                                          ),
-                                        ],
-                                        onChanged: (String? value) {
-                                          setState(() {
-                                            _selectedJam = value!;
-                                          });
-                                        },
                                       ),
+                                      onTap: () {
+                                        _showTimePicker(context);
+                                      },
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
+                            )
+                            // Visibility(
+                            //   visible: _showObject &&
+                            //       _activeSections.contains('jadwal'),
+                            //   child: Column(
+                            //     crossAxisAlignment: CrossAxisAlignment.start,
+                            //     children: [
+                            //       Text(
+                            //         "Jam Keberangkatan",
+                            //         style: TextStyle(
+                            //             color: Colors.white, fontSize: 12),
+                            //       ),
+                            //       SizedBox(height: 5),
+                            //       Container(
+                            //         padding: EdgeInsets.symmetric(
+                            //             horizontal: 21, vertical: 1),
+                            //         decoration: BoxDecoration(
+                            //           color: Colors.white,
+                            //           borderRadius: BorderRadius.circular(100),
+                            //         ),
+                            //         child: Padding(
+                            //           padding: const EdgeInsets.symmetric(
+                            //               vertical: 0),
+                            //           child: DropdownButtonFormField<String>(
+                            //             onTap: () {},
+                            //             decoration: InputDecoration(
+                            //               border: InputBorder.none,
+                            //               // contentPadding: EdgeInsets.symmetric(
+                            //               //     horizontal: 21, vertical: 10),
+                            //               // hintText: 'tanggal/bulan/tahun',
+                            //               // suffixIcon: Padding(
+                            //               //   padding: const EdgeInsets.only(
+                            //               //       right: 20),
+                            //               //   child: Icon(
+                            //               //       Icons.calendar_month_outlined),
+                            //               // ),
+                            //             ),
+                            //             icon: Icon(Icons.schedule),
+                            //             style: TextStyle(color: Colors.black54),
+                            //             value: _selectedJam,
+                            //             items: [
+                            //               DropdownMenuItem<String>(
+                            //                 value: "1",
+                            //                 child: Text(
+                            //                   'Pagi',
+                            //                 ),
+                            //               ),
+                            //               DropdownMenuItem<String>(
+                            //                 value: "2",
+                            //                 child: Text('Siang'),
+                            //               ),
+                            //               DropdownMenuItem<String>(
+                            //                 value: "3",
+                            //                 child: Text('Malam'),
+                            //               ),
+                            //             ],
+                            //             onChanged: (String? value) {
+                            //               setState(() {
+                            //                 _selectedJam = value!;
+                            //               });
+                            //             },
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // ),
                           ],
                         )),
                   ),
@@ -610,9 +658,13 @@ class _JadwalScreenState extends State<JadwalScreen> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
+        final pickedDate =
+            ("${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}");
+        _pickedDate = pickedDate;
         _selectedDateController.text =
             "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
       });
+      print(_pickedDate);
     }
   }
 
@@ -623,33 +675,25 @@ class _JadwalScreenState extends State<JadwalScreen> {
     );
     if (picked != null && picked != _selectedTime) {
       setState(() {
+        final pickedTime = ("${picked.hour}:${picked.minute}");
+        _pickedTime = pickedTime;
         _selectedTime = picked;
-        _selectedTimeController.text =
-            "${_selectedTime.hour}:${_selectedTime.minute}";
+        final formattedTime =
+            _selectedTime.format(context); // Format the selected time
+        _selectedTimeController.text = formattedTime;
       });
+      print(_pickedTime);
     }
   }
 }
 
-enum ColorLabel {
-  blue('Blue', Colors.blue),
-  pink('Pink', Colors.pink),
-  green('Green', Colors.green),
-  yellow('Yellow', Colors.yellow),
-  grey('Grey', Colors.grey);
+// enum JamLabel {
+//   pagi('Pagi', 1),
+//   siang('Siang', 2),
+//   malam('Malam', 3);
 
-  const ColorLabel(this.label, this.color);
-  final String label;
-  final Color color;
-}
+//   const JamLabel(this.label, this.value);
 
-enum JamLabel {
-  pagi('Pagi', 1),
-  siang('Siang', 2),
-  malam('Malam', 3);
-
-  const JamLabel(this.label, this.value);
-
-  final String label;
-  final int value;
-}
+//   final String label;
+//   final int value;
+// }

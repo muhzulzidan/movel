@@ -5,6 +5,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'trx/PesananDibatalkanScreen.dart';
 import 'trx/TopUpScreen.dart';
@@ -30,6 +31,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
   @override
   void initState() {
     super.initState();
+    _loadButtonPressedState();
     fetchSeatData().then((seatData) {
       setState(() {
         _seats = seatData;
@@ -41,6 +43,16 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
         _isLoading = false;
       });
     });
+  }
+
+  void _loadButtonPressedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final aktif = prefs.getBool('aktif') ??
+        false; // Set the default value to false if it doesn't exist
+    setState(() {
+      _isButtonPressed = aktif;
+    });
+    print("_isButtonPressed : $_isButtonPressed");
   }
 
   Future<List<Map<String, dynamic>>> fetchSeatData() async {
@@ -100,11 +112,32 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     child: Padding(
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _isButtonPressed = !_isButtonPressed;
-                          });
+                        onPressed: () async {
                           if (_isButtonPressed) {
+                            final prefs = await SharedPreferences.getInstance();
+                            await prefs.setBool('aktif', false);
+                            final token = prefs.getString('token');
+                            // Make the PUT request to the endpoint
+
+                            final response = await Requests.put(
+                              'https://api.movel.id/api/user/drivers/inactive',
+                              headers: {
+                                'Authorization': 'Bearer $token',
+                              },
+                            );
+                            if (response.statusCode == 200) {
+                              setState(() {
+                                _isButtonPressed = false;
+                              });
+                              // Request successful, handle the response
+                              print(response.body);
+                              print('Inactive request success');
+                            } else {
+                              // Request failed, handle the error
+                              print(
+                                  'Inactive request failed with status: ${response.statusCode}');
+                            }
+                          } else {
                             Navigator.push(
                               context,
                               MaterialPageRoute(

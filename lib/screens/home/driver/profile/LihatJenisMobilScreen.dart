@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'DetailMobilDriverScreen.dart';
+
 class LihatJenisMobilScreen extends StatefulWidget {
   @override
   State<LihatJenisMobilScreen> createState() => _LihatJenisMobilScreenState();
@@ -73,6 +75,92 @@ class _LihatJenisMobilScreenState extends State<LihatJenisMobilScreen> {
             gambarMobil: 'assets/mobilDriver.png',
           ),
           SizedBox(height: 16),
+          Container(
+            padding: EdgeInsets.all(25),
+            decoration: BoxDecoration(
+                color: Colors.amber, borderRadius: BorderRadius.circular(20)),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Tipe Kursi Mobil",
+                      style:
+                          TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Depan",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
+                SizedBox(
+                  height: 0,
+                ),
+                Container(
+                  width: 200,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                          'assets/car.png'), // Replace with your desired background image
+                      // fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.circular(10.0),
+                    // color: Colors.amber,
+                  ),
+                  child: RotatedBox(
+                    quarterTurns: 4,
+                    child: _isLoading
+                        ? Center(child: CircularProgressIndicator())
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (_seats.length > 0)
+                                    buildSeatCard(_seats[0]),
+                                  SizedBox(width: 4),
+                                  if (_seats.length > 1)
+                                    buildSeatCard(_seats[1]),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (_seats.length > 2)
+                                    buildSeatCard(_seats[2]),
+                                  if (_seats.length > 3) SizedBox(width: 4),
+                                  if (_seats.length > 3)
+                                    buildSeatCard(_seats[3]),
+                                  if (_seats.length > 4) SizedBox(width: 4),
+                                  if (_seats.length > 4)
+                                    buildSeatCard(_seats[4]),
+                                ],
+                              ),
+                              SizedBox(height: 15),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  if (_seats.length > 5)
+                                    buildSeatCard(_seats[5]),
+                                  SizedBox(width: 4),
+                                  if (_seats.length > 6)
+                                    buildSeatCard(_seats[6]),
+                                ],
+                              ),
+                            ],
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -164,72 +252,84 @@ class JenisMobilCard extends StatelessWidget {
   });
 
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.deepPurple.shade700,
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Stack(
-        children: [
-          Container(
-            height: 180,
+    return GestureDetector(
+      onTap: () async {
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString('token');
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailCarScreen(token: '$token'),
           ),
-          Positioned(
-            top: 32,
-            left: 30,
-            child: Row(
-              children: [
-                Text(
-                  "Jenis mobil yang terdaftar:",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+        );
+      },
+      child: Card(
+        color: Colors.deepPurple.shade700,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Stack(
+          children: [
+            Container(
+              height: 180,
             ),
-          ),
-          Positioned(
-            top: 60,
-            left: 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  namaMobil,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 24,
-                    color: Colors.amber,
-                    fontWeight: FontWeight.bold,
+            Positioned(
+              top: 32,
+              left: 30,
+              child: Row(
+                children: [
+                  Text(
+                    "Jenis mobil yang terdaftar:",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  tahunMobil,
-                  style: TextStyle(
-                    height: 1,
-                    fontSize: 24,
-                    color: Colors.amber,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            top: 45,
-            right: 0,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Image.asset(
-                gambarMobil,
-                width: MediaQuery.of(context).size.width / 1.8,
-                fit: BoxFit.cover,
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              top: 60,
+              left: 30,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    namaMobil,
+                    style: TextStyle(
+                      height: 1,
+                      fontSize: 24,
+                      color: Colors.amber,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    tahunMobil,
+                    style: TextStyle(
+                      height: 1,
+                      fontSize: 24,
+                      color: Colors.amber,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+              top: 45,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Image.asset(
+                  gambarMobil,
+                  width: MediaQuery.of(context).size.width / 1.8,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
