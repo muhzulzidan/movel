@@ -38,9 +38,9 @@ class EditProfileScreen extends StatelessWidget {
             ),
           ),
           Divider(),
-          Column(
-            children: [Text('$userData')],
-          ),
+          // Column(
+          //   children: [Text('$userData')],
+          // ),
           ListTile(
             title: Row(
               children: [

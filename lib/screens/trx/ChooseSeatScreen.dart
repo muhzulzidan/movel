@@ -76,11 +76,11 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
     print(widget.driverId);
 
     final requestBody = '''
-{
-"driver_departure_id": ${widget.driverId},
-"seat_car_choices": $seatChoices
-}
-''';
+    {
+    "driver_departure_id": ${widget.driverId},
+    "seat_car_choices": $seatChoices
+    }
+    ''';
 
     // Make the API request
     final prefs = await SharedPreferences.getInstance();

@@ -74,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final userService = UserService();
       final user = await userService.getUser();
+      print("prifle user json : $user");
       setState(() {
         // _userName = user["user"]["name"].toString();
         _userName = user[0]['name'].toString();

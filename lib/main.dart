@@ -9,7 +9,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 
-import 'screens/home/driver/home.dart';
+import 'screens/home/driver/driver_home.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

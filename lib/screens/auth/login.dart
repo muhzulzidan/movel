@@ -5,7 +5,7 @@ import 'package:movel/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/auth/auth_state.dart';
-import '../home/driver/home.dart';
+import '../home/driver/driver_home.dart';
 import 'forget_pass.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -240,10 +240,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // final password = "password";
 
     // sopir
-    final email = "barnas@member.com";
-    final password = "123456";
-    // final email = "zidan@movel.id";
-    // final password = "zidan2023";
+    // final email = "barnas@member.com";
+    // final password = "123456";
+    final email = "zidan@movel.id";
+    final password = "zidan2023";
     // final email = "sopirbaru@gmail.com";
     // final password = "123456";
 
