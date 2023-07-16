@@ -2,9 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:requests/requests.dart';
 import 'package:movel/screens/home/driver/driver_home_content.dart';
-import 'package:movel/screens/chat/inbox.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './profile/profile.dart';
+import 'chat/inbox_driver.dart';
 import 'pesanan/pesanan_baru.dart';
 import 'pesanan/pesanan_driver_diterima.dart';
 
@@ -18,7 +18,7 @@ class MyHomeDriverPage extends StatefulWidget {
 
 class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
   int _currentIndex = 0;
-  late List<dynamic> _acceptedOrders = [];
+  late List<dynamic> _newOrders = [];
 
   @override
   void initState() {
@@ -30,7 +30,7 @@ class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
-    final url = 'https://api.movel.id/api/user/orders/driver/accepted';
+    final url = 'https://api.movel.id/api/user/orders/driver/';
 
     final response = await Requests.get(
       url,
@@ -41,18 +41,30 @@ class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
 
     if (response.statusCode == 200) {
       final jsonData = response.json();
-      final acceptedOrders = jsonData['data'];
-      print("acceptedOrders : $acceptedOrders");
-      if (!listEquals(acceptedOrders, _acceptedOrders)) {
-        setState(() {
-          _acceptedOrders = acceptedOrders;
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PesananBaruScreen(acceptedOrders : acceptedOrders)),
-          );
-          // Send a notification
-          _sendNotification();
-        });
+      final status = jsonData['status'];
+      final message = jsonData['message'];
+
+      final newOrders = jsonData['data'];
+      print("new order : $newOrders");
+
+      if (status == false) {
+        print('Failed to fetch accepted orders: $message');
+      } else {
+        if (!listEquals(newOrders, _newOrders)) {
+          print("status true ");
+          setState(() {
+            _newOrders = newOrders;
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      PesananBaruScreen(newOrders: _newOrders)),
+            );
+
+            // Send a notification
+            // _sendNotification();
+          });
+        }
       }
     } else {
       print('Failed to fetch accepted orders: ${response.statusCode}');
@@ -87,7 +99,7 @@ class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
           Navigator(
             onGenerateRoute: (settings) {
               return MaterialPageRoute(
-                builder: (context) => InboxScreen(),
+                builder: (context) => DriverInboxScreen(),
               );
             },
           ),

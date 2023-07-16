@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'cek_progress_pesanan.dart';
+
 class PesananDriverDiterimaScreen extends StatefulWidget {
   @override
   State<PesananDriverDiterimaScreen> createState() =>
@@ -10,19 +12,24 @@ class PesananDriverDiterimaScreen extends StatefulWidget {
 
 class OrderListItem extends StatelessWidget {
   final String name;
+  final int orderid;
   final String pickupLocation;
   final String destination;
   final String orderDate;
+  final int statusOrder;
 
   const OrderListItem({
     required this.name,
+    required this.orderid,
     required this.pickupLocation,
     required this.destination,
     required this.orderDate,
+    required this.statusOrder,
   });
 
   @override
   Widget build(BuildContext context) {
+    print("orderid : $orderid");
     return ListTile(
       title: Text(
         name,
@@ -83,6 +90,18 @@ class OrderListItem extends StatelessWidget {
                 ),
                 onPressed: () {
                   // Implement progress check functionality
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CekDetailPesananScreen(
+                              orderid: orderid,
+                              pickupLocation: pickupLocation,
+                              name: name,
+                              destination: destination,
+                              orderDate: orderDate,
+                              statusOrder : statusOrder,
+                            )),
+                  );
                 },
                 child: Text(
                   'Cek Progres Pesanan',
@@ -132,12 +151,13 @@ class _PesananDriverDiterimaScreenState
         setState(() {
           _acceptedOrdersFuture = Future.value(acceptedOrders);
         });
-        print(response.json());
+        print("pesanan_driver_diterima : $jsonData");
         print(acceptedOrders);
       } else {
+        print("Failed to fetch accepted orders");
         print(response.body);
         print(response.json());
-        throw Exception('Failed to fetch accepted orders');
+        // throw Exception('Failed to fetch accepted orders');
       }
     } catch (e) {
       print(e);
@@ -180,14 +200,18 @@ class _PesananDriverDiterimaScreenState
                   itemCount: acceptedOrders.length,
                   itemBuilder: (context, index) {
                     final order = acceptedOrders[index];
+                    final orderId = order['id'];
                     final name = order['passenger_name'];
                     final pickupLocation = order['kota_asal'];
                     final destination = order['kota_tujuan'];
                     final orderDate = order['date_order'];
+                    final statusOrder = order['status_order'];
 
                     return Column(
                       children: [
                         OrderListItem(
+                          statusOrder: statusOrder,
+                          orderid: orderId,
                           name: name,
                           pickupLocation: pickupLocation,
                           destination: destination,

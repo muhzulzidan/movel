@@ -47,7 +47,31 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Terima notifikasi'),
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('Merokok'),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      '(Klik tombol untuk menjawab Ya)',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "(Selanjutnya hanya bisa diubah melalui Admin)",
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 10,
+                                  ),
+                                )
+                              ],
+                            ),
                             CupertinoSwitch(
                               value: notifikasiChecked,
                               onChanged: (value) {
@@ -78,7 +102,38 @@ class _PengaturanScreenState extends State<PengaturanScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Terima promosi'),
+                            Text('Notifikasi'),
+                            CupertinoSwitch(
+                              value: notifikasiChecked,
+                              onChanged: (value) {
+                                setState(() {
+                                  notifikasiChecked = value;
+                                });
+                              },
+                              activeColor: Colors.deepPurple,
+                              // overrides the default green color of the track
+                              // color of the round icon, which moves from right to left
+                              thumbColor: Colors.white,
+                              // when the switch is off
+                              trackColor: Colors.black12,
+                              // boolean variable value
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Promosi'),
                             CupertinoSwitch(
                               value: promosiChecked,
                               onChanged: (value) {

@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:http/http.dart';
 
 import 'package:movel/screens/auth/login.dart';
+import 'package:requests/requests.dart';
 
 class RegisterScreen extends StatefulWidget {
   // final AuthService _authService = AuthService();
@@ -363,7 +365,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // Send the registration data to your backend server
     // and wait for the response
     final response =
-        await dio.post('https://api.movel.id/api/user/register', data: {
+        await Requests.post('https://api.movel.id/api/user/register', body: {
       // 'name': "zidan",
       // 'role_id': "2",
       // 'no_hp': "08111111111",
@@ -383,7 +385,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (response.statusCode == 201) {
       // Registration was successful
       print("success");
-      final jsonResponse = (response.data);
+      final jsonResponse = (response.json());
       print(jsonResponse);
 
       ScaffoldMessenger.of(context).showSnackBar(

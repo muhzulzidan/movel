@@ -1,7 +1,10 @@
 // import 'package:cookie_jar/cookie_jar.dart';
 // import 'package:dio/dio.dart';
 // import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:movel/screens/auth/intro.dart';
 import 'package:movel/controller/auth/auth_state.dart';
 import 'package:movel/screens/home/driver/profile/alamat.dart';
@@ -60,6 +63,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
   }
 
   String _userName = '';
+  late String _userPhoto = '';
   // String _userName = '';
   // String _u = '';
   late Map<String, dynamic> _userData = {};
@@ -78,6 +82,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       setState(() {
         // _userName = user["user"]["name"].toString();
         _userName = user[0]['name'].toString();
+        _userPhoto = user[0]['photo'];
 
         _userData = user[0];
       });
@@ -110,6 +115,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("_userPhoto : $_userPhoto");
     return Scaffold(
       body: Stack(children: [
         SafeArea(
@@ -190,36 +196,36 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 padding: const EdgeInsets.all(15),
                 child: Column(
                   children: [
-                    ListTile(
-                      visualDensity: VisualDensity.compact,
-                      // leading: Icon(Icons.person),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            // '$_userData',
-                            'Personal Information',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          Divider(
-                            height: 30,
-                            color: Colors.black54,
-                          ),
-                        ],
-                      ),
-                      // trailing: Icon(Icons.arrow_forward_ios),
-                      onTap: () {
-                        // // TODO: Navigate to personal information screen.
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //       builder: (context) => TokecScreen()),
-                        // );
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
+                    // ListTile(
+                    //   visualDensity: VisualDensity.compact,
+                    //   // leading: Icon(Icons.person),
+                    //   title: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Text(
+                    //         // '$_userData',
+                    //         'Personal Information',
+                    //         style: TextStyle(fontWeight: FontWeight.w500),
+                    //       ),
+                    //       Divider(
+                    //         height: 30,
+                    //         color: Colors.black54,
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   // trailing: Icon(Icons.arrow_forward_ios),
+                    //   onTap: () {
+                    //     // // TODO: Navigate to personal information screen.
+                    //     // Navigator.push(
+                    //     //   context,
+                    //     //   MaterialPageRoute(
+                    //     //       builder: (context) => TokecScreen()),
+                    //     // );
+                    //   },
+                    // ),
+                    // Divider(
+                    //   height: 1,
+                    // ),
                     ListTile(
                       visualDensity: VisualDensity.compact,
                       // leading: Icon(Icons.person),
@@ -313,34 +319,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pusat bantuan',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          Divider(
-                            height: 30,
-                            color: Colors.black54,
-                          ),
-                        ],
-                      ),
-                      // trailing: Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    PusatBantuanScreen(userName: _userName)));
-                        // TODO: Navigate to change password screen.
-                      },
-                    ),
-                    Divider(
-                      height: 1,
-                    ),
-                    ListTile(
-                      // leading: Icon(Icons.lock),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
                             'Pengaturan',
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
@@ -369,7 +347,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Alamat',
+                            'Pusat bantuan',
                             style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                           Divider(
@@ -383,38 +361,154 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AlamatScreen()));
+                                builder: (context) =>
+                                    PusatBantuanScreen(userName: _userName)));
                         // TODO: Navigate to change password screen.
                       },
                     ),
                     Divider(
                       height: 1,
                     ),
+
+                    // ListTile(
+                    //   // leading: Icon(Icons.lock),
+                    //   title: Column(
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       Text(
+                    //         'Alamat',
+                    //         style: TextStyle(fontWeight: FontWeight.w500),
+                    //       ),
+                    //       Divider(
+                    //         height: 30,
+                    //         color: Colors.black54,
+                    //       ),
+                    //     ],
+                    //   ),
+                    //   // trailing: Icon(Icons.arrow_forward),
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //             builder: (context) => AlamatScreen()));
+                    //     // TODO: Navigate to change password screen.
+                    //   },
+                    // ),
+                    // Divider(
+                    //   height: 1,
+                    // ),
                     ListTile(
-                      // leading: Icon(Icons.exit_to_app),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Keluar',
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                          Divider(
-                            height: 30,
-                            color: Colors.black54,
-                          ),
-                        ],
-                      ),
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        // final SharedPreferences? prefs = await _prefs;
-                        // print(prefs?.get('message'));
-                        final token = prefs.getString('token');
-                        print(token);
-                        logout(context, token!);
-                        // TODO: Log out the user and navigate to the login screen.
-                      },
-                    ),
+                        // leading: Icon(Icons.exit_to_app),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Keluar',
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            Divider(
+                              height: 30,
+                              color: Colors.black54,
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
+                                child: AlertDialog(
+                                  contentPadding:
+                                      EdgeInsets.only(top: 30, bottom: 10),
+                                  buttonPadding: EdgeInsets.zero,
+                                  actionsPadding: EdgeInsets.zero,
+                                  content: Text(
+                                    'Anda yakin ingin keluar?',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  actions: [
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 30),
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                ),
+                                                elevation: 4,
+                                              ),
+                                              onPressed: () => Navigator.of(
+                                                      context)
+                                                  .pop(), // Close the dialog
+                                              child: Text(
+                                                'Batal',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                    horizontal: 30),
+                                                backgroundColor: Colors.amber,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          100),
+                                                ),
+                                                elevation: 4,
+                                              ),
+                                              onPressed: () async {
+                                                final prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                final token =
+                                                    prefs.getString('token');
+                                                // Navigator.of(context)
+                                                //     .pop(); // Close the dialog
+                                                logout(context,
+                                                    token!); // Log out the user
+                                              },
+                                              child: Text(
+                                                'Ya',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 25,
+                                        )
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        }),
                   ],
                 ),
               ),
