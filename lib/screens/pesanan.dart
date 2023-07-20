@@ -23,7 +23,7 @@ class PesananScreen extends StatelessWidget {
             children: [
               buildProgressTile(
                 title: "Pesanan Diterima",
-                icon: Icons.bookmark_add,
+                icon: Icons.bookmark_added,
               ),
               buildProgressTile(
                 title: "Sopir Menuju ke Lokasi Anda",
@@ -35,7 +35,7 @@ class PesananScreen extends StatelessWidget {
               ),
               buildProgressTile(
                 title: "Anda Telah Tiba di Tujuan",
-                icon: Icons.check_circle,
+                icon: Icons.place,
               ),
             ],
           ),
@@ -110,7 +110,7 @@ class PesananScreen extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.deepPurple.shade500,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(20),
       ),
       padding: EdgeInsets.all(10),
       child: Row(
@@ -136,6 +136,15 @@ class PesananScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                Text(
+                  "DW 4573 WT",
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.normal,
                     color: Colors.white,
                   ),
                   textAlign: TextAlign.center,
@@ -264,10 +273,13 @@ class PesananScreen extends StatelessWidget {
                           textAlign: TextAlign.start,
                         ),
                       ),
-                      Icon(
-                        Icons.send,
-                        color: Colors.blue,
-                        size: 20,
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Icon(
+                          Icons.send,
+                          color: Colors.blue,
+                          size: 20,
+                        ),
                       )
                     ],
                   ),
