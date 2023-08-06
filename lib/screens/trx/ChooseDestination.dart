@@ -1,14 +1,9 @@
-// import 'package:dio/dio.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:http/http.dart' as http;
-import 'package:requests/requests.dart';
 
-// import '../profile/alamat.dart';
-// import '../profile/change_password.dart';
-// import '../profile/riwayat_pesanan.dart';
-// import 'ChooseDestination.dart';
+import 'package:requests/requests.dart';
 
 import 'ChooseDepartureDateScreen.dart';
 
@@ -29,7 +24,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
   List<dynamic> _kotaTujuan = [];
   List<dynamic> _filteredKotaTujuan = [];
   List<dynamic> _kotaThree = [];
-  int? _selectedKotaTujuanId = 18;
+  int? _selectedKotaTujuanId;
   String? _selectedKotaTujuanNama;
 
   @override
@@ -481,7 +476,7 @@ class _ChooseDestinationScreenState extends State<ChooseDestinationScreen> {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   await prefs.setInt(
-                                      'selectedKotaTujuanId', 18);
+                                      'selectedKotaTujuanId', _selectedKotaTujuanId!);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(

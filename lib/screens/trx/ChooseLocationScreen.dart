@@ -1,17 +1,8 @@
-// import 'package:cookie_jar/cookie_jar.dart';
-// import 'package:dio/dio.dart';
-// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
-// import 'package:movel/screens/home/token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'dart:convert';
 import 'package:requests/requests.dart';
-// import 'package:cookie_jar/cookie_jar.dart';
-
-// import '../profile/alamat.dart';
-// import '../profile/change_password.dart';
-// import '../profile/riwayat_pesanan.dart';
 import 'ChooseDestination.dart';
 
 class ChooseLocationScreen extends StatefulWidget {
@@ -30,7 +21,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
   List<dynamic> _kotaAsal = [];
   List<dynamic> _filteredKotaAsal = [];
   List<dynamic> _kotaThree = [];
-  int? _selectedKotaAsalId = 6;
+  int? _selectedKotaAsalId;
   String? _selectedKotaAsalNama;
 
   @override
@@ -62,7 +53,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
   FocusNode _searchFocusNode = FocusNode();
 
   void _handleTap() {
-    // print('onTap');
     FocusScopeNode currentFocus = FocusScope.of(context);
 
     if (!currentFocus.hasPrimaryFocus) {
@@ -70,12 +60,10 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
     }
     setState(() {
       _showObject = !_showObject;
-      // print(_showObject);
     });
   }
 
   Future<List<dynamic>> _fetchData() async {
-
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -133,7 +121,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
         throw Exception(data['status']);
       } else {
         final cities = data['data'];
-        // print("three : $cities");
+
         return cities;
       }
     } else {
@@ -144,28 +132,9 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
 
   // Future<void> setKotaAsal(int kotaAsalId) async {
   //   _isLoading = true;
-  //   // final dio = Dio();
-  //   // Get cookies from SharedPreferences
   //   final prefs = await SharedPreferences.getInstance();
-  //   final cookies = prefs.getString('cookies');
-  //   // Use the cookie jar to send the cookies with the request
-  //   // final cookieJar = CookieJar(cookies);
-  //   // print("before headers : $cookies");
-  //   // final cookieJar = CookieJar.fromString(cookies);
-  //   // dio.interceptors.add(CookieManager());
-
   //   final token = prefs.getString('token');
-
-  //   final headers = {
-  //     'Authorization': 'Bearer $token',
-  //     'Content-Type': 'application/json',
-  //     "Connection": 'keep-alive',
-  //     "sendCookies": true,
-  //     "set-cookie": cookies
-  //   };
-
   //   final body = {"kota_asal_id": kotaAsalId};
-
   //   final response = await Requests.post(
   //       'https://api.movel.id/api/user/rute_jadwal/kota_asal',
   //       body: body,
@@ -181,12 +150,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
 
   //   if (response.statusCode == 200) {
   //     final data = (response.json());
-  //     print(data);
+  //     print("data setKotaAsal : $data");
   //     print(response.headers);
-  //     // print(response.requestOptions);
-  //     // print(response.extra);
-  //     // print(await cookieJar.loadForRequest(
-  //     // Uri.parse('https://api.movel.id/api/user/rute_jadwal/kota_asal')));
   //   } else {
   //     throw Exception('Failed to set kota asal');
   //   }
@@ -348,7 +313,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                             itemCount: _filteredKotaAsal.length,
                             itemBuilder: (context, index) {
                               final city = _filteredKotaAsal[index];
-                              // print(city);
 
                               return ListTile(
                                 title: Text(city['nama_kota'] as String),
@@ -360,7 +324,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                         _selectedKotaAsalNama!;
                                   });
                                   _handleTap();
-                                  print(_selectedKotaAsalNama);
+                                  print(
+                                      "_selectedKotaAsalNama : $_selectedKotaAsalNama");
                                 },
                               );
                             },
@@ -432,7 +397,6 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                       itemCount: _kotaThree.length,
                                       itemBuilder: (context, index) {
                                         final city = _kotaThree[index];
-                                        // print(city);
 
                                         return SizedBox(
                                           width: 20,
@@ -474,7 +438,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                                       _selectedKotaAsalNama!;
                                                 });
                                                 // _handleTap();
-                                                print(_selectedKotaAsalNama);
+                                                print(
+                                                    "_selectedKotaAsalNama : $_selectedKotaAsalNama");
                                               },
                                             ),
                                           ),
@@ -509,7 +474,8 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                 onPressed: () async {
                                   SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
-                                  await prefs.setInt('selectedKotaAsalId', 6);
+                                  await prefs.setInt('selectedKotaAsalId',
+                                      _selectedKotaAsalId!);
                                   // setKotaAsal(_selectedKotaAsalId!);
                                   Navigator.push(
                                     context,
