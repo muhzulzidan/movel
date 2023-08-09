@@ -12,11 +12,35 @@ class ChooseDepartureDateScreen extends StatefulWidget {
       _ChooseDepartureDateScreenState();
 }
 
+// // This is the type used by the popup menu below.
+// enum SampleItem { itemOne, itemTwo, itemThree }
+
+class TimesofDepart {
+  final int id;
+  final String timeName;
+
+  TimesofDepart({
+    required this.id,
+    required this.timeName,
+  });
+}
+
+List<TimesofDepart> sampleItems = [
+  TimesofDepart(id: 1, timeName: 'Pagi'),
+  TimesofDepart(id: 2, timeName: 'Siang'),
+  TimesofDepart(id: 3, timeName: 'Sore'),
+  TimesofDepart(id: 4, timeName: 'Malam'),
+  TimesofDepart(id: 5, timeName: 'Tengah Malam'),
+];
+
 class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
   // final dio = Dio();
+  TimesofDepart? selectedMenu;
 
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
+  late String _selectedTimeValues;
+  late String _selectedDateValues;
   TextEditingController _selectedDateController = TextEditingController();
   TextEditingController _selectedTimeController = TextEditingController();
 
@@ -237,26 +261,42 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: TextFormField(
-                        controller: _selectedTimeController,
-                        decoration: InputDecoration(
-                          labelStyle:
-                              TextStyle(fontSize: 12, color: Colors.black54),
-                          hintStyle:
-                              TextStyle(fontSize: 12, color: Colors.black54),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 21, vertical: 10),
-                          hintText: 'Pilih Jam Keberangkatan',
-                          suffixIcon: Padding(
-                            padding: const EdgeInsets.only(right: 21),
-                            child: Icon(Icons.schedule),
-                          ),
-                        ),
-                        onTap: () {
-                          _showTimePicker(context);
+                      child: PopupMenuButton<TimesofDepart>(
+                        initialValue: selectedMenu,
+                        // Callback that sets the selected popup menu item.
+                        onSelected: (TimesofDepart item) {
+                          setState(() {
+                            selectedMenu = item;
+                          });
                         },
+                        itemBuilder: (BuildContext context) =>
+                            sampleItems.map((item) {
+                          return PopupMenuItem<TimesofDepart>(
+                            value: item,
+                            child: Text(item.timeName),
+                          );
+                        }).toList(),
                       ),
+                      // child: TextFormField(
+                      //   controller: _selectedTimeController,
+                      //   decoration: InputDecoration(
+                      //     labelStyle:
+                      //         TextStyle(fontSize: 12, color: Colors.black54),
+                      //     hintStyle:
+                      //         TextStyle(fontSize: 12, color: Colors.black54),
+                      //     border: InputBorder.none,
+                      //     contentPadding: EdgeInsets.symmetric(
+                      //         horizontal: 21, vertical: 10),
+                      //     hintText: 'Pilih Jam Keberangkatan',
+                      //     suffixIcon: Padding(
+                      //       padding: const EdgeInsets.only(right: 21),
+                      //       child: Icon(Icons.schedule),
+                      //     ),
+                      //   ),
+                      //   onTap: () {
+                      //     _showTimePicker(context);
+                      //   },
+                      // ),
                     ),
                   ],
                 ),
@@ -284,7 +324,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                 // String timeCategory = _getTimeCategory(_selectedTime);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setString('selectedDate', "2023-05-20");
-                prefs.setString('selectedTime', "1");
+                prefs.setString('selectedTime',
+                    selectedMenu?.id.toString() ?? ""); // Use the selectedMenu
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -333,7 +374,12 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
         _selectedDate = picked;
         _selectedDateController.text =
             "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
+        _selectedDateValues =
+            "${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}";
       });
+      print(_selectedDateController.text);
+      print(_selectedDate);
+      print(_selectedDateValues);
     }
   }
 
@@ -348,6 +394,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
         _selectedTimeController.text =
             "${_selectedTime.hour}:${_selectedTime.minute}";
       });
+      print(_selectedTimeController.text);
+      print(_selectedTime);
     }
   }
 }

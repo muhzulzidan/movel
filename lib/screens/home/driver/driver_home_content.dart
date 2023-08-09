@@ -132,7 +132,17 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                               // Request successful, handle the response
                               print(response.body);
                               print('Inactive request success');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Status Driver Tidak aktif!')),
+                              );
                             } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Status Driver Tidak berubah!')),
+                              );
                               // Request failed, handle the error
                               print(
                                   'Inactive request failed with status: ${response.statusCode}');

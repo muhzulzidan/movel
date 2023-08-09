@@ -659,12 +659,12 @@ class _JadwalScreenState extends State<JadwalScreen> {
       setState(() {
         _selectedDate = picked;
         final pickedDate =
-            ("${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}");
+            ("${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}");
         _pickedDate = pickedDate;
         _selectedDateController.text =
             "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
       });
-      print(_pickedDate);
+      print("_pickedDate : $_pickedDate");
     }
   }
 
@@ -682,7 +682,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
             _selectedTime.format(context); // Format the selected time
         _selectedTimeController.text = formattedTime;
       });
-      print(_pickedTime);
+      print("_pickedTime $_pickedTime");
     }
   }
 }
