@@ -25,17 +25,21 @@ class TimesofDepart {
   });
 }
 
-List<TimesofDepart> sampleItems = [
-  TimesofDepart(id: 1, timeName: 'Pagi'),
-  TimesofDepart(id: 2, timeName: 'Siang'),
-  TimesofDepart(id: 3, timeName: 'Sore'),
-  TimesofDepart(id: 4, timeName: 'Malam'),
-  TimesofDepart(id: 5, timeName: 'Tengah Malam'),
-];
+// List<TimesofDepart> sampleItems = [
+//   TimesofDepart(id: 1, timeName: 'Pagi'),
+//   TimesofDepart(id: 2, timeName: 'Siang'),
+//   TimesofDepart(id: 3, timeName: 'Sore'),
+//   TimesofDepart(id: 4, timeName: 'Malam'),
+//   TimesofDepart(id: 5, timeName: 'Tengah Malam'),
+// ];
 
 class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
   // final dio = Dio();
   TimesofDepart? selectedMenu;
+  String dropdownValue = ''; // The selected value from dropdown
+  TimesofDepart? selectedValue; // The selected value from dropdown
+
+  List<TimesofDepart> sampleItems = []; // Initialize an empty list
 
   late DateTime _selectedDate;
   late TimeOfDay _selectedTime;
@@ -168,7 +172,7 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
     super.initState();
     // Set the default selected date to today
     fetchDataSharedpreference();
-
+    fetchTimeDeparture(); // Call the function to fetch data on widget initialization
     _selectedDate = DateTime.now();
     _selectedTime = TimeOfDay.now();
 
@@ -176,6 +180,38 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
     //     "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
     // _selectedTimeController.text =
     //     "${_selectedTime.hour}:${_selectedTime.minute}";
+  }
+
+  Future<void> fetchTimeDeparture() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final token = prefs.getString('token');
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/time_departure',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final jsonData = response.json();
+      final data = jsonData['data'];
+
+      List<TimesofDepart> items = [];
+
+      for (var item in data) {
+        items.add(TimesofDepart(id: item['id'], timeName: item['time_name']));
+      }
+
+      setState(() {
+        sampleItems = items; // Update the sampleItems list with fetched data
+      });
+
+      print("sampleItems : $items");
+    } else {
+      print('Failed to fetch time departure data');
+    }
   }
 
   Future<void> fetchDataSharedpreference() async {
@@ -261,22 +297,67 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: PopupMenuButton<TimesofDepart>(
-                        initialValue: selectedMenu,
-                        // Callback that sets the selected popup menu item.
-                        onSelected: (TimesofDepart item) {
-                          setState(() {
-                            selectedMenu = item;
-                          });
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            sampleItems.map((item) {
-                          return PopupMenuItem<TimesofDepart>(
-                            value: item,
-                            child: Text(item.timeName),
-                          );
-                        }).toList(),
-                      ),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 21, vertical: 1),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            child: DropdownButton<TimesofDepart>(
+                              value: selectedValue,
+                              icon: const Icon(
+                                Icons.arrow_downward,
+                                color: Colors.white,
+                              ),
+                              hint: Text(
+                                  'Pilih Jam Keberangkatan'), // Placeholder
+                              elevation: 16,
+                              style: const TextStyle(color: Colors.black54),
+                              underline: Container(
+                                height: 0,
+                                color: Colors.deepPurpleAccent,
+                              ),
+                              onChanged: (TimesofDepart? value) {
+                                setState(() {
+                                  selectedValue =
+                                      value; // Update the selected value
+                                });
+                                setState(() {
+                                  dropdownValue = value!.id.toString();
+                                });
+                                print("userselectedValue : $selectedValue");
+                                print("userdropdownValue : $dropdownValue");
+                              },
+                              items: sampleItems
+                                  .map<DropdownMenuItem<TimesofDepart>>(
+                                      (TimesofDepart item) {
+                                return DropdownMenuItem<TimesofDepart>(
+                                  value: item,
+                                  child: Text(item.timeName),
+                                );
+                              }).toList(),
+                            ),
+                          )),
+                      // child: PopupMenuButton<TimesofDepart>(
+                      //   initialValue: selectedMenu,
+                      //   // Callback that sets the selected popup menu item.
+                      //   onSelected: (TimesofDepart item) {
+                      //     setState(() {
+                      //       selectedMenu = item;
+                      //     });
+                      //   },
+                      //   itemBuilder: (BuildContext context) =>
+                      //       sampleItems.map((item) {
+                      //     return PopupMenuItem<TimesofDepart>(
+                      //       value: item,
+                      //       child: Text(item.timeName),
+                      //     );
+                      //   }).toList(),
+                      // ),
                       // child: TextFormField(
                       //   controller: _selectedTimeController,
                       //   decoration: InputDecoration(
@@ -323,9 +404,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
               onPressed: () async {
                 // String timeCategory = _getTimeCategory(_selectedTime);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('selectedDate', "2023-05-20");
-                prefs.setString('selectedTime',
-                    selectedMenu?.id.toString() ?? ""); // Use the selectedMenu
+                prefs.setString('selectedDate', "$_selectedDateValues");
+                prefs.setString('selectedTime', "$dropdownValue");
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -378,8 +458,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
             "${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}";
       });
       print(_selectedDateController.text);
-      print(_selectedDate);
-      print(_selectedDateValues);
+      print("user _selectedDate: $_selectedDate");
+      print("user_selectedDateValues: $_selectedDateValues");
     }
   }
 

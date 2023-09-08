@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:movel/controller/auth/auth_state.dart';
+import 'package:requests/requests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
@@ -41,12 +44,92 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     });
   }
 
-  void _submitForm() {
+  @override
+  void initState() {
+    super.initState();
+    try {
+      _loadUserData();
+    } catch (e) {
+      print('Caught profilscren exception: $e');
+    }
+  }
+
+  String _email = '';
+  // String _userName = '';
+  // String _u = '';
+  late Map<String, dynamic> _userData = {};
+
+  Future<void> _loadUserData() async {
+    late String token;
+
+    Future<void> _getSharedPrefrences() async {
+      final prefs = await SharedPreferences.getInstance();
+      token = prefs.getString('token') ?? '';
+    }
+
+    try {
+      final userService = UserService();
+      final user = await userService.getUser();
+      print("change pass: $user");
+      setState(() {
+        // _userName = user["user"]["name"].toString();
+        _email = user[0]['email'].toString();
+      });
+      print('profile testtt');
+      print("email : $_email");
+    } catch (e) {
+      print("dari profil : $e");
+    }
+  }
+
+  Future<void> _submitForm() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
     if (_formKey.currentState!.validate()) {
-      // TODO: Implement password change logic.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password changed successfully!')),
-      );
+      // final token =
+      // "22f82bf69102ceb5f26c69dd09b676409a3445ca5a8411d8b0ef2f5110b90ceb";
+      // final email = "matiusrimbe.ptik@gmail.com";
+      final password = _newPasswordController.text;
+      final passwordConfirmation = _confirmPasswordController.text;
+
+      final url = 'https://api.movel.id/api/user/reset_password';
+      final headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      print(token);
+      print(_email);
+      print(password);
+      print(passwordConfirmation);
+
+      final body = {
+        "token": token,
+        "email": _email,
+        "password": password,
+        "password_confirmation": passwordConfirmation,
+      };
+
+      final response = await Requests.post(url, body: body);
+
+      if (response.statusCode == 200) {
+        // Password reset request sent successfully.
+        // Handle success, show a success message, navigate to the login screen, etc.
+        print(response.json());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Password changed successfully!')),
+        );
+
+        // TODO: Navigate to the login screen or perform other actions.
+      } else {
+        // Failed to send password reset request.
+        // Handle error, show an error message, etc.
+        print(response.json());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Failed to change password. Please try again.')),
+        );
+      }
     }
   }
 
@@ -64,7 +147,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: Form(
         key: _formKey,
         child: Container(
-
           child: Column(
             children: [
               Container(

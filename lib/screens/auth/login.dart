@@ -228,12 +228,16 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final email = emailController.text;
-    final password = _passwordController.text;
+    // final email = emailController.text;
+    // final password = _passwordController.text;
 
     // user
     // final email = "zulzdn@gmail.com";
     // const password = "zidan100";
+    // final email = "zidan300@gmail.com";
+    // const password = "zidan100";
+    final email = "zidan@gmail.com";
+    const password = "zidan100";
 
     // const email = "zulzdn@sopir.com";
     // final email = "zidan@movel.id";
@@ -245,7 +249,11 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "zidan@movel.id";
     // final password = "zidan2023";
     // final email = "sopirbaru@gmail.com";
-    // final password = "123456";
+    // final password = "12345678";
+    // final email = "dodi@gmail.com";
+    // final password = "12345678";
+    // final email = "bang@gmail.com";
+    // final password = "zidan100";
 
     final result = await _authService.login(email, password);
 
@@ -285,6 +293,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Navigator.pushNamed(context, '/home');
     } else {
+      print(result);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Cek Email atau password kamu'),

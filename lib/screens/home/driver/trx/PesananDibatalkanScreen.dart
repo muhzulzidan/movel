@@ -35,6 +35,8 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
         setState(() {
           _rejectedOrdersFuture = Future.value(rejectedOrders);
         });
+        print(rejectedOrders);
+        print(jsonData);
       } else {
         print(response.body);
         print(response.json());
@@ -53,168 +55,170 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
       appBar: AppBar(
           // title: Text('Pesanan Dibatalkan'),
           ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close_rounded,
+                size: 50,
+                color: Colors.white,
+              ),
             ),
-            child: Icon(
-              Icons.close_rounded,
-              size: 50,
-              color: Colors.white,
+            SizedBox(height: 16),
+            Text(
+              'Pesanan dibatalkan!',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Pesanan dibatalkan!',
-            style: TextStyle(
-              fontSize: 24,
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 32),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                FutureBuilder<List<dynamic>>(
-                  future: _rejectedOrdersFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (snapshot.hasData) {
-                      final rejectedOrders = snapshot.data!;
-                      return Column(
-                        children: rejectedOrders.map((order) {
-                          final name = order['name'];
-                          final location = order['location'];
+            SizedBox(height: 32),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  FutureBuilder<List<dynamic>>(
+                    future: _rejectedOrdersFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData) {
+                        final rejectedOrders = snapshot.data!;
+                        return Column(
+                          children: rejectedOrders.map((order) {
+                            final name = order['passenger_name'];
+                            final location = order['kota_asal'];
 
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.deepPurple.shade100,
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                            return ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.deepPurple.shade100,
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                               ),
-                            ),
-                            onPressed: () {},
-                            child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    name,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                              onPressed: () {},
+                              child: Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      name!,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    location,
-                                    style: TextStyle(
-                                      color: Colors.black,
+                                    SizedBox(width: 8),
+                                    Text(
+                                      location!,
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }).toList(),
-                      );
-                    } else {
-                      return Text('No rejected orders found');
-                    }
-                  },
-                ),
-              ],
+                            );
+                          }).toList(),
+                        );
+                      } else {
+                        return Text('No rejected orders found');
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple.shade100,
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Alif',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'BTN Pepabri',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple.shade100,
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Zidan',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Perumnas Tibojong',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Column(
+            //     children: [
+            //       ElevatedButton(
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: Colors.deepPurple.shade100,
+            //           elevation: 4,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8),
+            //           ),
+            //         ),
+            //         onPressed: () {},
+            //         child: Padding(
+            //           padding: EdgeInsets.all(16),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             children: [
+            //               Text(
+            //                 'Alif',
+            //                 style: TextStyle(
+            //                   fontSize: 18,
+            //                   fontWeight: FontWeight.bold,
+            //                   color: Colors.black,
+            //                 ),
+            //               ),
+            //               SizedBox(width: 8),
+            //               Text(
+            //                 'BTN Pepabri',
+            //                 style: TextStyle(
+            //                   color: Colors.black,
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //       SizedBox(height: 16),
+            //       ElevatedButton(
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: Colors.deepPurple.shade100,
+            //           elevation: 4,
+            //           shape: RoundedRectangleBorder(
+            //             borderRadius: BorderRadius.circular(8),
+            //           ),
+            //         ),
+            //         onPressed: () {},
+            //         child: Padding(
+            //           padding: EdgeInsets.all(16),
+            //           child: Row(
+            //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //             children: [
+            //               Text(
+            //                 'Zidan',
+            //                 style: TextStyle(
+            //                   fontSize: 18,
+            //                   fontWeight: FontWeight.bold,
+            //                   color: Colors.black,
+            //                 ),
+            //               ),
+            //               SizedBox(width: 8),
+            //               Text(
+            //                 'Perumnas Tibojong',
+            //                 style: TextStyle(
+            //                   color: Colors.black,
+            //                 ),
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }

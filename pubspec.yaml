@@ -54,6 +54,7 @@ dependencies:
   dio_cookie_manager: ^3.0.0
   flutter_rating_bar: ^4.0.1
   flutter_local_notifications: ^15.0.0
+  flutter_easyloading: ^3.0.5
   
 
 dev_dependencies:

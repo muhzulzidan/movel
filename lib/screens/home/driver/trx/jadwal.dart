@@ -143,18 +143,18 @@ class _JadwalScreenState extends State<JadwalScreen> {
       final _time = _selectedTime.toString();
       print("submitform asal $_selectedKotaAsalId");
       print("submitform tujuan $_selectedKotaTujuanId");
-      print("submitform tujuan $_pickedDate");
-      print("submitform tujuan $_pickedTime");
+      print("submitform _pickedDate $_pickedDate");
+      print("submitform _pickedTime $_pickedTime");
 
       final body = {
         'kota_asal_id': _selectedKotaAsalId,
         'kota_tujuan_id': _selectedKotaTujuanId,
-        'date_departure': _pickedDate,
-        'time_departure': _pickedTime.toString(),
+        'date_departure': "$_pickedDate",
+        'time_departure': "${_pickedTime.toString()}",
       };
 
       final response = await Requests.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Request successful, handle the response
         print(response.body);
         await prefs.setBool('aktif', true); // Update with your desired value
@@ -168,9 +168,23 @@ class _JadwalScreenState extends State<JadwalScreen> {
           MaterialPageRoute(builder: (context) => DriverHomeContent()),
         );
       } else {
+        // print(response.body);
+        print(response.request);
+        print(response.json());
+        print(response.headers);
+        print(response.content());
+        print(response.url);
         // Request failed, handle the error
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Rute Gagal!')),
+          SnackBar(
+            content: Text(
+              'Rute Gagal!',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
         print('Request failed with status: ${response.statusCode}');
       }
@@ -675,12 +689,11 @@ class _JadwalScreenState extends State<JadwalScreen> {
     );
     if (picked != null && picked != _selectedTime) {
       setState(() {
-        final pickedTime = ("${picked.hour}:${picked.minute}");
-        _pickedTime = pickedTime;
         _selectedTime = picked;
-        final formattedTime =
-            _selectedTime.format(context); // Format the selected time
-        _selectedTimeController.text = formattedTime;
+        final formattedHour = picked.hour.toString().padLeft(2, '0');
+        final formattedMinute = picked.minute.toString().padLeft(2, '0');
+        _pickedTime = '$formattedHour:$formattedMinute';
+        _selectedTimeController.text = _pickedTime;
       });
       print("_pickedTime $_pickedTime");
     }

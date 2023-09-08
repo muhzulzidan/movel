@@ -106,6 +106,8 @@ class AuthService {
         // }
         return true;
       } else {
+        print("headers : ${response.headers}");
+        print("json : ${response.json()}");
         return false; // Return false to indicate failed login
       }
     } catch (error) {

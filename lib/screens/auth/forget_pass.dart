@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:requests/requests.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   @override
@@ -8,6 +11,70 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+
+  Future<void> _sendResetPasswordRequest() async {
+    final email = _emailController.text;
+    final url = 'https://api.movel.id/api/user/forgot_password';
+    // final headers = {'Content-Type': 'application/json'};
+    final body = {'email': email};
+
+    print(email);
+    print(_emailController);
+
+    final response = await Requests.post(url, body: {"email": "$email"});
+
+    if (response.statusCode == 200) {
+      // Reset password request sent successfully.
+      // Handle success, show a success message, etc.
+      print(response.json());
+      print(response.headers);
+      print(response.request);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Success"),
+            content: Text(
+                "Reset password request sent successfully. Check your email."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      // Failed to send reset password request.
+      // Handle error, show an error message, etc.
+
+      // print(response.json());
+      print(response.body);
+      print(response.headers);
+      print(response.request);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+            content: Text(
+                "Failed to send reset password request. Please try again."),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +176,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 fontSize: 17),
                           ),
                           onPressed: () {
-                            // if (_formKey.currentState.validate()) {
-                            //   // TODO: Implement reset password logic
-                            // }
+                            if (_formKey.currentState!.validate()) {
+                              _sendResetPasswordRequest();
+                            }
                           },
                         ),
                       ),

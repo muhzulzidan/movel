@@ -1,8 +1,8 @@
-import 'dart:math';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../driver_home_content.dart';
 
 class TopUpScreen extends StatelessWidget {
@@ -122,8 +122,23 @@ class TopUpScreen extends StatelessWidget {
                   ElevatedButton.icon(
                     // onPressed: () => launch('tel:+6281234567890'),
                     // onPressed: null,
-                    onPressed: () => launchUrl(
-                        'https://wa.me/+6281354789375?text=Hello' as Uri),
+                    onPressed: () async {
+                      var contact = "+6281354789375";
+                      var androidUrl =
+                          "whatsapp://send?phone=$contact&text=Mau top up movel";
+                      var iosUrl =
+                          "https://wa.me/$contact?text=${Uri.parse('Mau top up movel')}";
+
+                      try {
+                        if (Platform.isIOS) {
+                          await launchUrl(Uri.parse(iosUrl));
+                        } else {
+                          await launchUrl(Uri.parse(androidUrl));
+                        }
+                      } on Exception {
+                        EasyLoading.showError('WhatsApp is not installed.');
+                      }
+                    },
 
                     icon: Icon(Icons.call),
                     label: Text('Hubungi Admin'),

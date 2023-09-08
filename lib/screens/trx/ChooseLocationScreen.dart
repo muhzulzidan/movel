@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,6 +75,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
 
     if (response.statusCode == 200) {
       final data = response.json();
+      print("kota_kab : $data");
       if (data.containsKey('status')) {
         // Handle response with 'status' key
         throw Exception(data['status']);
@@ -116,6 +116,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
 
     if (response.statusCode == 200) {
       final data = response.json();
+      print(data);
       if (data.containsKey('status')) {
         // Handle response with 'status' key
         throw Exception(data['status']);

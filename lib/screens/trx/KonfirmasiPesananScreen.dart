@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
+import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../pesanan.dart';
@@ -188,7 +189,7 @@ class KonfirmasiPesananScreen extends StatelessWidget {
 
                 if (response.statusCode == 200) {
                   // Handle successful response here
-
+                  print("user order: ${response.json()}");
                   // Update the bottom navigation index by calling the function with the desired index
                   final currentIndexProvider =
                       Provider.of<CurrentIndexProvider>(context, listen: false);

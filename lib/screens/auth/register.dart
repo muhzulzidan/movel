@@ -366,18 +366,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     // and wait for the response
     final response =
         await Requests.post('https://api.movel.id/api/user/register', body: {
-      // 'name': "zidan",
-      // 'role_id': "2",
-      // 'no_hp': "08111111111",
-      // 'email': "zidan3@gmail.com",
-      // 'password': "zidan100",
-      // 'password_confirmation': "zidan100",
-      'name': name,
+      'name': "zidan",
       'role_id': "2",
-      'no_hp': phoneNumber,
-      'email': email,
-      'password': password,
-      'password_confirmation': passwordConfirmation,
+      'no_hp': "08111111111",
+      'email': "zidan4@gmail.com",
+      'password': "zidan100",
+      'password_confirmation': "zidan100",
+      // 'name': name,
+      // 'role_id': "2",
+      // 'no_hp': phoneNumber,
+      // 'email': email,
+      // 'password': password,
+      // 'password_confirmation': passwordConfirmation,
     });
 
     String message = '';
@@ -401,6 +401,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       // Unexpected response
       print(response);
+      print(response.json());
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
