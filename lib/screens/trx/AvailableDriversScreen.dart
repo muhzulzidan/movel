@@ -17,8 +17,8 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
   @override
   void initState() {
     super.initState();
-    fetchAvailableDrivers();
     fetchData();
+    fetchAvailableDrivers();
   }
 
   Future<void> fetchData() async {
@@ -41,18 +41,24 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
     print(token);
     final headers = {
       'Authorization': 'Bearer $token',
+      'Accept': 'application/json',
     };
     final _selectedKotaAsalId = prefs.getInt('selectedKotaAsalId');
     final _selectedKotaTujuanId = prefs.getInt('selectedKotaTujuanId');
     final _selectedDate = prefs.getString('selectedDate');
     final _selectedTime = prefs.getString('selectedTime');
+    // Convert the string back to an int.
+    int? _selectedTimeAsInt = int.tryParse(_selectedTime ?? "");
 
     final body = {
       "kota_asal_id": _selectedKotaAsalId,
       "kota_tujuan_id": _selectedKotaTujuanId,
       "date_departure": _selectedDate,
-      "time_departure_id": _selectedTime
+      "time_departure_id": _selectedTimeAsInt
     };
+
+    print("Sending request with headers: $headers");
+    print("Sending request with body: $body");
     try {
       final response = await Requests.post(
         url,
@@ -98,6 +104,8 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
           final data = (response.json());
           print(data);
           print(response.statusCode);
+          print(response.body);
+          print(response.headers);
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -113,13 +121,13 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
           );
         }
       }
-    } catch (error) {
-      print(error);
+    } catch (error, stacktrace) {
+      print("Exception occured: $error stackTrace: $stacktrace");
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Error'),
-          content: Text('An error occurred. Please try again.'),
+          content: Text('An error occurred: $error'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

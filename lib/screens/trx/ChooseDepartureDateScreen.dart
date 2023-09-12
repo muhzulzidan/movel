@@ -261,42 +261,39 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: PopupMenuButton<TimesofDepart>(
-                        initialValue: selectedMenu,
-                        // Callback that sets the selected popup menu item.
-                        onSelected: (TimesofDepart item) {
-                          setState(() {
-                            selectedMenu = item;
-                          });
-                        },
-                        itemBuilder: (BuildContext context) =>
-                            sampleItems.map((item) {
-                          return PopupMenuItem<TimesofDepart>(
-                            value: item,
-                            child: Text(item.timeName),
-                          );
-                        }).toList(),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 21, vertical: 0),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<TimesofDepart>(
+                          isExpanded: true,
+                          value: selectedMenu,
+                          style: TextStyle(fontSize: 15, color: Colors.black45),
+                          hint: Text(
+                            "Pilih Jam Keberangkatan",
+                            style:
+                                TextStyle(fontSize: 12, color: Colors.black54),
+                          ),
+                          icon: Padding(
+                            padding: const EdgeInsets.only(left: 21),
+                            child: Icon(Icons.access_time_rounded),
+                          ),
+                          onChanged: (TimesofDepart? item) {
+                            setState(() {
+                              selectedMenu = item;
+                            });
+
+                            print("selectedMenu $selectedMenu");
+                            print("selectedMenu id ${selectedMenu?.id}");
+                            print("selectedMenu item $item");
+                          },
+                          items: sampleItems.map((TimesofDepart item) {
+                            return DropdownMenuItem<TimesofDepart>(
+                              value: item,
+                              child: Text(item.timeName),
+                            );
+                          }).toList(),
+                        ),
                       ),
-                      // child: TextFormField(
-                      //   controller: _selectedTimeController,
-                      //   decoration: InputDecoration(
-                      //     labelStyle:
-                      //         TextStyle(fontSize: 12, color: Colors.black54),
-                      //     hintStyle:
-                      //         TextStyle(fontSize: 12, color: Colors.black54),
-                      //     border: InputBorder.none,
-                      //     contentPadding: EdgeInsets.symmetric(
-                      //         horizontal: 21, vertical: 10),
-                      //     hintText: 'Pilih Jam Keberangkatan',
-                      //     suffixIcon: Padding(
-                      //       padding: const EdgeInsets.only(right: 21),
-                      //       child: Icon(Icons.schedule),
-                      //     ),
-                      //   ),
-                      //   onTap: () {
-                      //     _showTimePicker(context);
-                      //   },
-                      // ),
                     ),
                   ],
                 ),
@@ -323,7 +320,8 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
               onPressed: () async {
                 // String timeCategory = _getTimeCategory(_selectedTime);
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setString('selectedDate', "2023-05-20");
+                prefs.setString('selectedDate', "$_selectedDateValues");
+
                 prefs.setString('selectedTime',
                     selectedMenu?.id.toString() ?? ""); // Use the selectedMenu
                 Navigator.push(
@@ -374,12 +372,15 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
         _selectedDate = picked;
         _selectedDateController.text =
             "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
-        _selectedDateValues =
-            "${_selectedDate.year}-${_selectedDate.month}-${_selectedDate.day}";
+        // Pad the day and month with leading zeros to ensure they are two digits
+        String paddedDay = _selectedDate.day.toString().padLeft(2, '0');
+        String paddedMonth = _selectedDate.month.toString().padLeft(2, '0');
+
+        _selectedDateValues = "${_selectedDate.year}-$paddedMonth-$paddedDay";
       });
       print(_selectedDateController.text);
-      print(_selectedDate);
-      print(_selectedDateValues);
+      print("_selectedDate $_selectedDate");
+      print("_selectedDateValues $_selectedDateValues");
     }
   }
 
