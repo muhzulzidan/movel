@@ -91,7 +91,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
       },
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       final data = response.json();
       if (data.containsKey('status')) {
         // Handle response with 'status' key
@@ -675,7 +675,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
     );
     if (picked != null && picked != _selectedTime) {
       setState(() {
-        final pickedTime = ("${picked.hour}:${picked.minute}");
+        final pickedTime =
+            ("${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}");
         _pickedTime = pickedTime;
         _selectedTime = picked;
         final formattedTime =

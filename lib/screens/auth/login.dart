@@ -234,8 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // user
     // final email = "zulzdn@gmail.com";
     // const password = "zidan100";
-    final email = "nuryamukhtar@gmail.com";
-    const password = "12345678";
+    // final email = "nuryamukhtar@gmail.com";
+    // const password = "12345678";
 
     // const email = "zulzdn@sopir.com";
     // final email = "zidan@movel.id";
@@ -246,8 +246,10 @@ class _LoginScreenState extends State<LoginScreen> {
     // final password = "123456";
     // final email = "zidan@movel.id";
     // final password = "zidan2023";
-    // final email = "sopirbaru@gmail.com";
-    // final password = "123456";
+    final email = "shym@gmail.com";
+    final password = "12345678";
+    // final email = "zidan@gmail.com";
+    // final password = "zidan100";
 
     final result = await _authService.login(email, password);
 
