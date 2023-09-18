@@ -7,13 +7,6 @@ import 'package:movel/screens/auth/login.dart';
 import 'package:requests/requests.dart';
 
 class RegisterScreen extends StatefulWidget {
-  // final AuthService _authService = AuthService();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmationController =
-      TextEditingController();
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -25,6 +18,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
       TextEditingController();
+
+  String? _selectedGender;
 
   bool _isLoading = false;
   bool _passwordVisible = false;
@@ -221,23 +216,98 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     SizedBox(
                       height: 20,
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.end,
-                    //   children: [
-                    //     TextButton(
-                    //       onPressed: () => {},
-                    //       style: ElevatedButton.styleFrom(
-                    //         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    //         minimumSize: Size.zero,
-                    //         padding: EdgeInsets.zero,
-                    //         backgroundColor: Colors.transparent,
-                    //       ),
-                    //       child: Text(
-                    //         "Lupa kata sandi ?",
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          "Pilih Gender",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 4,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedGender = 'Laki-laki';
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 25, vertical: 13),
+                                decoration: BoxDecoration(
+                                  color: _selectedGender == 'Laki-laki'
+                                      ? Colors.deepPurple.shade700
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Laki-laki',
+                                  style: TextStyle(
+                                    color: _selectedGender == 'Laki-laki'
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectedGender = 'Perempuan';
+                                });
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 13),
+                                decoration: BoxDecoration(
+                                  color: _selectedGender == 'Perempuan'
+                                      ? Colors.deepPurple.shade700
+                                      : Colors.white,
+                                  borderRadius: BorderRadius.circular(100),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  'Perempuan',
+                                  style: TextStyle(
+                                    color: _selectedGender == 'Perempuan'
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 20),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
@@ -310,89 +380,39 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final String email = _emailController.text.trim();
     final String password = _passwordController.text.trim();
     final String passwordConfirmation = _passwordController.text.trim();
+    final gender = _selectedGender;
 
-    // final result = await _authService.login(email, password);
-
-    // Perform validation on the input fields
-    // if (name.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please enter your name')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // if (phoneNumber.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please enter your phone number')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // if (email.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please enter your email')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // if (password.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please enter your password')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // if (password != password_confirmation) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Passwords do not match')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // if (password_confirmation.isEmpty) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Please enter your password')),
-    //   );
-    //   _isLoading = false;
-    //   return;
-    // }
-
-    // Send the registration data to your backend server
-    // and wait for the response
     final response =
         await Requests.post('https://api.movel.id/api/user/register', body: {
-      // 'name': "zidan",
+      'name': "zidan",
       // 'role_id': "2",
-      // 'no_hp': "08111111111",
-      // 'email': "zidan3@gmail.com",
-      // 'password': "zidan100",
-      // 'password_confirmation': "zidan100",
-      'name': name,
+      'no_hp': "08111121121",
+      'email': "zidan41@gmail.com",
+      'password': "zidan100",
+      'password_confirmation': "zidan100",
+
+      // 'name': name,
       'role_id': "2",
-      'no_hp': phoneNumber,
-      'email': email,
-      'password': password,
-      'password_confirmation': passwordConfirmation,
+      'gender': gender,
+      // 'no_hp': phoneNumber,
+      // 'email': email,
+      // 'password': password,
+      // 'password_confirmation': passwordConfirmation,
     });
 
     String message = '';
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       // Registration was successful
       print("success");
       final jsonResponse = (response.json());
       print(jsonResponse);
-
+      String message = jsonResponse['message'] ?? 'No message from server';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
             backgroundColor: Colors.deepPurple.shade700,
-            content: Text('Registration Success')),
+            content: Text('Success $message')),
       );
       Navigator.push(
         context,
@@ -401,6 +421,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       // Unexpected response
       print(response);
+      print(response.json());
+      print(response.body);
+      print(response.headers);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             duration: Duration(seconds: 2),
@@ -415,107 +439,5 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(builder: (context) => RegisterScreen()),
       );
     }
-
-    // if (jsonResponse.containsKey('token')) {
-    //   // Registration was successful
-    //   print("success");
-    //   print(jsonResponse);
-
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Registration Success')),
-    //   );
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => LoginScreen()),
-    //   );
-    // } else if (response.statusCode == 200 &&
-    //     jsonResponse.containsKey('status') &&
-    //     jsonResponse['status'] == 'failed') {
-    //   // Registration failed
-    //   print("status failed");
-    //   print(jsonResponse);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('${jsonResponse['message']}')),
-    //   );
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
-    //   );
-    // } else {
-    //   // Unexpected response
-    //   print(jsonResponse);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Registration Failed')),
-    //   );
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
-    //   );
-    // }
-
-    // if (response.statusCode == 200) {
-    //   final jsonResponse = (response.body);
-
-    // } else {
-    //   final jsonResponse = (response.body);
-    //   print(jsonResponse);
-    //   print(response.body);
-    //   print("gagal hhttpnya");
-    //   // HTTP request failed
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('Registration failed')),
-    //   );
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
-    //   );
-    // }
-
-    // Check the response status code
-    // if (response.statusCode == 200) {
-    //   final jsonResponse = (response.body);
-    //   // ScaffoldMessenger.of(context).showSnackBar(
-    //   //   SnackBar(content: Text('${jsonResponse['message']}')),
-    //   // );
-    //   if (jsonResponse['status'] == "failed") {
-    //     print("failed");
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('${jsonResponse['message']}')),
-    //     );
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => RegisterScreen()),
-    //     );
-    //   } else if (jsonResponse['status'] == "success") {
-    //     print("success");
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(content: Text('${jsonResponse['message']}')),
-    //     );
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => LoginScreen()),
-    //     );
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       // SnackBar(content: Text('${jsonResponse['message']}')),
-    //       SnackBar(content: Text('ndak tahu')),
-    //     );
-    //     Navigator.push(
-    //       context,
-    //       MaterialPageRoute(builder: (context) => LoginScreen()),
-    //     );
-    //   }
-    // } else {
-    //   final jsonResponse = (response.body);
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     SnackBar(content: Text('${jsonResponse}')),
-    //   );
-    //   // _isLoading = false;
-    //   // return;
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => RegisterScreen()),
-    //   );
-    // }
   }
 }

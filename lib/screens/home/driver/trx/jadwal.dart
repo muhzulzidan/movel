@@ -21,8 +21,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
   // JamLabel? selectedjam;
 
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _lokasiAsalController = TextEditingController();
-  final TextEditingController _destinasiController = TextEditingController();
+  late TextEditingController _lokasiAsalController = TextEditingController();
+  late TextEditingController _destinasiController = TextEditingController();
 
   final TextEditingController _searchController = TextEditingController();
 
@@ -37,6 +37,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
   int? _selectedKotaAsalId = 6;
   String? _selectedKotaAsalNama;
 
+  bool hasExistingData = false; // Add this flag at the class level
   bool _asalVisibility = true;
   bool _showObject = true;
 
@@ -60,16 +61,73 @@ class _JadwalScreenState extends State<JadwalScreen> {
     // Set the default selected date to today
     _selectedDate = DateTime.now();
     _selectedTime = TimeOfDay.now();
+    Future.wait([
+      _fetchData(),
+      getExistingRouteAndSchedule(),
+    ]).then((List responses) {
+      final data = responses[0];
+      final routeData = responses[1];
 
-    _fetchData().then((data) {
       setState(() {
         _filteredKotaAsal = data;
         _kotaAsal = data;
         _filteredKotaTujuan = data;
         _kotaTujuan = data;
       });
-    }).catchError((error) {
-      print('Error: $error');
+
+      String? kotaAsalName;
+      String? kotaTujuanName;
+      print("routeData $routeData");
+      try {
+        // Find the city names that match the IDs in the existing route and schedule
+        final kotaAsal = _kotaAsal
+            .firstWhere((city) => city['id'] == routeData['kota_asal_id']);
+        final kotaTujuan = _kotaTujuan
+            .firstWhere((city) => city['id'] == routeData['kota_tujuan_id']);
+        print(routeData['kota_asal_id']);
+        print(_kotaAsal);
+        // Assign the names to the initialized variables
+        kotaAsalName = kotaAsal[
+            'nama_kota']; // Replace 'name' with the actual key for the city name
+        kotaTujuanName = kotaTujuan[
+            'nama_kota']; // Replace 'name' with the actual key for the city name
+
+        // Set hasExistingData to true since we have valid data
+        hasExistingData = true; // <-- Add this line here
+      } catch (e) {
+        print('An error occurred: $e');
+      }
+
+      // Use the names here
+      if (kotaAsalName != null && kotaTujuanName != null) {
+        _lokasiAsalController.text = kotaAsalName;
+        _destinasiController.text = kotaTujuanName;
+        _selectedKotaAsalId = routeData['kota_asal_id'];
+        _selectedKotaTujuanId = routeData['kota_tujuan_id'];
+        _pickedDate = routeData['date_departure'];
+        _pickedTime = routeData['time_departure'];
+
+        // Set the default selected date to today
+        // Convert _pickedDate to DateTime
+        _selectedDate = DateTime.parse(_pickedDate);
+
+        // Convert _pickedTime to TimeOfDay
+        final timeParts = _pickedTime.split(':');
+        _selectedTime = TimeOfDay(
+            hour: int.parse(timeParts[0]), minute: int.parse(timeParts[1]));
+
+        // Format the date to your desired format
+        final formattedDate =
+            "${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year}";
+        // Format the time to your desired format
+        final formattedTime = "${timeParts[0]}:${timeParts[1]}";
+
+        // Initialize _selectedDateController and _selectedTimeController
+        _selectedDateController.text = formattedDate;
+        _selectedTimeController.text = formattedTime;
+        // ... and so on
+        setState(() {}); // Call setState to refresh the UI
+      }
     });
 
     WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -79,6 +137,22 @@ class _JadwalScreenState extends State<JadwalScreen> {
         containerHeight = screenHeight - keyboardHeight;
       });
     });
+  }
+
+  Future<Map<String, dynamic>> getExistingRouteAndSchedule() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/drivers/rute_jadwal',
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      return response.json();
+    } else {
+      throw Exception('Failed to fetch existing route and schedule');
+    }
   }
 
   Future<List<dynamic>> _fetchData() async {
@@ -153,6 +227,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
         'time_departure': _pickedTime.toString(),
       };
 
+
       final response = await Requests.post(url, headers: headers, body: body);
       if (response.statusCode == 200) {
         // Request successful, handle the response
@@ -198,17 +273,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final List<DropdownMenuEntry<JamLabel>> jamEntries =
-    //     <DropdownMenuEntry<JamLabel>>[];
-    // for (final JamLabel jam in JamLabel.values) {
-    //   jamEntries.add(
-    //     DropdownMenuEntry<JamLabel>(
-    //       value: jam, label: jam.label,
-    //       // enabled: jam.label != 'Pagi'
-    //     ),
-    //   );
-    // }
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.deepPurple.shade700,
@@ -687,14 +751,3 @@ class _JadwalScreenState extends State<JadwalScreen> {
     }
   }
 }
-
-// enum JamLabel {
-//   pagi('Pagi', 1),
-//   siang('Siang', 2),
-//   malam('Malam', 3);
-
-//   const JamLabel(this.label, this.value);
-
-//   final String label;
-//   final int value;
-// }

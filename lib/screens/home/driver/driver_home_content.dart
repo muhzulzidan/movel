@@ -19,7 +19,7 @@ class DriverHomeContent extends StatefulWidget {
 }
 
 class _DriverHomeContentState extends State<DriverHomeContent> {
-  int saldo = 900000;
+  int saldo = 0; // Initialize with 0 or some default value
   List<Map<String, dynamic>> _seats = [];
 
   // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
@@ -43,6 +43,78 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
         _isLoading = false;
       });
     });
+
+    fetchSaldo();
+  }
+
+// Function to check if a route and schedule exist
+  Future<bool> checkRouteAndSchedule() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/drivers/rute_jadwal',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var jsonResponse = response.json();
+      if (jsonResponse != null && jsonResponse.containsKey('id')) {
+        print("true $jsonResponse");
+        return true; // Route and schedule exist
+      } else {
+        print("false $jsonResponse");
+        return false; // Route and schedule do not exist
+      }
+    } else {
+      throw Exception('Failed to check route and schedule');
+    }
+  }
+
+// Function to set the driver to "Active"
+  Future<void> setDriverActive() async {
+    print("setDriverActive");
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final response = await Requests.put(
+      'https://api.movel.id/api/user/drivers/active',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to set driver to active');
+    }
+  }
+
+  Future<void> fetchSaldo() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    try {
+      final response = await Requests.get(
+        'https://api.movel.id/api/user/drivers/balance',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = response.json();
+        setState(() {
+          saldo = int.parse(data['saldo']);
+        });
+      } else {
+        print("Failed to load balance");
+      }
+    } catch (e) {
+      print("An error occurred: $e");
+    }
   }
 
   void _loadButtonPressedState() async {
@@ -148,11 +220,29 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                   'Inactive request failed with status: ${response.statusCode}');
                             }
                           } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => JadwalScreen()),
-                            );
+                            bool routeExists =
+                                await checkRouteAndSchedule(); // Check if a route and schedule exist
+                            if (routeExists) {
+                              await setDriverActive(); // Set driver to active if a route and schedule exist
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.setBool('aktif',
+                                  true); // Save the active state to SharedPreferences
+                              setState(() {
+                                _isButtonPressed =
+                                    true; // Update the UI to indicate the driver is now active
+                              });
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Status Driver Aktif!')),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        JadwalScreen()), // Navigate to JadwalScreen if no route and schedule exist
+                              );
+                            }
                           }
                         },
                         style: ElevatedButton.styleFrom(
