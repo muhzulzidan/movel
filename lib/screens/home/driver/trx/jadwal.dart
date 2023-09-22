@@ -139,7 +139,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
     });
   }
 
-  Future<Map<String, dynamic>> getExistingRouteAndSchedule() async {
+  Future<Map<String, dynamic>?> getExistingRouteAndSchedule() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     final response = await Requests.get(
@@ -151,7 +151,9 @@ class _JadwalScreenState extends State<JadwalScreen> {
     if (response.statusCode == 200) {
       return response.json();
     } else {
-      throw Exception('Failed to fetch existing route and schedule');
+      print(
+          'Failed to fetch existing route and schedule. Status code: ${response.statusCode}');
+      return null;
     }
   }
 
@@ -227,9 +229,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
         'time_departure': _pickedTime.toString(),
       };
 
-
       final response = await Requests.post(url, headers: headers, body: body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         // Request successful, handle the response
         print(response.body);
         await prefs.setBool('aktif', true); // Update with your desired value

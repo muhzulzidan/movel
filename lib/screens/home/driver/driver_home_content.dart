@@ -24,7 +24,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
 
   // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
   Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
-  bool _isButtonPressed = false;
+  late bool _isButtonPressed;
   bool _isBerangkat = false;
   bool _isLoading = true;
 
@@ -62,13 +62,19 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     if (response.statusCode == 200) {
       var jsonResponse = response.json();
       if (jsonResponse != null && jsonResponse.containsKey('id')) {
-        print("true $jsonResponse");
+        print("Route and schedule exist: $jsonResponse");
         return true; // Route and schedule exist
       } else {
-        print("false $jsonResponse");
+        print("Route and schedule do not exist: $jsonResponse");
         return false; // Route and schedule do not exist
       }
+    } else if (response.statusCode == 404 &&
+        response.body.contains("Rute jadwal not found")) {
+      // Handle the specific error message or status code for "Rute jadwal not found"
+      return false;
     } else {
+      print("Error status code: ${response.statusCode}");
+      print("Error response body: ${response.body}");
       throw Exception('Failed to check route and schedule');
     }
   }
@@ -125,6 +131,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
       _isButtonPressed = aktif;
     });
     print("_isButtonPressed : $_isButtonPressed");
+    print("aktif : $aktif");
   }
 
   Future<List<Map<String, dynamic>>> fetchSeatData() async {
@@ -186,10 +193,10 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                       child: ElevatedButton(
                         onPressed: () async {
                           if (_isButtonPressed) {
+                            // Deactivate the driver
                             final prefs = await SharedPreferences.getInstance();
                             await prefs.setBool('aktif', false);
                             final token = prefs.getString('token');
-                            // Make the PUT request to the endpoint
 
                             final response = await Requests.put(
                               'https://api.movel.id/api/user/drivers/inactive',
@@ -201,9 +208,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                               setState(() {
                                 _isButtonPressed = false;
                               });
-                              // Request successful, handle the response
-                              print(response.body);
-                              print('Inactive request success');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     content:
@@ -215,22 +219,16 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                     content:
                                         Text('Status Driver Tidak berubah!')),
                               );
-                              // Request failed, handle the error
-                              print(
-                                  'Inactive request failed with status: ${response.statusCode}');
                             }
                           } else {
-                            bool routeExists =
-                                await checkRouteAndSchedule(); // Check if a route and schedule exist
+                            bool routeExists = await checkRouteAndSchedule();
                             if (routeExists) {
-                              await setDriverActive(); // Set driver to active if a route and schedule exist
+                              await setDriverActive();
                               final prefs =
                                   await SharedPreferences.getInstance();
-                              await prefs.setBool('aktif',
-                                  true); // Save the active state to SharedPreferences
+                              await prefs.setBool('aktif', true);
                               setState(() {
-                                _isButtonPressed =
-                                    true; // Update the UI to indicate the driver is now active
+                                _isButtonPressed = true;
                               });
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Status Driver Aktif!')),
@@ -239,8 +237,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        JadwalScreen()), // Navigate to JadwalScreen if no route and schedule exist
+                                    builder: (context) => JadwalScreen()),
                               );
                             }
                           }
