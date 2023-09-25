@@ -24,7 +24,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
 
   // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
   Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
-  late bool _isButtonPressed;
+  bool _isButtonPressed = false;
   bool _isBerangkat = false;
   bool _isLoading = true;
 
