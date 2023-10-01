@@ -386,8 +386,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         await Requests.post('https://api.movel.id/api/user/register', body: {
       'name': "zidan",
       // 'role_id': "2",
-      'no_hp': "08111121121",
-      'email': "zidan41@gmail.com",
+      'no_hp': "081111211400",
+      'email': "zidan400@gmail.com",
       'password': "zidan100",
       'password_confirmation': "zidan100",
 

@@ -239,6 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "nuryamukhtar@gmail.com";
     // const password = "12345678";
     // final email = "zidan4@gmail.com";
+    // final email = "zidan400@gmail.com";
     // const password = "zidan100";
 
     // const email = "zulzdn@sopir.com";
