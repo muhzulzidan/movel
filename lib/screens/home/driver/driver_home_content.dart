@@ -23,16 +23,21 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
   List<Map<String, dynamic>> _seats = [];
 
   // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
-  Set<String> _selectedSeats = <String>{}; // Keep track of selected seats
+  Set<int> _selectedSeats = <int>{};
+
   bool _isButtonPressed = false;
   bool _isBerangkat = false;
   bool _isLoading = true;
+  String? _kotaAsalName;
+  String? _kotaTujuanName;
 
   @override
   void initState() {
     super.initState();
     _loadButtonPressedState();
+    fetchRouteData();
     fetchSeatData().then((seatData) {
+      print("seatData $seatData");
       setState(() {
         _seats = seatData;
         _isLoading = false;
@@ -45,6 +50,61 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     });
 
     fetchSaldo();
+  }
+
+  Future<void> addSeatForDriver(List<int> seatIds) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final url = 'https://api.movel.id/api/user/orders/driver/take_self';
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+    // final body = jsonEncode({
+    //   'seat_car_choices': seatIds,
+    // });
+
+    final body = '''
+    {
+    "seat_car_choices": $seatIds
+    }
+    ''';
+    print('Headers: $headers');
+    print('Body: $body');
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers,
+        body: body,
+      );
+      print('Response: ${response.content()}');
+      // print('Response: ${response.json()}');
+    } catch (e) {
+      print('Error making the request: $e');
+    }
+  }
+
+  Future<void> fetchRouteData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final response = await Requests.get(
+      'https://api.movel.id/api/user/drivers/rute_jadwal',
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      print('API Response: ${response.content()}');
+      final routeData = response.json();
+      setState(() {
+        _kotaAsalName = routeData['kota_asal'];
+        _kotaTujuanName = routeData['kota_tujuan'];
+      });
+    } else {
+      print('Failed to fetch route data. Status code: ${response.statusCode}');
+    }
   }
 
 // Function to check if a route and schedule exist
@@ -309,7 +369,9 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                           elevation: 4,
                         ),
                         child: Text(
-                          'Atur Rute dan Jadwal',
+                          _kotaAsalName != null && _kotaTujuanName != null
+                              ? '$_kotaAsalName - $_kotaTujuanName'
+                              : 'Atur Rute dan Jadwal',
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w700,
@@ -620,7 +682,10 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
 
   Widget buildSeatCard(Map<String, dynamic> seat) {
     final String labelSeat = seat['label_seat'] as String;
-    final bool isSelected = _selectedSeats.contains(labelSeat);
+    // final bool isSelected = _selectedSeats.contains(labelSeat);
+
+    final int idLabel = seat['id_label'] as int;
+    final bool isSelected = _selectedSeats.contains(idLabel);
 
     final int isFilled = seat['is_filled'] as int; // Update the casting to int
     final Color backgroundColor = isSelected ? Colors.amber : Colors.white;
@@ -739,16 +804,20 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     ],
                   );
                 },
-              ).then((confirmed) {
+              ).then((confirmed) async {
+                final int idLabel = seat['id_label'] as int;
+
                 if (confirmed != null && confirmed) {
                   setState(() {
-                    final String selectedSeat = seat['label_seat'] as String;
-                    if (_selectedSeats.contains(selectedSeat)) {
-                      _selectedSeats.remove(selectedSeat);
+                    if (_selectedSeats.contains(idLabel)) {
+                      _selectedSeats.remove(idLabel);
                     } else {
-                      _selectedSeats.add(selectedSeat);
+                      _selectedSeats.add(idLabel);
                     }
                   });
+                  print('Selected Seat IDs: $_selectedSeats');
+
+                  await addSeatForDriver(_selectedSeats.toList());
                 }
               });
             },
