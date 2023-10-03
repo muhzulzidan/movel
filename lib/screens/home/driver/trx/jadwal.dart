@@ -530,72 +530,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                                 ],
                               ),
                             )
-                            // Visibility(
-                            //   visible: _showObject &&
-                            //       _activeSections.contains('jadwal'),
-                            //   child: Column(
-                            //     crossAxisAlignment: CrossAxisAlignment.start,
-                            //     children: [
-                            //       Text(
-                            //         "Jam Keberangkatan",
-                            //         style: TextStyle(
-                            //             color: Colors.white, fontSize: 12),
-                            //       ),
-                            //       SizedBox(height: 5),
-                            //       Container(
-                            //         padding: EdgeInsets.symmetric(
-                            //             horizontal: 21, vertical: 1),
-                            //         decoration: BoxDecoration(
-                            //           color: Colors.white,
-                            //           borderRadius: BorderRadius.circular(100),
-                            //         ),
-                            //         child: Padding(
-                            //           padding: const EdgeInsets.symmetric(
-                            //               vertical: 0),
-                            //           child: DropdownButtonFormField<String>(
-                            //             onTap: () {},
-                            //             decoration: InputDecoration(
-                            //               border: InputBorder.none,
-                            //               // contentPadding: EdgeInsets.symmetric(
-                            //               //     horizontal: 21, vertical: 10),
-                            //               // hintText: 'tanggal/bulan/tahun',
-                            //               // suffixIcon: Padding(
-                            //               //   padding: const EdgeInsets.only(
-                            //               //       right: 20),
-                            //               //   child: Icon(
-                            //               //       Icons.calendar_month_outlined),
-                            //               // ),
-                            //             ),
-                            //             icon: Icon(Icons.schedule),
-                            //             style: TextStyle(color: Colors.black54),
-                            //             value: _selectedJam,
-                            //             items: [
-                            //               DropdownMenuItem<String>(
-                            //                 value: "1",
-                            //                 child: Text(
-                            //                   'Pagi',
-                            //                 ),
-                            //               ),
-                            //               DropdownMenuItem<String>(
-                            //                 value: "2",
-                            //                 child: Text('Siang'),
-                            //               ),
-                            //               DropdownMenuItem<String>(
-                            //                 value: "3",
-                            //                 child: Text('Malam'),
-                            //               ),
-                            //             ],
-                            //             onChanged: (String? value) {
-                            //               setState(() {
-                            //                 _selectedJam = value!;
-                            //               });
-                            //             },
-                            //           ),
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
+                           
                           ],
                         )),
                   ),

@@ -188,17 +188,17 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
                     icon: Icons.bookmark_add,
                   ),
                   buildProgressTile(
-                    status: 4,
+                    status: 5,
                     title: "Menuju ke Lokasi Anda",
                     icon: Icons.directions_run,
                   ),
                   buildProgressTile(
-                    status: 5,
+                    status: 6,
                     title: "Telah Tiba di Lokasi Anda",
                     icon: Icons.directions_car,
                   ),
                   buildProgressTile(
-                    status: 6,
+                    status: 7,
                     title: "Anda Telah Tiba di Tujuan",
                     icon: Icons.check_circle,
                   ),
@@ -355,17 +355,17 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
                   ],
                 ),
                 updatepesanan(
-                  status: 4,
+                  status: 5,
                   title: "Menuju ke Titik Jemput",
                   onPressed: () => _updatePesanan("${widget.orderid}"),
                 ),
                 updatepesanan(
-                  status: 5,
+                  status: 6,
                   title: "Tiba di Titik Jemput",
                   onPressed: () => _tibaDiTitikJemput("${widget.orderid}"),
                 ),
                 updatepesanan(
-                  status: 6,
+                  status: 7,
                   title: "Selesai",
                   onPressed: () => _pesananSelesai("${widget.orderid}"),
                 ),

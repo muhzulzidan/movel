@@ -675,7 +675,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                         ),
                       ),
                       AlertDialog(
-                        // title: Text('Yakin ingin menambahkan penumpang?'),
                         content: Text(
                           'Yakin ingin menambahkan penumpang?',
                           style: TextStyle(
@@ -732,19 +731,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                     ),
                                   ),
                                 ),
-
-                                // TextButton(
-                                //   onPressed: () {
-                                //     Navigator.of(context).pop(false); // No
-                                //   },
-                                //   child: Text('Tidak'),
-                                // ),
-                                // TextButton(
-                                //   onPressed: () {
-                                //     Navigator.of(context).pop(true); // Yes
-                                //   },
-                                //   child: Text('Ya'),
-                                // ),
                               ],
                             ),
                           ),
