@@ -21,6 +21,7 @@ class DriverHomeContent extends StatefulWidget {
 class _DriverHomeContentState extends State<DriverHomeContent> {
   int saldo = 0; // Initialize with 0 or some default value
   List<Map<String, dynamic>> _seats = [];
+  bool _hasAcceptedOrders = false;
 
   // List<String> _seats = ['1A', '1B', '1C', '2A', '2B', '2C', '3A', '3B', '3C'];
   Set<int> _selectedSeats = <int>{};
@@ -50,6 +51,44 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     });
 
     fetchSaldo();
+    _fetchAcceptedOrders(); // Add this line
+  }
+
+  Future<void> _fetchAcceptedOrders() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    try {
+      final url = 'https://api.movel.id/api/user/orders/driver/accepted';
+      final headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+
+      final response = await Requests.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        final jsonData = response.json();
+        final acceptedOrders = jsonData['data'];
+        if (acceptedOrders.isNotEmpty) {
+          setState(() {
+            _hasAcceptedOrders = true;
+          });
+        } else {
+          setState(() {
+            _hasAcceptedOrders = false;
+          });
+        }
+
+        print(acceptedOrders);
+      } else {
+        print("Failed to fetch accepted orders");
+        print(response.body);
+        print(response.json());
+        // throw Exception('Failed to fetch accepted orders');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> addSeatForDriver(List<int> seatIds) async {
@@ -354,11 +393,23 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => JadwalScreen()),
-                          );
+                          if (!_hasAcceptedOrders) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'You cannot change the route anymore.'),
+                                duration: Duration(seconds: 2),
+                                backgroundColor: Colors.red.shade700,
+                                // behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => JadwalScreen()),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 12),
@@ -478,7 +529,9 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => TopUpScreen()),
+                                        builder: (context) =>
+                                            TopUpScreen(saldo: saldo),
+                                      ),
                                     );
                                   },
                                   child: Row(

@@ -166,15 +166,6 @@ class _PesananDriverDiterimaScreenState
       });
     }
   }
-  // final List<Map<String, dynamic>> acceptedOrders = [
-  //   {
-  //     'name': 'Ahmad Risaldi',
-  //     'pickupLocation': 'Jl. Sambaloge Baru No. 13',
-  //     'destination': 'Hotel Clarion',
-  //     'orderDate': '16 April 2023',
-  //   },
-  //   // Add more accepted orders here...
-  // ];
 
   @override
   Widget build(BuildContext context) {

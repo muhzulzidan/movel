@@ -1,26 +1,20 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../driver_home_content.dart';
 
 class TopUpScreen extends StatelessWidget {
+   final int saldo;
+
+  TopUpScreen({required this.saldo});
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.deepPurple.shade700,
-      //   iconTheme: IconThemeData(
-      //     color: Colors.white,
-      //   ),
-      //   title: Text(
-      //     'Top Up',
-      //     style: TextStyle(
-      //       color: Colors.white,
-      //     ),
-      //   ),
-      // ),
       body: SafeArea(
         child: Column(
           children: [
@@ -80,7 +74,7 @@ class TopUpScreen extends StatelessWidget {
                       ),
                       // SizedBox(height: 8),
                       Text(
-                        'Rp. 900.000',
+                        'Rp. ${NumberFormat.currency(locale: 'id', symbol: '').format(saldo)}',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -128,12 +122,6 @@ class TopUpScreen extends StatelessWidget {
                     icon: Icon(Icons.call),
                     label: Text('Hubungi Admin'),
                   ),
-                  // ElevatedButton(
-                  //   onPressed: () {
-                  //     // Implement your logic to contact the admin
-                  //   },
-                  //   child: Text('Hubungi Admin'),
-                  // ),
                 ],
               ),
             ),
