@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
@@ -93,41 +94,36 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
   }
 
   Future<List<dynamic>> _fetchDatathree() async {
-    // final dio = Dio();
-    // final cookieJar = CookieJar();
-    // Add the CookieJar to Dio's HttpClientAdapter
+    final completer = Completer<List<dynamic>>();
 
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
+    final headers = {'Authorization': 'Bearer $token'};
 
-    // final options = Options(
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //   },
-    // );
-
-    final response = await Requests.get(
+    Requests.get(
       'https://api.movel.id/api/user/kota_kab/three',
-      // options: options,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = response.json();
-      if (data.containsKey('status')) {
-        // Handle response with 'status' key
-        throw Exception(data['status']);
+      headers: headers,
+    ).then((response) {
+      if (response.statusCode == 200) {
+        final data = response.json();
+        if (data.containsKey('status')) {
+          // Handle response with 'status' key
+          completer.completeError(Exception(data['status']));
+        } else {
+          final cities = data['data'];
+          completer.complete(cities);
+        }
       } else {
-        final cities = data['data'];
-
-        return cities;
+        completer.completeError(Exception(
+            'Failed to load data, Status Code: ${response.statusCode}'));
       }
-    } else {
-      throw Exception(
-          'Failed to load data, Status Code: ${response.statusCode}');
-    }
+    }).catchError((e) {
+      // Handle exceptions here, e.g., log the error or show a message to the user
+      print('Error fetching data: $e');
+      completer.completeError(e);
+    });
+
+    return completer.future;
   }
 
   // Future<void> setKotaAsal(int kotaAsalId) async {

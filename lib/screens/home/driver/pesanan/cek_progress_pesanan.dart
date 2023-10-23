@@ -113,13 +113,36 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
         print("jsonData : $jsonData");
         _fetchAcceptedOrders();
       } else {
+        final jsonData = response.json();
         _fetchAcceptedOrders();
+        final message = jsonData['message'];
+        // Print some debug information
+        print("Showing SnackBar with message: $message");
+        print("Using context: $context");
+        _showSnackBar(context, message);
         throw Exception('Failed to update pesanan');
       }
     } catch (e) {
       print("error");
       print(e);
+      _showSnackBar(context, 'An error occurred');
     }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    // final snackBar = SnackBar(
+    //   content: Text(message),
+    //   duration: Duration(seconds: 3),
+    // );
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: 2),
+        backgroundColor: Colors.deepPurple.shade700,
+        // behavior: SnackBarBehavior.floating,
+      ),
+    );
+    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Future<void> _fetchAcceptedOrders() async {
@@ -329,28 +352,32 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
               children: [
                 Row(
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${widget.name}",
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "${widget.name}",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.start,
                           ),
-                          textAlign: TextAlign.start,
-                        ),
-                        Text(
-                          "Titik Jemput : ${widget.pickupLocation}",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
+                          Text(
+                            "Titik Jemput : ${widget.pickupLocation}",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.start,
                           ),
-                          textAlign: TextAlign.start,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -222,16 +222,16 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     }
   }
 
-  void _loadButtonPressedState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final aktif = prefs.getBool('aktif') ??
-        false; // Set the default value to false if it doesn't exist
-    setState(() {
-      _isButtonPressed = aktif;
-    });
-    print("_isButtonPressed : $_isButtonPressed");
-    print("aktif : $aktif");
-  }
+    void _loadButtonPressedState() async {
+      final prefs = await SharedPreferences.getInstance();
+      final aktif = prefs.getBool('aktif') ??
+          false; // Set the default value to false if it doesn't exist
+      setState(() {
+        _isButtonPressed = aktif;
+      });
+      print("_isButtonPressed : $_isButtonPressed");
+      print("aktif : $aktif");
+    }
 
   Future<List<Map<String, dynamic>>> fetchSeatData() async {
     final apiUrl = 'https://api.movel.id/api/user/drivers/seat_cars';
