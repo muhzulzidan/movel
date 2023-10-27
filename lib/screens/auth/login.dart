@@ -241,7 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "zidan4@gmail.com";
     // final email = "zidan400@gmail.com";
     // final email = "zidan41@gmail.com";
-    final email = "zidanPenumpang501@gmail.com";
+    // final email = "zidanPenumpang501@gmail.com";
     // final email = "zidanPenumpang502@gmail.com";
     // final email = "zidanPenumpang503@gmail.com";
     // final email = "zidanPenumpang505@gmail.com";
@@ -265,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "anjing@gmail.com";
     // final email = "zidan3@gmail.com";
     // final email = "zidan2@gmail.com";
-    // final email = "zidansopir5@gmail.com";
+    final email = "zidansopir5@gmail.com";
     // final email = "zidan5@gmail.com";
     // final email = "zidansopir6@gmail.com";
     final password = "zidan100";

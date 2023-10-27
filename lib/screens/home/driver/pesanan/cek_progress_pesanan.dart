@@ -111,10 +111,11 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
       if (response.statusCode == 200) {
         final jsonData = response.json();
         print("jsonData : $jsonData");
-        _fetchAcceptedOrders();
+        _showSnackBar(context, jsonData);
+        // _fetchAcceptedOrders();
       } else {
         final jsonData = response.json();
-        _fetchAcceptedOrders();
+        // _fetchAcceptedOrders();
         final message = jsonData['message'];
         // Print some debug information
         print("Showing SnackBar with message: $message");

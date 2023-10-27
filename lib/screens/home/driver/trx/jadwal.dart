@@ -249,6 +249,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
           SnackBar(content: Text('Rute Gagal!')),
         );
         print('Request failed with status: ${response.statusCode}');
+        print('Request failed with status: ${response.body}');
+        print('Request failed with status: ${response.json()}');
       }
     }
   }
@@ -530,7 +532,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
                                 ],
                               ),
                             )
-                           
                           ],
                         )),
                   ),
