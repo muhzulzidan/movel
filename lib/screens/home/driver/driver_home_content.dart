@@ -222,16 +222,49 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     }
   }
 
-    void _loadButtonPressedState() async {
-      final prefs = await SharedPreferences.getInstance();
-      final aktif = prefs.getBool('aktif') ??
-          false; // Set the default value to false if it doesn't exist
-      setState(() {
-        _isButtonPressed = aktif;
-      });
-      print("_isButtonPressed : $_isButtonPressed");
-      print("aktif : $aktif");
+  // void _loadButtonPressedState() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final aktif = prefs.getBool('aktif') ??
+  //       false; // Set the default value to false if it doesn't exist
+  //   setState(() {
+  //     _isButtonPressed = aktif;
+  //   });
+  //   print("_isButtonPressed : $_isButtonPressed");
+  //   print("aktif : $aktif");
+  // }
+
+  Future<void> _loadButtonPressedState() async {
+    final prefs = await SharedPreferences.getInstance();
+    final aktif = prefs.getBool('aktif') ?? false; // Default value is false
+    setState(() {
+      _isButtonPressed = aktif;
+    });
+
+    // Make the API request
+    try {
+      final response = await Requests.get(
+        'https://api.movel.id/api/user/drivers/rute_jadwal',
+        // Add any required headers here
+      );
+
+      if (response.statusCode == 200) {
+        final jsonData = response.json();
+        final isActive = jsonData['is_active'] == 1;
+        if (isActive) {
+          _isButtonPressed = true; // Set the button to active
+        } else {
+          _isButtonPressed = false; // Set the button to inactive
+        }
+      } else if (response.statusCode == 404) {
+        _isButtonPressed = false; // Set the button to inactive
+      }
+    } catch (e) {
+      print("API request error: $e");
     }
+
+    print("_isButtonPressed : $_isButtonPressed");
+    print("aktif : $aktif");
+  }
 
   Future<List<Map<String, dynamic>>> fetchSeatData() async {
     final apiUrl = 'https://api.movel.id/api/user/drivers/seat_cars';

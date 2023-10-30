@@ -384,20 +384,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final response =
         await Requests.post('https://api.movel.id/api/user/register', body: {
-      'name': "zidanPenumpang64",
+      // 'name': "zidanPenumpang64",
       // 'role_id': "2",
-      'no_hp': "0811112115064",
-      'email': "zidanPenumpang64@gmail.com",
-      'password': "zidan100",
-      'password_confirmation': "zidan100",
+      // 'no_hp': "0811112115064",
+      // 'email': "zidanPenumpang64@gmail.com",
+      // 'password': "zidan100",
+      // 'password_confirmation': "zidan100",
 
-      // 'name': name,
+      'name': name,
       'role_id': "2",
       'gender': gender,
-      // 'no_hp': phoneNumber,
-      // 'email': email,
-      // 'password': password,
-      // 'password_confirmation': passwordConfirmation,
+      'no_hp': phoneNumber,
+      'email': email,
+      'password': password,
+      'password_confirmation': passwordConfirmation,
     });
 
     String message = '';

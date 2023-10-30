@@ -2,16 +2,64 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:requests/requests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'chat/inbox.dart';
 
-class PesananScreen extends StatelessWidget {
+class PesananScreen extends StatefulWidget {
+  @override
+  State<PesananScreen> createState() => _PesananScreenState();
+}
+
+class _PesananScreenState extends State<PesananScreen> {
   // final Function(int) updateSelectedIndex;
+  Map<String, dynamic>? orderStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchOrderStatus();
+  }
+
+  Future<void> _fetchOrderStatus() async {
+    final data = await _fetchOrderStatusData();
+    if (data != null) {
+      setState(() {
+        orderStatus = data;
+      });
+    }
+  }
+
+  Future<Map<String, dynamic>?> _fetchOrderStatusData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
+      final response = await Requests.get(
+        'https://api.movel.id/api/user/orders/passenger/status',
+        // Add any required headers here
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.json();
+        print("fetchorder status data $responseData");
+        return responseData['data'];
+      } else {
+        return null; // Return null if the request failed
+      }
+    } catch (e) {
+      print("API request error: $e");
+      return null;
+    }
+  }
 
   // const PesananScreen({Key? key, required this.updateSelectedIndex})
-  //     : super(key: key);
   @override
   Widget build(BuildContext context) {
+    print("orderStatus : $orderStatus");
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progres Pesanan Anda"),
@@ -58,7 +106,7 @@ class PesananScreen extends StatelessWidget {
             ],
           ),
         ),
-        buildPromoImage('assets/promo.png'),
+        // buildPromoImage('assets/promo.png'),
       ]),
     );
   }
@@ -132,7 +180,7 @@ class PesananScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "John Doe",
+                  " ${orderStatus?['driver_name']} ",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -141,7 +189,7 @@ class PesananScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 Text(
-                  "DW 4573 WT",
+                  " ${orderStatus?['car_plate_number']}",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.normal,
@@ -194,11 +242,58 @@ class PesananScreen extends StatelessWidget {
                                       ),
                                       elevation: 4,
                                     ),
-                                    onPressed: () {
-                                      // User confirmed the cancellation
-                                      Navigator.of(context)
-                                          .pop(); // Close the dialog
-                                      // TODO: Implement cancel order functionality
+                                    onPressed: () async {
+                                      // Close the dialog
+                                      Navigator.of(context).pop();
+
+                                      // Show a loading indicator
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      );
+
+                                      // Make the API request
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      final token = prefs.getString('token');
+                                      final response = await Requests.post(
+                                        'https://api.movel.id/api/user/orders/passenger/cancel',
+                                        headers: {
+                                          'Accept': 'application/json',
+                                          'Authorization': 'Bearer $token',
+                                        },
+                                      );
+
+                                      // Dismiss the loading indicator
+                                      Navigator.of(context).pop();
+
+                                      if (response.statusCode == 200) {
+                                        // Show a success message
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                "Pembatalan sedang ditinjau!"),
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: Colors.green,
+                                          ),
+                                        );
+                                      } else {
+                                        // Show an error message
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                "Gagal membatalkan pesanan!"),
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: Colors.red,
+                                          ),
+                                        );
+                                      }
                                     },
                                     child: Text(
                                       "ya",
