@@ -53,6 +53,8 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
 
       if (response.statusCode == 200) {
         final jsonData = response.json();
+                print("jsonData : $jsonData");
+        _showSnackBar(context, jsonData['message']);
         print("jsonData : $jsonData");
         _fetchAcceptedOrders();
       } else {
@@ -83,6 +85,8 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
       if (response.statusCode == 200) {
         final jsonData = response.json();
         print("jsonData : $jsonData");
+          print("jsonData : $jsonData");
+        _showSnackBar(context, jsonData['message']);
         _fetchAcceptedOrders();
       } else {
         _fetchAcceptedOrders();
@@ -94,7 +98,7 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
     }
   }
 
-  Future<void> _pesananSelesai(String orderid) async {
+Future<void> _pesananSelesai(String orderid) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -111,17 +115,16 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
       if (response.statusCode == 200) {
         final jsonData = response.json();
         print("jsonData : $jsonData");
-        _showSnackBar(context, jsonData);
-        // _fetchAcceptedOrders();
+        _showSnackBar(context, jsonData['message']);
+
+       Future.delayed(Duration(seconds: 2), () {
+          Navigator.of(context)
+              .pop(); // This will take you back to the previous screen
+        });
       } else {
         final jsonData = response.json();
-        // _fetchAcceptedOrders();
         final message = jsonData['message'];
-        // Print some debug information
-        print("Showing SnackBar with message: $message");
-        print("Using context: $context");
-        _showSnackBar(context, message);
-        throw Exception('Failed to update pesanan');
+        _showSnackBar(context, message ?? 'Failed to complete order');
       }
     } catch (e) {
       print("error");
@@ -129,6 +132,7 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
       _showSnackBar(context, 'An error occurred');
     }
   }
+
 
   void _showSnackBar(BuildContext context, String message) {
     // final snackBar = SnackBar(

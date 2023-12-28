@@ -60,6 +60,10 @@ class _PesananScreenState extends State<PesananScreen> {
   @override
   Widget build(BuildContext context) {
     print("orderStatus : $orderStatus");
+    bool isOrderReceived = orderStatus?['status_order_id'] == 2;
+    bool isDriverEnRoute = orderStatus?['status_order_id'] == 4;
+    bool isDriverArrived = orderStatus?['status_order_id'] == 5;
+    bool isOrderCompleted = orderStatus?['status_order_id'] == 6;
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progres Pesanan Anda"),
@@ -72,18 +76,22 @@ class _PesananScreenState extends State<PesananScreen> {
               buildProgressTile(
                 title: "Pesanan Diterima",
                 icon: Icons.bookmark_added,
+                isHighlighted: isOrderReceived,
               ),
               buildProgressTile(
                 title: "Sopir Menuju ke Lokasi Anda",
                 icon: Icons.directions_run,
+                isHighlighted: isDriverEnRoute,
               ),
               buildProgressTile(
                 title: "Sopir Telah Tiba di Lokasi Anda",
                 icon: Icons.directions_car,
+                isHighlighted: isDriverArrived,
               ),
               buildProgressTile(
                 title: "Anda Telah Tiba di Tujuan",
                 icon: Icons.place,
+                isHighlighted: isOrderCompleted,
               ),
             ],
           ),
@@ -122,10 +130,17 @@ class _PesananScreenState extends State<PesananScreen> {
     );
   }
 
-  Widget buildProgressTile({required String title, required IconData icon}) {
+  Widget buildProgressTile(
+      {required String title,
+      required IconData icon,
+      bool isHighlighted = false}) {
+    Color backgroundColor =
+        isHighlighted ? Colors.purple : Colors.grey; // Change colors as needed
+
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
+          // color: backgroundColor,
           border: Border.all(color: Colors.transparent),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -134,19 +149,23 @@ class _PesananScreenState extends State<PesananScreen> {
           children: [
             Icon(
               icon,
-              size: 32, // Adjust the size as needed
+              size: 32,
+              color: isHighlighted
+                  ? Colors.deepPurple.shade700
+                  : Colors.black, // Change icon color based on highlight
             ),
             SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
                 fontSize: 12,
-                // Adjust the font size as needed
+                color: isHighlighted
+                    ? Colors.deepPurple.shade700
+                    : Colors.black, // Change text color based on highlight
               ),
               maxLines: 2,
-              textAlign: TextAlign.center, // Align the text to center if needed
-              overflow: TextOverflow
-                  .ellipsis, // Show ellipsis if the text exceeds two lines
+              textAlign: TextAlign.center,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

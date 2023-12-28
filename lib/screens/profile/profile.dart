@@ -119,34 +119,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Container(
                 // decoration: BoxDecoration(color: Colors.),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EditProfileScreen(userData: _userData),
-                              ),
-                            );
-                          },
-                          child: Column(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 30),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Flexible(
+                          // This will force the text to stay within the available space
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfileScreen(userData: _userData),
+                                ),
+                              );
+                            },
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  // "${_userData["user"]["name"]}",
                                   _userName,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w700,
                                     fontSize: 25,
                                     color: Colors.black,
                                   ),
+                                  softWrap: true,
+                                  overflow: TextOverflow
+                                      .ellipsis, // Add ellipsis when text overflows
                                 ),
-                                // Text('Edit Profil'),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
@@ -154,37 +158,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       'Edit Profil',
                                       style: TextStyle(color: Colors.black),
                                     ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
+                                    SizedBox(width: 3),
                                     Icon(Icons.arrow_forward_ios,
                                         size: 12, color: Colors.black),
                                   ],
                                 ),
-                              ])
-                          // Text(
-                          //   "${_userData["user"]["name"]}",
-                          //   // "${_userName}",
-                          //   style: TextStyle(
-                          //       fontWeight: FontWeight.w700,
-                          //       fontSize: 25,
-                          //       color: Colors.black),
-                          // ),
+                              ],
+                            ),
                           ),
-                      // SizedBox(width: 0),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.transparent,
-                          backgroundImage:
-                              AssetImage('assets/placeholderPhoto.png'),
                         ),
-                      ),
-                      // SizedBox(width: 2),
-                    ],
-                  ),
-                ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage:
+                                AssetImage('assets/placeholderPhoto.png'),
+                          ),
+                        ),
+                      ],
+                    )),
               ),
               Padding(
                 padding: const EdgeInsets.all(15),
