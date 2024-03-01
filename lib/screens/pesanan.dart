@@ -23,11 +23,13 @@ class _PesananScreenState extends State<PesananScreen> {
   }
 
   Future<void> _fetchOrderStatus() async {
-    final data = await _fetchOrderStatusData();
-    if (data != null) {
-      setState(() {
-        orderStatus = data;
-      });
+    if (orderStatus == null) {
+      final data = await _fetchOrderStatusData();
+      if (data != null) {
+        setState(() {
+          orderStatus = data;
+        });
+      }
     }
   }
 
@@ -187,9 +189,11 @@ class _PesananScreenState extends State<PesananScreen> {
             child: Container(
               width: 100,
               height: 100,
-              child: Image.asset(
-                "assets/placeholderPhoto.png",
-                fit: BoxFit.cover,
+              child: ClipOval(
+                child: Image.network(
+                  orderStatus?['driver_photo'] ?? '',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           ),

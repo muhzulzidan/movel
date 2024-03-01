@@ -1,6 +1,13 @@
+import 'dart:convert';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:movel/screens/trx/ChooseSeatScreen.dart';
+import 'package:movel/screens/trx/KonfirmasiPesananScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:requests/requests.dart';
+import 'package:http/http.dart' as http;
 
 import '../trx/ChooseLocationScreen.dart';
 
@@ -61,6 +68,120 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   var tokenText;
   int _current = 0;
+  List<dynamic> activeDrivers = [];
+  String baseUrl = 'https://api.movel.id';
+  List<dynamic> kotaData = [];
+
+  Future<Map<String, dynamic>> fetchOrderResume(
+      {required int driverDepartureId,
+      required List<int> seatCarChoices}) async {
+    final response = await http.post(
+      Uri.parse('https://api.movel.id/api/user/orders/resume'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'driver_departure_id': driverDepartureId,
+        'seat_car_choices': seatCarChoices,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load order resume');
+    }
+  }
+
+  Future<List<dynamic>> fetchKotaData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    try {
+      final response = await Requests.get(
+        'https://api.movel.id/api/user/kota_kab/search',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print("Response: ${response.content()}"); // print the raw response
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, parse the JSON.
+        return response.json()['data'];
+      } else {
+        // If the server did not return a 200 OK response, throw an exception.
+        throw Exception('Failed to load kota data');
+      }
+    } catch (e) {
+      print("Error: $e"); // print any errors that occur
+      return [];
+    }
+  }
+
+  Future<void> fetchActiveDrivers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    try {
+      final response = await Requests.get(
+        'https://api.movel.id/api/user/drivers/active-drivers',
+        headers: {
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print("Response: ${response.content()}"); // print the raw response
+
+      if (response.statusCode == 200) {
+        // If the server returns a 200 OK response, parse the JSON.
+        setState(() {
+          activeDrivers = response.json();
+          print("activeDrivers: $activeDrivers"); // print here
+        });
+      } else {
+        // If the server did not return a 200 OK response, throw an exception.
+        throw Exception('Failed to load active drivers');
+      }
+    } catch (e) {
+      print("Error: $e"); // print any errors that occur
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchActiveDrivers();
+    fetchKotaData().then((data) {
+      setState(() {
+        kotaData = data;
+      });
+    });
+  }
+
+  Widget buildKotaName(Map<String, dynamic> activeDriver) {
+    if (kotaData.isNotEmpty) {
+      String getKotaName(int id) {
+        var kota =
+            kotaData.firstWhere((k) => k['id'] == id, orElse: () => null);
+        return kota != null ? kota['nama_kota'] : 'Unknown';
+      }
+
+      return Text(
+        '${getKotaName(activeDriver["kota_asal_id"])} - ${getKotaName(activeDriver["kota_tujuan_id"])}',
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+        ),
+      );
+    } else {
+      // By default, show a loading spinner.
+      return CircularProgressIndicator();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,108 +260,101 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                   enlargeCenterPage: false,
                   viewportFraction: 1,
                 ),
-                itemCount: (items.length / 2).ceil(),
+                itemCount: (activeDrivers.length / 2).ceil(),
                 itemBuilder: (context, index, realIdx) {
                   final int first = index * 2;
                   final int second = first + 1;
 
                   return Row(
                     children: [first, second].map((idx) {
-                      if (idx < items.length) {
+                      if (idx < activeDrivers.length) {
                         return Expanded(
                           flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              // color: HexColor("#fff"),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            margin: EdgeInsets.only(
-                              right: 5,
-                            ),
-                            child: Card(
-                              elevation: 4,
-                              shadowColor: Colors.black,
-                              color: Color.fromARGB(255, 255, 255, 255),
-                              shape: RoundedRectangleBorder(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChooseSeatScreen(
+                                    driverId: activeDrivers[idx]
+                                        ["id"],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20),
-                                        ),
-                                        image: DecorationImage(
-                                          fit: BoxFit.fitWidth,
-                                          image: AssetImage(
-                                            '${items[idx]["foto"]}',
+                              margin: EdgeInsets.only(
+                                right: 5,
+                              ),
+                              child: Card(
+                                elevation: 4,
+                                shadowColor: Colors.black,
+                                color: Color.fromARGB(255, 255, 255, 255),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20),
+                                          ),
+                                          image: DecorationImage(
+                                            fit: BoxFit.fitWidth,
+                                            image: NetworkImage(
+                                              '$baseUrl/${activeDrivers[idx]["photo"]}'
+                                                  .replaceFirst(
+                                                      'public/', 'storage/'),
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 12),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              '${items[idx]["nama"]}',
-                                              textAlign: TextAlign.center,
+                                              '${activeDrivers[idx]["name"]}',
+                                              textAlign: TextAlign.start,
                                               style: TextStyle(
-                                                  // background: Colors.white,
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w900),
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w900,
+                                              ),
                                             ),
                                             SizedBox(
-                                              width: 7,
+                                              height: 2,
+                                            ),
+                                            buildKotaName(activeDrivers[idx]),
+                                            SizedBox(
+                                              height: 2,
                                             ),
                                             Text(
-                                              '${items[idx]["mobil"]}',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w400),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 2,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              textAlign: TextAlign.center,
-                                              '${items[idx]["kursi"]}',
+                                              '${DateFormat('d MMMM yyyy').format(DateTime.parse(activeDrivers[idx]["date_departure"]))}',
+                                              textAlign: TextAlign.start,
                                               style: TextStyle(
                                                 fontSize: 12,
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: 7,
-                                            ),
-                                            Text(
-                                              '${items[idx]["merokok"]}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            )
                                           ],
                                         ),
-                                      ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -253,7 +367,6 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                 },
               ),
             ),
-
             SizedBox(
               height: 20,
             ),
