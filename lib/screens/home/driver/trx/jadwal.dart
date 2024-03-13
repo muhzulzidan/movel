@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 // import 'package:hexcolor/hexcolor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:requests/requests.dart';
@@ -229,7 +230,15 @@ class _JadwalScreenState extends State<JadwalScreen> {
         'time_departure': _pickedTime.toString(),
       };
 
-      final response = await Requests.post(url, headers: headers, body: body);
+      Response response;
+      if (hasExistingData) {
+        // If there is existing data, use PUT to update
+        response = await Requests.put(url, headers: headers, body: body);
+      } else {
+        // If there is no existing data, use POST to create
+        response = await Requests.post(url, headers: headers, body: body);
+      }
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Request successful, handle the response
         print(response.body);
@@ -653,7 +662,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2020),
       lastDate: DateTime.now().add(Duration(days: 365)),
     );
     if (picked != null && picked != _selectedDate) {
@@ -676,15 +685,14 @@ class _JadwalScreenState extends State<JadwalScreen> {
     );
     if (picked != null && picked != _selectedTime) {
       setState(() {
-        final pickedTime =
-            ("${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}");
-        _pickedTime = pickedTime;
         _selectedTime = picked;
-        final formattedTime =
-            _selectedTime.format(context); // Format the selected time
-        _selectedTimeController.text = formattedTime;
+        // Format the time manually to get it in HH:MM format
+        _pickedTime =
+            "${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}";
+        _selectedTimeController.text = _pickedTime;
       });
       print("_pickedTime $_pickedTime");
+
     }
   }
 }

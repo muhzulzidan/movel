@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'screens/home/driver/driver_home.dart';
 
@@ -18,6 +19,7 @@ void main() async {
   // final token = prefs.getString('token');
   // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   // print(isLoggedIn);
+  initializeDateFormatting('id_ID', null);
 
   runApp(
     ChangeNotifierProvider(

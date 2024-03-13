@@ -51,10 +51,37 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     });
 
     fetchSaldo();
-    _fetchAcceptedOrders(); // Add this line
+    _fetchAcceptedOrders();
+     // Fetch the active status of the driver
+    _fetchActiveStatus();
   }
 
-  Future<void> _fetchAcceptedOrders() async {
+  Future<void> _fetchActiveStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/drivers/active-status'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var activeStatus = jsonDecode(response.body)['isActive'];
+      setState(() {
+        _isButtonPressed = activeStatus == 1;
+      });
+    } else {
+      // Handle error
+      print('Failed to fetch active status');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to fetch active status')),
+      );
+    }
+  }
+
+Future<void> _fetchAcceptedOrders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     try {
@@ -63,28 +90,39 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
       };
-
       final response = await Requests.get(url, headers: headers);
-
       if (response.statusCode == 200) {
         final jsonData = response.json();
-        final acceptedOrders = jsonData['data'];
-        if (acceptedOrders.isNotEmpty) {
+        if (jsonData['status'] == false &&
+            jsonData['message'] == 'Order tidak ditemukan') {
           setState(() {
             _hasAcceptedOrders = true;
           });
         } else {
-          setState(() {
-            _hasAcceptedOrders = false;
-          });
+          final acceptedOrders = jsonData['data'];
+          if (acceptedOrders.isNotEmpty) {
+            setState(() {
+              _hasAcceptedOrders = true;
+            });
+          } else {
+            setState(() {
+              _hasAcceptedOrders = false;
+            });
+          }
         }
-
-        print(acceptedOrders);
-      } else {
+        print("acceptedOrders: ${jsonData['data']}");
+      } else if (response.statusCode == 404) {
+        setState(() {
+          _hasAcceptedOrders = true;
+        });
         print("Failed to fetch accepted orders");
         print(response.body);
         print(response.json());
-        // throw Exception('Failed to fetch accepted orders');
+      } else {
+        
+        print("Failed to fetch accepted orders");
+        print(response.body);
+        print(response.json());
       }
     } catch (e) {
       print(e);
@@ -430,7 +468,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                    'You cannot change the route anymore.'),
+                                    'Tidak Bisa Mengubah Rute lagi.'),
                                 duration: Duration(seconds: 2),
                                 backgroundColor: Colors.red.shade700,
                                 // behavior: SnackBarBehavior.floating,

@@ -1,11 +1,58 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:movel/screens/home/driver/chat/ChatScreenDriver.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class DriverInboxScreen extends StatefulWidget {
+
   @override
   _DriverInboxScreenState createState() => _DriverInboxScreenState();
 }
 
 class _DriverInboxScreenState extends State<DriverInboxScreen> {
+  List<dynamic> chats = [];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() async {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
+      fetchChats('$token').then((fetchedChats) {
+        setState(() {
+          chats = fetchedChats;
+        });
+        print("chats :$chats");
+      });
+    });
+  }
+
+  Future<List<dynamic>> fetchChats(String token) async {
+    final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/chats'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      if (data is Map<String, dynamic>) {
+        if (data.containsKey('chats')) {
+          return data['chats'];
+        } else {
+          throw Exception('Unexpected data format');
+        }
+      } else {
+        throw Exception('Unexpected data format');
+      }
+    } else {
+      throw Exception('Failed to load chats');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -15,123 +62,81 @@ class _DriverInboxScreenState extends State<DriverInboxScreen> {
           title: Text(
             "Kotak Masuk",
           ),
-          bottom: const TabBar(
-            labelColor: Colors.black,
-            tabs: [
-              Tab(
-
-                text: "Terjadwal",
-              ),
-              Tab(
-
-                text: "Sedang Proses",
-              ),
-              Tab(
-
-                text: "Riwayat",
-              ),
-            ],
-          ),
-
+          // bottom: const TabBar(
+          //   labelColor: Colors.black,
+          //   tabs: [
+          //     Tab(
+          //       text: "Terjadwal",
+          //     ),
+          //     Tab(
+          //       text: "Sedang Proses",
+          //     ),
+          //     Tab(
+          //       text: "Riwayat",
+          //     ),
+          //   ],
+          // ),
         ),
-        body: TabBarView(
-          children: [
+        body:
+            // TabBarView(
+            // children: [
             Container(
-              padding: EdgeInsets.symmetric(
-                vertical: 30,
-              ),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ListTile(
-                        onTap: () {
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(builder: (context) => ChatScreen()),
-                          // );
-                        },
-                        title: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.white,
-                              child: ClipOval(
-                                child: Image.asset(
-                                  "assets/driverProfile.png",
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                              child: Column(
-                                children: [
-                                  Text(
-                                      "Halo Zidan, \nKami ingin memberitahu Anda bahwa perjalanan Anda dengan sopir kami sudah berhasil diatur.",
-                                      style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.bold)),
-                                  Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
-                                    height: 30,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        )),
+          padding: EdgeInsets.symmetric(
+            vertical: 30,
+          ),
+          child: ListView.builder(
+            itemCount: chats.length,
+            itemBuilder: (context, index) {
+              var chat = chats[index];
+              print("$chat['updated_at']");
+              return ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreenDriver(
+                        chatId: chat['id'].toString(),
+                        name: chat['user']['name'],
+                        profilePicture: chat['receiver']['photo']
+                            .replaceFirst('/photos/public', ''),
+                      ),
+                    ),
+                  );
+                },
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    '${chat['receiver']['photo']}'
+                        .replaceFirst('/photos/public', ''),
                   ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ListTile(
-                        title: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.white,
-                          child: ClipOval(
-                            child: Image.asset(
-                              "assets/driverProfile.png",
-                              fit: BoxFit.cover,
-                              width: 70,
-                              height: 70,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Column(
-                            children: [
-                              Text(
-                                "Halo Zidan, \nKami ingin memberitahu Anda bahwa perjalanan Anda dengan sopir kami sudah berhasil diatur.",
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              Divider(
-                                color: Colors.grey,
-                                thickness: 1,
-                                height: 30,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )),
-                  ),
-                ],
-              ),
-            ),
-            Icon(Icons.directions_car),
-            Icon(Icons.directions_transit),
-          ],
+                ),
+                title: Text(
+                  chat['user']['name'],
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      chat['details'],
+                      style: TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.normal),
+                    ),
+                    Text(
+                      DateFormat('kk:mm - yyyy MMM dd')
+                          .format(DateTime.parse(chat['updated_at'])),
+                      style:
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
+        // Icon(Icons.directions_car),
+        // Icon(Icons.directions_transit),
+        // ],
+        // ),
       ),
     );
   }
