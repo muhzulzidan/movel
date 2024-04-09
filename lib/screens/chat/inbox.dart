@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+// import 'package:pusher_channels_flutter/pusher-js/core/pusher.dart';
 
 import 'ChatScreen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:pusher_websocket_flutter/pusher.dart';
 
 class InboxScreen extends StatefulWidget {
   @override
@@ -17,7 +20,24 @@ class _InboxScreenState extends State<InboxScreen> {
   void initState() {
     super.initState();
     fetchData();
+    // connectToServer(); // Call the connectToServer function
   }
+
+  // void connectToServer() async {
+  //  var options = PusherOptions(
+  //     host: 'code.movel.id',
+  //     port: 6001,
+  //     encrypted: false,
+  //     cluster: 'ap1',
+  //   );
+
+  //   var pusher =
+  //       FlutterPusher('320b0a04d5f7bd0a1109', options, enableLogging: true);
+
+  //   pusher.subscribe('test-channel').bind('App\\Events\\MyEvent', (data) {
+  //     print('Received event: $data');
+  //   });
+  // }
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
