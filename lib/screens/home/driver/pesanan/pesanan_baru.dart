@@ -61,6 +61,7 @@ class PesananBaruScreen extends StatefulWidget {
 }
 
 bool _acceptButtonEnabled = true;
+bool _rejectButtonEnabled = true;
 
 class _PesananBaruScreenState extends State<PesananBaruScreen> {
   Future<void> acceptOrder(BuildContext context, int orderId) async {
@@ -91,6 +92,37 @@ class _PesananBaruScreenState extends State<PesananBaruScreen> {
 
     setState(() {
       _acceptButtonEnabled = true;
+    });
+  }
+
+  Future<void> rejectOrder(BuildContext context, int orderId) async {
+    setState(() {
+      _rejectButtonEnabled = false;
+    });
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    final url = 'https://api.movel.id/api/user/orders/$orderId/driver/reject';
+    final headers = {
+      'Authorization': 'Bearer $token', // Replace <token> with the actual token
+    };
+
+    final response = await Requests.put(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      // Order rejected successfully
+      print(response.json());
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyHomeDriverPage()),
+      );
+    } else {
+      // Failed to reject the order
+      print(response.json());
+      throw Exception('Failed to reject the order');
+    }
+
+    setState(() {
+      _rejectButtonEnabled = true;
     });
   }
 
@@ -203,6 +235,8 @@ class _PesananBaruScreenState extends State<PesananBaruScreen> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     // Implement logic for rejecting the order
+                                    rejectOrder(
+                                        context, widget.newOrders[0]["id"]);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     padding: EdgeInsets.symmetric(vertical: 13),

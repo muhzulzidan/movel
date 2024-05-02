@@ -5,7 +5,95 @@ import 'package:http/http.dart' as http;
 import 'message.dart'; // Import the Message class
 
 class ChatService {
-  Future<void> fetchChats(String token, String url) async {
+  final String baseUrl = 'https://api.movel.id/api/user/passenger';
+  final String baseUrlDriver = 'https://api.movel.id/api/user';
+
+  Future<int?> getLatestChatId(String token) async {
+    // Make the GET request
+    print("chat exists : ${baseUrl}/chats/");
+    var response = await http.get(
+      Uri.parse('$baseUrl/chats/'), // Replace with your actual endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print("response : ${response.statusCode}");
+    print("response : ${response.body}");
+
+    // Check the response
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      var data = jsonDecode(response.body);
+      // If the server returns a chat, return the ID of the latest chat
+      if (data != null && data['chats'] is List && data['chats'].isNotEmpty) {
+        print("chat exists : true");
+        return data['chats'].last['id'];
+      } else {
+        print("No chats found");
+        return null;
+      }
+    } else {
+      // If the server returns an error or no chat, return null
+      print("Failed to load chats");
+      return null;
+    }
+  }
+
+  Future<bool> chatExists(String token) async {
+    // Make the GET request
+
+    print("chat exists : ${baseUrl}/chats/");
+    var response = await http.get(
+      Uri.parse('$baseUrl/chats/'), // Replace with your actual endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print("response : ${response.statusCode}");
+    print("response : ${response.body}");
+
+    // Check the response
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      var data = jsonDecode(response.body);
+      // If the server returns a chat, return true
+      print("chat exists : ${data != null}");
+      return data != null;
+    } else {
+      // If the server returns an error or no chat, return false
+      print("failede to load chats");
+      return false;
+    }
+  }
+
+  Future<void> createChat(String token, String driverId) async {
+    // Define the data to send
+    Map<String, String> data = {
+      'receiver_id': driverId.toString(),
+      // Add any other data required to create a chat
+    };
+
+    // Make the POST request
+    var response = await http.post(
+      Uri.parse('$baseUrl/chats'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(data),
+    );
+
+    // Check the response
+    if (response.statusCode != 201) {
+      throw Exception('Could not create chat: ${response.body}');
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchChats(String token, String url) async {
     final response = await http.get(
       Uri.parse('$url'),
       headers: {
@@ -19,21 +107,35 @@ class ChatService {
       var chats = jsonData['chats'];
       print('User ID: $userId');
       print('Chats: $chats');
+      return jsonData; // Return the JSON data
     } else {
       throw Exception('Failed to load chats');
     }
   }
 
-  Future<List<Message>> fetchMessages(
-      String token, String chatId, String url) async {
+  Future<void> deleteChat(String token, int chatId, String url) async {
+    final response = await http.delete(
+      Uri.parse('$url/$chatId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete chat');
+    }
+  }
+
+  Future<List<Message>> fetchMessages(String token, String chatId) async {
     final response = await http.get(
-      Uri.parse('$url/$chatId/messages'),
+      Uri.parse('$baseUrlDriver/chats/$chatId/messages'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
-    print("fetchMessages : ${url}/${chatId}/$token");
+    print("fetchMessages : ${baseUrlDriver}/chats/${chatId}/messages");
 
     if (response.statusCode == 200) {
       List<Message> _messages = [];

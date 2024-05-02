@@ -53,7 +53,7 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
 
       if (response.statusCode == 200) {
         final jsonData = response.json();
-                print("jsonData : $jsonData");
+        print("jsonData : $jsonData");
         _showSnackBar(context, jsonData['message']);
         print("jsonData : $jsonData");
         _fetchAcceptedOrders();
@@ -85,7 +85,7 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
       if (response.statusCode == 200) {
         final jsonData = response.json();
         print("jsonData : $jsonData");
-          print("jsonData : $jsonData");
+        print("jsonData : $jsonData");
         _showSnackBar(context, jsonData['message']);
         _fetchAcceptedOrders();
       } else {
@@ -98,7 +98,7 @@ class _CekDetailPesananScreenState extends State<CekDetailPesananScreen> {
     }
   }
 
-Future<void> _pesananSelesai(String orderid) async {
+  Future<void> _pesananSelesai(String orderid) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -117,7 +117,7 @@ Future<void> _pesananSelesai(String orderid) async {
         print("jsonData : $jsonData");
         _showSnackBar(context, jsonData['message']);
 
-       Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 2), () {
           Navigator.of(context)
               .pop(); // This will take you back to the previous screen
         });
@@ -132,7 +132,6 @@ Future<void> _pesananSelesai(String orderid) async {
       _showSnackBar(context, 'An error occurred');
     }
   }
-
 
   void _showSnackBar(BuildContext context, String message) {
     // final snackBar = SnackBar(
