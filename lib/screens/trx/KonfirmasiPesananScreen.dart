@@ -80,71 +80,70 @@ class KonfirmasiPesananScreen extends StatelessWidget {
               // fit: BoxFit.,
             ),
           ),
-          Expanded(
-            child: Container(
-              margin: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(5),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // SizedBox(
-                    //   height: 50,
-                    // ),
-                    Card(
-                      color: Colors.deepPurple.shade500,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(30),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomRow(
-                                label: 'Nama Sopir',
-                                value: ': ${responseData['driver_name']}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Umur',
-                                value: ': ${responseData['driver_age']}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Merokok',
-                                value: ': ${responseData['is_smoking']}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Type Mobil',
-                                value: ': ${responseData['car_merk']}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Tahun Mobil',
-                                value: ': ${responseData['car_prod_year']}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Kode Kursi',
-                                value:
-                                    ': ${responseData['seat_car_choices'].toString()}',
-                              ),
-                              SizedBox(height: 16.0),
-                              CustomRow(
-                                label: 'Harga',
-                                value:
-                                    ': ${responseData['price_order'].toString()}',
-                              ),
-                            ]),
-                      ),
+          Container(
+            width: double.infinity,
+            margin: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // SizedBox(
+                  //   height: 50,
+                  // ),
+                  Card(
+                    color: Colors.deepPurple.shade500,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  ],
-                ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(30),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomRow(
+                              label: 'Nama Sopir',
+                              value: ': ${responseData['driver_name']}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Umur',
+                              value: ': ${responseData['driver_age']}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Merokok',
+                              value: ': ${responseData['is_smoking']}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Type Mobil',
+                              value: ': ${responseData['car_merk']}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Tahun Mobil',
+                              value: ': ${responseData['car_prod_year']}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Kode Kursi',
+                              value:
+                                  ': ${responseData['seat_car_choices'].toString()}',
+                            ),
+                            SizedBox(height: 16.0),
+                            CustomRow(
+                              label: 'Harga',
+                              value:
+                                  ': ${responseData['price_order'].toString()}',
+                            ),
+                          ]),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:movel/screens/pesanan/pesanan_detail.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'chat/inbox.dart';
 
@@ -17,10 +18,47 @@ class _PesananScreenState extends State<PesananScreen> {
   // final Function(int) updateSelectedIndex;
   Map<String, dynamic>? orderStatus;
 
+  late IO.Socket socket;
+
   @override
   void initState() {
     super.initState();
     _fetchOrderStatus();
+
+    socket = IO.io('https://admin.movel.id', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.onConnect((_) {
+      print('Connected');
+    });
+
+    socket.on('order_pick_location', (data) {
+      print('order_pick_location event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_pick_location_arrive', (data) {
+      print('order_pick_location_arrive event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_complete', (data) {
+      print('order_complete event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_cancel_accept', (data) {
+      print('order_cancel_accept event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_cancel_reject', (data) {
+      print('order_cancel_reject event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.connect();
   }
 
   Future<void> _fetchOrderStatus() async {
@@ -63,15 +101,15 @@ class _PesananScreenState extends State<PesananScreen> {
   @override
   Widget build(BuildContext context) {
     print("orderStatus : $orderStatus");
-    bool isOrderReceived = orderStatus?['status_order_id'] == 2;
-    bool isDriverEnRoute = orderStatus?['status_order_id'] == 4;
-    bool isDriverArrived = orderStatus?['status_order_id'] == 5;
-    bool isOrderCompleted = orderStatus?['status_order_id'] == 6;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progres Pesanan Anda"),
       ),
-      body: (orderStatus == null)
+      body: (orderStatus == null ||
+              orderStatus?['status_order_id'] == 7 ||
+              orderStatus?['status_order_id'] == 8 ||
+              orderStatus?['status_order_id'] == 0)
           ? Container(
               color: Colors.white,
               child: Center(
@@ -108,30 +146,6 @@ class _PesananScreenState extends State<PesananScreen> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 20),
-                    // ElevatedButton(
-                    //   onPressed: () {
-                    //     // Navigate to the home screen
-                    //     Navigator.of(context).pushNamed(
-                    //         '/home'); // Replace '/home' with the route to your home screen
-                    //   },
-                    //   style: ElevatedButton.styleFrom(
-                    //     padding:
-                    //         EdgeInsets.symmetric(vertical: 12, horizontal: 30),
-                    //     backgroundColor: Colors.deepPurple.shade700,
-                    //     shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(100),
-                    //     ),
-                    //     elevation: 4,
-                    //   ),
-                    //   child: Text(
-                    //     'Kembali ke Layar Utama',
-                    //     style: TextStyle(
-                    //         inherit: false, // Add this line
-                    //         color: Colors.white,
-                    //         fontWeight: FontWeight.w700,
-                    //         fontSize: 16),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -144,22 +158,22 @@ class _PesananScreenState extends State<PesananScreen> {
                     buildProgressTile(
                       title: "Pesanan Diterima",
                       icon: Icons.bookmark_added,
-                      isHighlighted: isOrderReceived,
+                      status: 3,
                     ),
                     buildProgressTile(
                       title: "Sopir Menuju ke Lokasi Anda",
                       icon: Icons.directions_run,
-                      isHighlighted: isDriverEnRoute,
+                      status: 5,
                     ),
                     buildProgressTile(
                       title: "Sopir Telah Tiba di Lokasi Anda",
                       icon: Icons.directions_car,
-                      isHighlighted: isDriverArrived,
+                      status: 6,
                     ),
                     buildProgressTile(
                       title: "Anda Telah Tiba di Tujuan",
                       icon: Icons.place,
-                      isHighlighted: isOrderCompleted,
+                      status: 7,
                     ),
                   ],
                 ),
@@ -199,16 +213,10 @@ class _PesananScreenState extends State<PesananScreen> {
   }
 
   Widget buildProgressTile(
-      {required String title,
-      required IconData icon,
-      bool isHighlighted = false}) {
-    Color backgroundColor =
-        isHighlighted ? Colors.purple : Colors.grey; // Change colors as needed
-
+      {required String title, required int status, required IconData icon}) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          // color: backgroundColor,
           border: Border.all(color: Colors.transparent),
           borderRadius: BorderRadius.circular(8),
         ),
@@ -217,23 +225,25 @@ class _PesananScreenState extends State<PesananScreen> {
           children: [
             Icon(
               icon,
-              size: 32,
-              color: isHighlighted
+              color: status == orderStatus?['status_order_id']
                   ? Colors.deepPurple.shade700
-                  : Colors.black, // Change icon color based on highlight
+                  : Colors.black,
+              size: 32, // Adjust the size as needed
             ),
             SizedBox(height: 8),
             Text(
               title,
               style: TextStyle(
-                fontSize: 12,
-                color: isHighlighted
+                color: status == orderStatus?['status_order_id']
                     ? Colors.deepPurple.shade700
-                    : Colors.black, // Change text color based on highlight
+                    : Colors.black,
+                fontSize: 12,
+                // Adjust the font size as needed
               ),
               maxLines: 2,
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center, // Align the text to center if needed
+              overflow: TextOverflow
+                  .ellipsis, // Show ellipsis if the text exceeds two lines
             ),
           ],
         ),

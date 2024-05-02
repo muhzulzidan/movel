@@ -7,6 +7,7 @@ import './profile/profile.dart';
 import 'chat/inbox_driver.dart';
 import 'pesanan/pesanan_baru.dart';
 import 'pesanan/pesanan_driver_diterima.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class MyHomeDriverPage extends StatefulWidget {
   // final String userAccessToken;
@@ -17,13 +18,37 @@ class MyHomeDriverPage extends StatefulWidget {
 }
 
 class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
+  late IO.Socket socket;
   int _currentIndex = 0;
   late List<dynamic> _newOrders = [];
 
   @override
   void initState() {
     super.initState();
+    connectToServer();
+
     _fetchAcceptedOrders();
+  }
+
+  void connectToServer() {
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.onConnect((_) {
+      print('Connected to Socket.IO server');
+    });
+
+    // Listen for the new_order event
+    socket.on('new_order', (data) {
+      // Update the list of orders
+      print('Received new_order event: $data');
+      _fetchAcceptedOrders();
+    });
+
+    socket.onDisconnect((_) {
+      print('Disconnected from Socket.IO server');
+    });
   }
 
   Future<void> _fetchAcceptedOrders() async {

@@ -56,6 +56,16 @@ class MyApp extends StatelessWidget {
         create: (context) => MyAppState(),
         child: GetMaterialApp(
           // key: UniqueKey(),
+          builder: (context, child) {
+            if (child == null) {
+              return Container(); // or throw an error
+            }
+
+            return MediaQuery(
+              data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+              child: child,
+            );
+          },
           title: 'Movel : Mobil Travel',
           theme: ThemeData(
             fontFamily: 'Poppins',
@@ -76,8 +86,19 @@ class MyApp extends StatelessWidget {
               backgroundColor: Colors.white,
             ),
             // scaffoldBackgroundColor: HexColor("#F2F2F2"),
-            colorScheme:
-                ColorScheme.fromSeed(seedColor: Colors.deepPurple.shade700),
+            colorScheme: ColorScheme(
+              primary: Colors.deepPurple.shade900,
+              secondary: Colors.amber,
+              surface: Colors.white,
+              background: Colors.white,
+              error: Colors.red,
+              onPrimary: Colors.white,
+              onSecondary: Colors.black,
+              onSurface: Colors.black,
+              onBackground: Colors.deepPurple.shade900,
+              onError: Colors.red,
+              brightness: Brightness.light,
+            ),
           ),
           // home: LoginScreen(),
           debugShowCheckedModeBanner: false,

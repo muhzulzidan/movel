@@ -37,8 +37,10 @@ class _ChatScreenState extends State<ChatScreen> {
       chatService.fetchChats(
           token, "https://api.movel.id/api/user/passenger/chats");
       chatService
-          .fetchMessages(token, widget.chatId,
-              "https://api.movel.id/api/user/passenger/chats")
+          .fetchMessages(
+        token,
+        widget.chatId,
+      )
           .then((messages) {
         _messageController.add(messages);
       });

@@ -74,78 +74,101 @@ class _InboxScreenState extends State<InboxScreen> {
         //   },
         // )
       ),
-      body: data != null && data['chats'] != null && data['chats'].isNotEmpty
-          ? ListView.builder(
-              itemCount: data['chats'].length,
-              itemBuilder: (context, index) {
-                var chat = data['chats'][index];
-                print("chat pasenger : $chat");
-                return ListTile(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                                chatId: chat['id'].toString(),
-                                name: chat['receiver']['user_driver']['name'],
-                                profilePicture: chat['receiver']['photo']
-                                    .replaceFirst('/photos/public', ''),
-                              )),
+      body: data == null
+          ? Center(child: CircularProgressIndicator()) // Loading indicator
+          : data['chats'] != null && data['chats'].isNotEmpty
+              ? ListView.builder(
+                  itemCount: data['chats'].length,
+                  itemBuilder: (context, index) {
+                    var chat = data['chats'][index];
+                    print("chat pasenger : $chat");
+                    return ListTile(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ChatScreen(
+                                    chatId: chat['id'].toString(),
+                                    name: chat['receiver']['user_driver']
+                                        ['name'],
+                                    profilePicture: chat['receiver']['photo']
+                                        .replaceFirst('/photos/public', ''),
+                                  )),
+                        );
+                      },
+                      title: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 50,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: chat['receiver'] != null
+                                  ? Image.network(
+                                      chat['receiver']['photo']
+                                          .replaceFirst('/photos/public', ''),
+                                      fit: BoxFit.cover,
+                                      width: 70,
+                                      height: 70,
+                                    )
+                                  : Container(), // Placeholder widget
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (chat['receiver'] != null) ...[
+                                  Text(
+                                    '${chat['receiver']['user_driver']['name']}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
+                                Text(
+                                  data != null && data['user'] != null
+                                      ? "Halo ${data['user']['name']}"
+                                      : 'Loading...', // Placeholder text
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
+                                  textAlign: TextAlign.left,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
-                  title: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 50,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: chat['receiver'] != null
-                              ? Image.network(
-                                  chat['receiver']['photo']
-                                      .replaceFirst('/photos/public', ''),
-                                  fit: BoxFit.cover,
-                                  width: 70,
-                                  height: 70,
-                                )
-                              : Container(), // Placeholder widget
-                        ),
+                )
+              : Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Icon(
+                        Icons.inbox,
+                        size: 100.0,
+                        color: Colors.deepPurple.shade700,
                       ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (chat['receiver'] != null) ...[
-                              Text(
-                                '${chat['receiver']['user_driver']['name']}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.left,
-                              ),
-                            ],
-                            Text(
-                              data != null && data['user'] != null
-                                  ? "Halo ${data['user']['name']}"
-                                  : 'Loading...', // Placeholder text
-                              style: TextStyle(
-                                fontSize: 14,
-                              ),
-                              textAlign: TextAlign.left,
-                            ),
-                          ],
+                      SizedBox(height: 10.0), // Add space between icon and text
+                      Text(
+                        'Kotak Masuk Kosong',
+                        style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
                         ),
                       ),
                     ],
                   ),
-                );
-              },
-            )
-          : Center(child: CircularProgressIndicator()), // Loading indicator
+                ), // Display when empty
     );
   }
 }

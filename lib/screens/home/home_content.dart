@@ -276,8 +276,7 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ChooseSeatScreen(
-                                    driverId: activeDrivers[idx]
-                                        ["id"],
+                                    driverId: activeDrivers[idx]["id"],
                                   ),
                                 ),
                               );
@@ -386,43 +385,43 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
             SizedBox(
               height: 15,
             ),
-            Container(
-              padding: EdgeInsetsDirectional.only(start: 20),
-              height: 200,
-              child: CarouselSlider.builder(
-                options: CarouselOptions(
-                  aspectRatio: 2.0,
-                  enlargeCenterPage: false,
-                  viewportFraction: 1,
-                  // height: 200,
-                ),
-                itemCount: (promo.length / 2).ceil(),
-                itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
-                  final int second = first + 1;
-                  return Container(
-                    // height: 500,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children:
-                          // [first, second].map((idx)
-                          promo.map((i) {
-                        // if (idx < promo.length) {
-                        return Container(
-                          margin: EdgeInsets.only(right: 5),
-                          child: Image.asset(
-                            '${i["foto"]}',
-                          ),
-                        );
-                        // } else {
-                        //   return Container();
-                        // }
-                      }).toList(),
-                    ),
-                  );
-                },
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsetsDirectional.only(start: 20),
+            //   height: 200,
+            //   child: CarouselSlider.builder(
+            //     options: CarouselOptions(
+            //       aspectRatio: 2.0,
+            //       enlargeCenterPage: false,
+            //       viewportFraction: 1,
+            //       // height: 200,
+            //     ),
+            //     itemCount: (promo.length / 2).ceil(),
+            //     itemBuilder: (context, index, realIdx) {
+            //       final int first = index * 2;
+            //       final int second = first + 1;
+            //       return Container(
+            //         // height: 500,
+            //         child: ListView(
+            //           scrollDirection: Axis.horizontal,
+            //           children:
+            //               // [first, second].map((idx)
+            //               promo.map((i) {
+            //             // if (idx < promo.length) {
+            //             return Container(
+            //               margin: EdgeInsets.only(right: 5),
+            //               child: Image.asset(
+            //                 '${i["foto"]}',
+            //               ),
+            //             );
+            //             // } else {
+            //             //   return Container();
+            //             // }
+            //           }).toList(),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),
