@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
 class DriverInboxScreen extends StatefulWidget {
-
   @override
   _DriverInboxScreenState createState() => _DriverInboxScreenState();
 }
@@ -77,62 +76,39 @@ class _DriverInboxScreenState extends State<DriverInboxScreen> {
           //   ],
           // ),
         ),
-        body:
-            // TabBarView(
-            // children: [
-            Container(
-          padding: EdgeInsets.symmetric(
-            vertical: 30,
-          ),
-          child: ListView.builder(
-            itemCount: chats.length,
-            itemBuilder: (context, index) {
-              var chat = chats[index];
-              print("$chat['updated_at']");
-              return ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatScreenDriver(
-                        chatId: chat['id'].toString(),
-                        name: chat['user']['name'],
-                        profilePicture: chat['receiver']['photo']
-                            .replaceFirst('/photos/public', ''),
-                      ),
+        body: chats.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.chat,
+                      size: 100.0,
+                      color: Colors.deepPurple.shade200,
                     ),
-                  );
-                },
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    '${chat['receiver']['photo']}'
-                        .replaceFirst('/photos/public', ''),
-                  ),
-                ),
-                title: Text(
-                  chat['user']['name'],
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
                     Text(
-                      chat['details'],
+                      'Chat Kosong',
                       style: TextStyle(
-                          fontSize: 13, fontWeight: FontWeight.normal),
-                    ),
-                    Text(
-                      DateFormat('kk:mm - yyyy MMM dd')
-                          .format(DateTime.parse(chat['updated_at'])),
-                      style:
-                          TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                        fontSize: 24.0,
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),
-              );
-            },
-          ),
-        ),
+              )
+            : Container(
+                padding: EdgeInsets.symmetric(
+                  vertical: 30,
+                ),
+                child: ListView.builder(
+                  itemCount: chats.length,
+                  itemBuilder: (context, index) {
+                    var chat = chats[index];
+                    print("$chat['updated_at']");
+                    // Rest of your code...
+                  },
+                ),
+              ),
         // Icon(Icons.directions_car),
         // Icon(Icons.directions_transit),
         // ],

@@ -35,9 +35,10 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
   void initState() {
     super.initState();
     getToken().then((token) {
-      chatService.fetchChats(token, "https://api.movel.id/api/user/chats"); // Use the ChatService instance
+      chatService.fetchChats(token,
+          "https://api.movel.id/api/user/chats"); // Use the ChatService instance
       chatService.fetchMessages(
-          token, widget.chatId, "https://api.movel.id/api/user/chats"); // Use the ChatService instance
+          token, widget.chatId); // Use the ChatService instance
     });
     connectToServer();
     print("widget chatId : ${widget.chatId}");
@@ -45,17 +46,27 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
   }
 
   void connectToServer() {
-    socket = IO.io('https://code.movel.id/', <String, dynamic>{
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
       'transports': ['websocket'],
     });
 
-    socket.on('connect', (_) {
+    socket.onConnect((_) {
       print('Connected to Socket.IO server');
-      socket.emit('test_message', {'data': 'Hello, Server!'});
     });
 
-    socket.on('test_response', (data) {
-      print('Received response: $data');
+    socket.on('message_sent', (data) {
+      print('Received message_sent event: $data');
+
+      getToken().then((token) {
+        chatService.fetchChats(token,
+            "https://api.movel.id/api/user/chats"); // Use the ChatService instance
+        chatService.fetchMessages(
+            token, widget.chatId); // Use the ChatService instance
+      });
+    });
+
+    socket.onDisconnect((_) {
+      print('Disconnected from Socket.IO server');
     });
   }
 

@@ -196,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -210,9 +210,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -224,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -239,9 +236,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -253,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -267,9 +261,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -281,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -295,9 +286,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -309,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -323,9 +311,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -337,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -350,9 +335,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
                     ListTile(
                       // leading: Icon(Icons.exit_to_app),
                       title: Column(
@@ -364,7 +346,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),

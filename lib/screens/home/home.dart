@@ -23,10 +23,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    _anjay();
+    _getToken();
   }
 
-  _anjay() async {
+  _getToken() async {
     final prefs = await SharedPreferences.getInstance();
     // final SharedPreferences? prefs = await _prefs;
     // print(prefs?.get('message'));

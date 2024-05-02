@@ -99,7 +99,7 @@ class OrderListItem extends StatelessWidget {
                               name: name,
                               destination: destination,
                               orderDate: orderDate,
-                              statusOrder : statusOrder,
+                              statusOrder: statusOrder,
                             )),
                   );
                 },
@@ -186,32 +186,59 @@ class _PesananDriverDiterimaScreenState
                 return Text('Error: ${snapshot.error}');
               } else if (snapshot.hasData) {
                 final acceptedOrders = snapshot.data!;
-
-                return ListView.builder(
-                  itemCount: acceptedOrders.length,
-                  itemBuilder: (context, index) {
-                    final order = acceptedOrders[index];
-                    final orderId = order['id'];
-                    final name = order['passenger_name'];
-                    final pickupLocation = order['kota_asal'];
-                    final destination = order['kota_tujuan'];
-                    final orderDate = order['date_order'];
-                    final statusOrder = order['status_order'];
-
-                    return Column(
-                      children: [
-                        OrderListItem(
-                          statusOrder: statusOrder,
-                          orderid: orderId,
-                          name: name,
-                          pickupLocation: pickupLocation,
-                          destination: destination,
-                          orderDate: orderDate,
+                if (acceptedOrders.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(
+                          Icons.inbox,
+                          size: 100.0,
+                          color: Colors.deepPurple.shade200,
                         ),
+                        SizedBox(height: 5.0),
+                        Container(
+                          width: 180, // Set the width to your desired value
+                          child: Text(
+                            'Tidak ada pesanan yang diterima',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        )
                       ],
-                    );
-                  },
-                );
+                    ),
+                  );
+                } else {
+                  return ListView.builder(
+                    itemCount: acceptedOrders.length,
+                    itemBuilder: (context, index) {
+                      final order = acceptedOrders[index];
+                      final orderId = order['id'];
+                      final name = order['passenger_name'];
+                      final pickupLocation = order['kota_asal'];
+                      final destination = order['kota_tujuan'];
+                      final orderDate = order['date_order'];
+                      final statusOrder = order['status_order'];
+
+                      return Column(
+                        children: [
+                          OrderListItem(
+                            statusOrder: statusOrder,
+                            orderid: orderId,
+                            name: name,
+                            pickupLocation: pickupLocation,
+                            destination: destination,
+                            orderDate: orderDate,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               } else {
                 return Text('Failed to fetch accepted orders');
               }

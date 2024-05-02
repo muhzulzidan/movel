@@ -276,25 +276,34 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ChooseSeatScreen(
-                                    driverId: activeDrivers[idx]
-                                        ["id"],
+                                    driverId: activeDrivers[idx]["id"],
                                   ),
                                 ),
                               );
                             },
                             child: Container(
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               margin: EdgeInsets.only(
                                 right: 5,
                               ),
-                              child: Card(
-                                elevation: 4,
-                                shadowColor: Colors.black,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                margin: EdgeInsets.all(
+                                    10), // Add some margin to give space for the shadow
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(
+                                          0.2), // Change the color and opacity as needed
+                                      spreadRadius: 1, // Change as needed
+                                      blurRadius: 2, // Change as needed
+                                      offset: Offset(0, 2), // Change as needed
+                                    ),
+                                  ],
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -386,43 +395,43 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
             SizedBox(
               height: 15,
             ),
-            Container(
-              padding: EdgeInsetsDirectional.only(start: 20),
-              height: 200,
-              child: CarouselSlider.builder(
-                options: CarouselOptions(
-                  aspectRatio: 2.0,
-                  enlargeCenterPage: false,
-                  viewportFraction: 1,
-                  // height: 200,
-                ),
-                itemCount: (promo.length / 2).ceil(),
-                itemBuilder: (context, index, realIdx) {
-                  final int first = index * 2;
-                  final int second = first + 1;
-                  return Container(
-                    // height: 500,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children:
-                          // [first, second].map((idx)
-                          promo.map((i) {
-                        // if (idx < promo.length) {
-                        return Container(
-                          margin: EdgeInsets.only(right: 5),
-                          child: Image.asset(
-                            '${i["foto"]}',
-                          ),
-                        );
-                        // } else {
-                        //   return Container();
-                        // }
-                      }).toList(),
-                    ),
-                  );
-                },
-              ),
-            ),
+            // Container(
+            //   padding: EdgeInsetsDirectional.only(start: 20),
+            //   height: 200,
+            //   child: CarouselSlider.builder(
+            //     options: CarouselOptions(
+            //       aspectRatio: 2.0,
+            //       enlargeCenterPage: false,
+            //       viewportFraction: 1,
+            //       // height: 200,
+            //     ),
+            //     itemCount: (promo.length / 2).ceil(),
+            //     itemBuilder: (context, index, realIdx) {
+            //       final int first = index * 2;
+            //       final int second = first + 1;
+            //       return Container(
+            //         // height: 500,
+            //         child: ListView(
+            //           scrollDirection: Axis.horizontal,
+            //           children:
+            //               // [first, second].map((idx)
+            //               promo.map((i) {
+            //             // if (idx < promo.length) {
+            //             return Container(
+            //               margin: EdgeInsets.only(right: 5),
+            //               child: Image.asset(
+            //                 '${i["foto"]}',
+            //               ),
+            //             );
+            //             // } else {
+            //             //   return Container();
+            //             // }
+            //           }).toList(),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
           ],
         ),
       ),

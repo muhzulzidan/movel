@@ -8,14 +8,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/cupertino.dart';
+import 'package:movel/controller/chat/chat_service.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
   final String chatId;
   final String name;
   final String profilePicture;
-  ChatScreen(
-      {required this.chatId, required this.name, required this.profilePicture});
+  ChatScreen({
+    required this.chatId,
+    required this.name,
+    required this.profilePicture,
+  });
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -23,6 +27,10 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final chatService = ChatService(); // Create an instance of ChatService
+  late IO.Socket socket;
+  final ScrollController _scrollController = ScrollController();
+
+  Map<String, dynamic> chatsData = {};
 
   Future<String> getToken() async {
     final prefs = await SharedPreferences.getInstance();
@@ -33,28 +41,88 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    getToken().then((token) {
-      chatService.fetchChats(
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+      }
+    });
+
+    getToken().then((token) async {
+      var data = await chatService.fetchChats(
           token, "https://api.movel.id/api/user/passenger/chats");
+
+      if (mounted) {
+        setState(() {
+          chatsData = data;
+        });
+      }
+
       chatService
-          .fetchMessages(token, widget.chatId,
-              "https://api.movel.id/api/user/passenger/chats")
+          .fetchMessages(
+        token,
+        widget.chatId,
+      )
           .then((messages) {
         _messageController.add(messages);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController
+                .jumpTo(_scrollController.position.maxScrollExtent);
+          }
+        });
       });
     });
+
+    connectToServer();
+
     print("widget chatId : ${widget.chatId}");
     print("messages : ${_messageController}");
   }
 
-  // List<String> _messages = [
-  //   "Hi, how can I help you?",
-  //   "I'd like to book a ride, please.",
-  //   "Sure, where are you located?",
-  //   "I'm at the airport.",
-  //   "Great, I'll send a driver your way.",
-  //   "Thank you!",
-  // ];
+  void connectToServer() {
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.onConnect((_) {
+      print('Connected to Socket.IO server');
+    });
+
+    socket.on('message_sent', (data) {
+      print('Received message_sent event: $data');
+
+      getToken().then((token) async {
+        var data = await chatService.fetchChats(
+            token, "https://api.movel.id/api/user/passenger/chats");
+
+        if (mounted) {
+          setState(() {
+            chatsData = data;
+          });
+        }
+
+        chatService
+            .fetchMessages(
+          token,
+          widget.chatId,
+        )
+            .then((messages) {
+          _messageController.add(messages);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController.hasClients) {
+              _scrollController
+                  .jumpTo(_scrollController.position.maxScrollExtent);
+            }
+          });
+        });
+      });
+    });
+
+    socket.onDisconnect((_) {
+      print('Disconnected from Socket.IO server');
+    });
+  }
 
   // Stream<List<Message>> _messages = Stream.empty();
   StreamController<List<Message>> _messageController =
@@ -66,10 +134,18 @@ class _ChatScreenState extends State<ChatScreen> {
       chatService.postMessage(token, widget.chatId, message,
           "https://api.movel.id/api/user/passenger/chats");
     });
+    _textEditingController.clear(); // Clear the TextField
+  }
+
+  @override
+  void dispose() {
+    _messageController.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // print("chat screen  : ${chatsData}");
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple.shade700,
@@ -94,6 +170,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               Flexible(
                 child: Text(
+                  // "test",
                   widget.name,
                   style: TextStyle(color: Colors.white),
                 ), // Display the sender's name
@@ -119,12 +196,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   return Text('Error: ${snapshot.error}');
                 } else {
                   return ListView.builder(
+                    controller: _scrollController,
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (context, index) {
                       final message = snapshot.data![index];
                       final isDriver = !message.isDriver;
-                      print("message : ${message}");
-                      // Parse the created_at field and format it
                       final createdAt = message.created_at != null
                           ? DateFormat('kk:mm ')
                               .format(DateTime.parse(message.created_at!))
@@ -135,20 +211,31 @@ class _ChatScreenState extends State<ChatScreen> {
                             ? Alignment.centerRight
                             : Alignment.centerLeft,
                         child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.8,
+                          ),
                           margin: const EdgeInsets.all(10),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 15, vertical: 10),
                           decoration: BoxDecoration(
                             color: isDriver
-                                ? Colors.deepPurple.shade100
+                                ? Colors.deepPurple.shade700
                                 : Colors.white,
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                              bottomLeft: isDriver
+                                  ? Radius.circular(15)
+                                  : Radius.circular(0),
+                              bottomRight: isDriver
+                                  ? Radius.circular(0)
+                                  : Radius.circular(15),
+                            ),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.grey.withOpacity(0.5),
                                 spreadRadius: 1,
                                 blurRadius: 2,
-                                // offset: Offset(0), // changes position of shadow
                               ),
                             ],
                           ),
@@ -157,23 +244,15 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ? CrossAxisAlignment.end
                                 : CrossAxisAlignment.start,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  right: 0,
-                                ),
-                                child: Text(
-                                  message.content,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                  ),
+                              Text(
+                                message.content,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color:
+                                      isDriver ? Colors.white : Colors.black87,
                                 ),
                               ),
-                              Text(createdAt,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.grey.shade700,
-                                    fontWeight: FontWeight.w800,
-                                  )),
+                              SizedBox(height: 5),
                             ],
                           ),
                         ),
@@ -201,6 +280,14 @@ class _ChatScreenState extends State<ChatScreen> {
                       controller: _textEditingController,
                       decoration: InputDecoration(
                         hintText: "Type a message",
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                        hintStyle: TextStyle(color: Colors.grey.shade300),
                       ),
                       onSubmitted: _sendMessage,
                     ),
@@ -209,6 +296,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 IconButton(
                   onPressed: () {
                     _sendMessage(_textEditingController.text);
+                    _textEditingController.clear(); // Clear the TextField
                   },
                   icon: Icon(Icons.send),
                 ),

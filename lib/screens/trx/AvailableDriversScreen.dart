@@ -207,6 +207,7 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     elevation: 2.0,
+                    surfaceTintColor: Colors.white,
                     shadowColor: Colors.grey[200],
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -332,7 +333,7 @@ class _AvailableDriversScreenState extends State<AvailableDriversScreen> {
                             height: 5,
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Colors.transparent,
                               borderRadius: BorderRadius.vertical(
                                   bottom: Radius.circular(16.0)),
                             ),

@@ -1,8 +1,12 @@
 import 'dart:ui';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'dart:convert';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:web_socket_channel/io.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'package:http/http.dart' as http;
 import 'package:requests/requests.dart';
@@ -19,6 +23,9 @@ class DriverHomeContent extends StatefulWidget {
 }
 
 class _DriverHomeContentState extends State<DriverHomeContent> {
+  late WebSocketChannel _channel;
+  late IO.Socket socket;
+
   int saldo = 0; // Initialize with 0 or some default value
   List<Map<String, dynamic>> _seats = [];
   bool _hasAcceptedOrders = false;
@@ -35,6 +42,9 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
   @override
   void initState() {
     super.initState();
+
+    connectToServer();
+
     _loadButtonPressedState();
     fetchRouteData();
     fetchSeatData().then((seatData) {
@@ -52,8 +62,40 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
 
     fetchSaldo();
     _fetchAcceptedOrders();
-     // Fetch the active status of the driver
+    // Fetch the active status of the driver
     _fetchActiveStatus();
+  }
+
+  void connectToServer() {
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.onConnect((_) {
+      print('Connected to Socket.IO server');
+    });
+
+    socket.on('top_up', (data) {
+      print('Received top_up event: $data');
+      fetchSaldo(); // Refetch saldo when a top_up event is received
+    });
+
+    // Listen for the new_order event
+    socket.on('new_order', (data) {
+      // Update the list of orders
+      print('Received new_order event: $data');
+      _fetchAcceptedOrders();
+    });
+
+    socket.onDisconnect((_) {
+      print('Disconnected from Socket.IO server');
+    });
+  }
+
+  @override
+  void dispose() {
+    _channel.sink.close();
+    super.dispose();
   }
 
   Future<void> _fetchActiveStatus() async {
@@ -81,7 +123,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     }
   }
 
-Future<void> _fetchAcceptedOrders() async {
+  Future<void> _fetchAcceptedOrders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
     try {
@@ -119,7 +161,6 @@ Future<void> _fetchAcceptedOrders() async {
         print(response.body);
         print(response.json());
       } else {
-        
         print("Failed to fetch accepted orders");
         print(response.body);
         print(response.json());
@@ -464,11 +505,10 @@ Future<void> _fetchAcceptedOrders() async {
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
                         onPressed: () {
-                          if (!_hasAcceptedOrders) {
+                          if (_hasAcceptedOrders) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                    'Tidak Bisa Mengubah Rute lagi.'),
+                                content: Text('Tidak Bisa Mengubah Rute lagi.'),
                                 duration: Duration(seconds: 2),
                                 backgroundColor: Colors.red.shade700,
                                 // behavior: SnackBarBehavior.floating,
@@ -570,17 +610,18 @@ Future<void> _fetchAcceptedOrders() async {
                                         fontSize: 15, color: Colors.black),
                                   ),
                                   Text(
-                                    "Rp $saldo",
+                                    "Rp ${NumberFormat('#,###', 'id_ID').format(saldo)}",
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w800),
+                                      fontSize: 20,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                             SizedBox(
-                              width: 30,
+                              width: 20,
                             ),
                             ElevatedButton(
                                 onPressed: () {
