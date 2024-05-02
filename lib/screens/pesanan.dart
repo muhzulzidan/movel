@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:http/http.dart' as http;
 import 'chat/inbox.dart';
 import "package:movel/controller/chat/chat_service.dart";
 
@@ -22,7 +22,7 @@ class PesananScreen extends StatefulWidget {
 class _PesananScreenState extends State<PesananScreen> {
   // final Function(int) updateSelectedIndex;
   Map<String, dynamic>? orderStatus;
-
+  ChatService chatService = ChatService();
   late IO.Socket socket;
 
   @override
@@ -35,35 +35,89 @@ class _PesananScreenState extends State<PesananScreen> {
     });
 
     socket.onConnect((_) {
-      print('Connected');
+      print('Socket Connected');
     });
+    List<String> events = [
+      'new_order',
+      'order_pick_location',
+      'order_pick_location_arrive',
+      'order_complete',
+      'order_cancel_accept',
+      'order_cancel_reject',
+      'order_accept',
+    ];
 
-    socket.on('order_pick_location', (data) {
-      print('order_pick_location event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_pick_location_arrive', (data) {
-      print('order_pick_location_arrive event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_complete', (data) {
-      print('order_complete event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_cancel_accept', (data) {
-      print('order_cancel_accept event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_cancel_reject', (data) {
-      print('order_cancel_reject event: $data');
-      _fetchOrderStatus();
-    });
+    for (var event in events) {
+      socket.on(event, (data) {
+        print('pesanan screen');
+        print('$event event: $data');
+        _fetchOrderStatusUpdated();
+        // Show a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$event'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      });
+    }
 
     socket.connect();
+    if (orderStatus != null) {
+      Map<String, String> data = {
+        'receiver_id': orderStatus!['driver_id'].toString(),
+        'order_id': orderStatus!['id_order'].toString(),
+      };
+
+      print("pesanan $data");
+    }
+  }
+
+  Future<int> createChat(String details) async {
+    // Check if orderStatus is not null
+    if (orderStatus != null) {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
+
+      // Define the data to send
+      Map<String, String> data = {
+        'receiver_id': orderStatus!['driver_id'].toString(),
+        'details': details,
+        'order_id': orderStatus!['id_order'].toString(),
+      };
+
+      // Make the POST request
+      var response = await http.post(
+        Uri.parse('https://api.movel.id/api/user/passenger/chats'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(data),
+      );
+
+      // Check the response
+      if (response.statusCode == 201) {
+        print('Chat created successfully');
+        var responseBody = json.decode(response.body);
+        return responseBody['chat']['id']; // Return the ID of the created chat
+      } else {
+        throw Exception('Could not create chat: ${response.body}');
+      }
+    } else {
+      return -1; // Replace -1 with your default value
+    }
+  }
+
+  Future<void> _fetchOrderStatusUpdated() async {
+    final data = await _fetchOrderStatusData();
+    print("pesanan fetchorder status data $data");
+    if (data != null && mounted) {
+      // Check if the widget is still mounted
+      setState(() {
+        orderStatus = data;
+      });
+    }
   }
 
   Future<void> _fetchOrderStatus() async {

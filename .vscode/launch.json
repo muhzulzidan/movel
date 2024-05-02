@@ -12,13 +12,5 @@
           "program": "lib/main.dart",
           "args": ["-v"]
         }
-         {
-           "name": "Flutter",
-           "request": "launch",
-           "type": "dart",
-           "flutterMode": "debug",
-           "args": ["-v"]
-         }
-       
     ]
 }
