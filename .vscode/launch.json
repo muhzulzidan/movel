@@ -4,13 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-         {
-           "name": "Flutter",
-           "request": "launch",
-           "type": "dart",
-           "flutterMode": "debug",
-           "args": ["-v"]
-         }
-       
+
+        {
+          "name": "Flutter Movel",
+          "type": "dart",
+          "request": "launch",
+          "program": "lib/main.dart",
+          "args": ["-v"]
+        }
     ]
 }

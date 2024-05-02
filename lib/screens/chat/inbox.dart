@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-// import 'package:pusher_channels_flutter/pusher-js/core/pusher.dart';
-
+import 'package:movel/controller/chat/chat_service.dart';
 import 'ChatScreen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
-// import 'package:pusher_websocket_flutter/pusher.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class InboxScreen extends StatefulWidget {
   @override
@@ -15,29 +13,60 @@ class InboxScreen extends StatefulWidget {
 
 class _InboxScreenState extends State<InboxScreen> {
   Map<String, dynamic> data = {};
+  late IO.Socket socket;
+  final chatService = ChatService(); // Create an instance of ChatService
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    // connectToServer(); // Call the connectToServer function
+    connectToServer();
   }
 
-  // void connectToServer() async {
-  //  var options = PusherOptions(
-  //     host: 'code.movel.id',
-  //     port: 6001,
-  //     encrypted: false,
-  //     cluster: 'ap1',
-  //   );
+  void connectToServer() {
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
+      'transports': ['websocket'],
+    });
 
-  //   var pusher =
-  //       FlutterPusher('320b0a04d5f7bd0a1109', options, enableLogging: true);
+    socket.onConnect((_) {
+      print('Connected to Socket.IO server');
+    });
 
-  //   pusher.subscribe('test-channel').bind('App\\Events\\MyEvent', (data) {
-  //     print('Received event: $data');
-  //   });
-  // }
+    socket.on('chat_created', (data) {
+      print('Received chat_created event: $data');
+      fetchData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pesan baru diterima!'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    });
+    socket.on('chat_updated', (data) {
+      print('Received chat_updated event: $data');
+      fetchData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pesan diperbarui!'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    });
+    socket.on('chat_deleted', (data) {
+      print('Received chat_deleted event: $data');
+      fetchData();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Pesan dihapus!'),
+          duration: Duration(seconds: 5),
+        ),
+      );
+    });
+
+    socket.onDisconnect((_) {
+      print('Disconnected from Socket.IO server');
+    });
+  }
 
   Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
@@ -67,12 +96,6 @@ class _InboxScreenState extends State<InboxScreen> {
         title: Text(
           "Kotak Masuk",
         ),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // )
       ),
       body: data == null
           ? Center(child: CircularProgressIndicator()) // Loading indicator
@@ -98,23 +121,27 @@ class _InboxScreenState extends State<InboxScreen> {
                       },
                       title: Row(
                         children: [
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Colors.white,
-                            child: ClipOval(
-                              child: chat['receiver'] != null
-                                  ? Image.network(
-                                      chat['receiver']['photo']
-                                          .replaceFirst('/photos/public', ''),
-                                      fit: BoxFit.cover,
-                                      width: 70,
-                                      height: 70,
-                                    )
-                                  : Container(), // Placeholder widget
+                          Container(
+                            width: 50,
+                            height: 60,
+                            child: CircleAvatar(
+                              radius: 50,
+                              backgroundColor: Colors.white,
+                              child: ClipOval(
+                                child: chat['receiver'] != null
+                                    ? Image.network(
+                                        chat['receiver']['photo']
+                                            .replaceFirst('/photos/public', ''),
+                                        fit: BoxFit.cover,
+                                        width: 50,
+                                        height: 50,
+                                      )
+                                    : Container(), // Placeholder widget
+                              ),
                             ),
                           ),
                           SizedBox(
-                            width: 10,
+                            width: 15,
                           ),
                           Expanded(
                             child: Column(
@@ -125,18 +152,21 @@ class _InboxScreenState extends State<InboxScreen> {
                                   Text(
                                     '${chat['receiver']['user_driver']['name']}',
                                     style: TextStyle(
-                                      fontSize: 14,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.w700,
                                     ),
                                     textAlign: TextAlign.left,
                                   ),
                                 ],
+                                SizedBox(
+                                  height: 2,
+                                ),
                                 Text(
                                   data != null && data['user'] != null
                                       ? "Halo ${data['user']['name']}"
                                       : 'Loading...', // Placeholder text
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: 12,
                                   ),
                                   textAlign: TextAlign.left,
                                 ),
@@ -144,6 +174,60 @@ class _InboxScreenState extends State<InboxScreen> {
                             ),
                           ),
                         ],
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          color: Colors.red.shade600,
+                        ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                surfaceTintColor: Colors.white,
+                                title: Text('Hapus Chat'),
+                                content: Text(
+                                    'Apakah Anda yakin ingin menghapus chat ini?'),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text(
+                                      'Batal',
+                                      style: TextStyle(
+                                        color: Colors.red.shade700,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                  TextButton(
+                                    child: Text(
+                                      'Hapus',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    onPressed: () async {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      String token =
+                                          prefs.getString('token') ?? '';
+
+                                      Navigator.of(context).pop();
+                                      await chatService.deleteChat(
+                                        token,
+                                        chat['id'],
+                                        "https://api.movel.id/api/user/passenger/chat",
+                                      );
+                                      fetchData();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
                       ),
                     );
                   },

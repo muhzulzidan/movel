@@ -180,7 +180,7 @@ class OrderProgressScreen extends StatelessWidget {
                     // TODO: Implement cancel order functionality
                   },
                   child: Text(
-                    "Chat dengan Sopir",
+                    "Chat dengan Sopir order progress ",
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -191,6 +191,4 @@ class OrderProgressScreen extends StatelessWidget {
       ),
     );
   }
-
-
 }

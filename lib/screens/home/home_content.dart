@@ -283,17 +283,27 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
                             },
                             child: Container(
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               margin: EdgeInsets.only(
                                 right: 5,
                               ),
-                              child: Card(
-                                elevation: 4,
-                                shadowColor: Colors.black,
-                                color: Color.fromARGB(255, 255, 255, 255),
-                                shape: RoundedRectangleBorder(
+                              child: Container(
+                                margin: EdgeInsets.all(
+                                    10), // Add some margin to give space for the shadow
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(
+                                          0.2), // Change the color and opacity as needed
+                                      spreadRadius: 1, // Change as needed
+                                      blurRadius: 2, // Change as needed
+                                      offset: Offset(0, 2), // Change as needed
+                                    ),
+                                  ],
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.start,

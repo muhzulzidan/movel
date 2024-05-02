@@ -362,28 +362,23 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                             Expanded(
                               flex: 1,
                               child: Container(
-                                  alignment: Alignment.topRight,
-                                  child: RichText(
-                                    textAlign: TextAlign.end,
-                                    text: TextSpan(
-                                      text: 'Atau pilih ',
-                                      style: DefaultTextStyle.of(context).style,
-                                      children: const <TextSpan>[
-                                        TextSpan(
-                                            text: 'kota asalmu',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                        TextSpan(text: ' di bawah ini!'),
-                                      ],
-                                    ),
-                                  )
-                                  // Text(
-                                  //   textAlign: TextAlign.end,
-                                  //   "Atau pilih kota asalmu di bawah ini",
-                                  //   style: TextStyle(),
-                                  // )
-
+                                alignment: Alignment.topRight,
+                                child: RichText(
+                                  textAlign: TextAlign.end,
+                                  softWrap: true, // Add this line
+                                  text: TextSpan(
+                                    text: 'atau pilih ',
+                                    style: DefaultTextStyle.of(context).style,
+                                    children: const <TextSpan>[
+                                      TextSpan(
+                                          text: 'kota asalmu',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold)),
+                                      TextSpan(text: ' di bawah ini!'),
+                                    ],
                                   ),
+                                ),
+                              ),
                             ),
                             SizedBox(
                               height: 160,
@@ -414,16 +409,7 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                               ],
                                               color: Colors.grey[100],
                                             ),
-                                            child: ListTile(
-                                              // leading: Icon(Icons.place),
-
-                                              title: Text(
-                                                city['nama_kota'] as String,
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.w800,
-                                                    height: .1),
-                                                textAlign: TextAlign.center,
-                                              ),
+                                            child: GestureDetector(
                                               onTap: () {
                                                 setState(() {
                                                   _selectedKotaAsalNama =
@@ -433,10 +419,23 @@ class _ChooseLocationScreenState extends State<ChooseLocationScreen> {
                                                   _searchController.text =
                                                       _selectedKotaAsalNama!;
                                                 });
-                                                // _handleTap();
                                                 print(
                                                     "_selectedKotaAsalNama : $_selectedKotaAsalNama");
                                               },
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    city['nama_kota'] as String,
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        height: .1),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         );

@@ -247,7 +247,9 @@ class _ChooseDepartureDateScreenState extends State<ChooseDepartureDateScreen> {
                     ),
                   ],
                 ),
-                Divider(),
+                Divider(
+                  color: Colors.transparent,
+                ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

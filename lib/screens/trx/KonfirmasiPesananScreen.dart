@@ -192,14 +192,16 @@ class KonfirmasiPesananScreen extends StatelessWidget {
                   final currentIndexProvider =
                       Provider.of<CurrentIndexProvider>(context, listen: false);
                   currentIndexProvider.setIndex(2);
+                  // Set the _currentIndex to the index of the 'Kotak Masuk' tab
 
                   Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PesananScreen(),
-                    ),
-                  );
+
+                  // Navigator.pushReplacement(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => PesananScreen(),
+                  //   ),
+                  // );
                 } else {
                   // Handle error response here
                   print(
