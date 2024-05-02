@@ -17,6 +17,7 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
 
   Future<List<dynamic>>? _rejectedOrdersFuture;
 
+
   Future<void> _fetchRejectedOrders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -96,15 +97,6 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         final rejectedOrders = snapshot.data!;
-                        if (rejectedOrders.isEmpty) {
-                          // Check if the list is empty
-                          return Column(
-                            children: [
-                              Center(
-                                  child: Text('Belum ada pesanan dibatalkan')),
-                            ],
-                          );
-                        }
                         return Column(
                           children: rejectedOrders.map((order) {
                             final name = order['passenger_name'];
@@ -152,7 +144,7 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
                           }).toList(),
                         );
                       } else {
-                        return Text('No cancelled orders');
+                        return Text('No rejected orders found');
                       }
                     },
                   ),

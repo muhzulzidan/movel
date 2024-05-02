@@ -1,17 +1,24 @@
 import 'dart:convert';
+import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 import 'package:movel/screens/chat/ChatScreen.dart';
+import 'package:movel/controller/auth/current_index_provider.dart';
+import 'package:movel/screens/chat/ChatScreen.dart';
 import 'package:movel/screens/pesanan/pesanan_detail.dart';
+import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
 import 'chat/inbox.dart';
+import "package:movel/controller/chat/chat_service.dart";
 import "package:movel/controller/chat/chat_service.dart";
 
 class PesananScreen extends StatefulWidget {
@@ -24,11 +31,102 @@ class _PesananScreenState extends State<PesananScreen> {
   Map<String, dynamic>? orderStatus;
   ChatService chatService = ChatService();
   late IO.Socket socket;
+  ChatService chatService = ChatService();
+  late IO.Socket socket;
 
   @override
   void initState() {
     super.initState();
     _fetchOrderStatus();
+
+    socket = IO.io('https://admin.movel.id', <String, dynamic>{
+      'transports': ['websocket'],
+    });
+
+    socket.onConnect((_) {
+      print('Socket Connected');
+    });
+    List<String> events = [
+      'new_order',
+      'order_pick_location',
+      'order_pick_location_arrive',
+      'order_complete',
+      'order_cancel_accept',
+      'order_cancel_reject',
+      'order_accept',
+    ];
+
+    for (var event in events) {
+      socket.on(event, (data) {
+        print('pesanan screen');
+        print('$event event: $data');
+        _fetchOrderStatusUpdated();
+        // Show a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$event'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      });
+    }
+
+    socket.connect();
+    if (orderStatus != null) {
+      Map<String, String> data = {
+        'receiver_id': orderStatus!['driver_id'].toString(),
+        'order_id': orderStatus!['id_order'].toString(),
+      };
+
+      print("pesanan $data");
+    }
+  }
+
+  Future<int> createChat(String details) async {
+    // Check if orderStatus is not null
+    if (orderStatus != null) {
+      final prefs = await SharedPreferences.getInstance();
+      String token = prefs.getString('token') ?? '';
+
+      // Define the data to send
+      Map<String, String> data = {
+        'receiver_id': orderStatus!['driver_id'].toString(),
+        'details': details,
+        'order_id': orderStatus!['id_order'].toString(),
+      };
+
+      // Make the POST request
+      var response = await http.post(
+        Uri.parse('https://api.movel.id/api/user/passenger/chats'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode(data),
+      );
+
+      // Check the response
+      if (response.statusCode == 201) {
+        print('Chat created successfully');
+        var responseBody = json.decode(response.body);
+        return responseBody['chat']['id']; // Return the ID of the created chat
+      } else {
+        throw Exception('Could not create chat: ${response.body}');
+      }
+    } else {
+      return -1; // Replace -1 with your default value
+    }
+  }
+
+  Future<void> _fetchOrderStatusUpdated() async {
+    final data = await _fetchOrderStatusData();
+    print("pesanan fetchorder status data $data");
+    if (data != null && mounted) {
+      // Check if the widget is still mounted
+      setState(() {
+        orderStatus = data;
+      });
+    }
 
     socket = IO.io('https://admin.movel.id', <String, dynamic>{
       'transports': ['websocket'],
@@ -164,6 +262,7 @@ class _PesananScreenState extends State<PesananScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        title: Text("Cek Progress Pesanan Anda"),
         title: Text("Cek Progress Pesanan Anda"),
       ),
       body: (orderStatus == null ||
@@ -521,6 +620,10 @@ class _PesananScreenState extends State<PesananScreen> {
                       Icons.cancel,
                       color: Colors.white,
                     ),
+                    icon: Icon(
+                      Icons.cancel,
+                      color: Colors.white,
+                    ),
                     label: Text(
                       "Batalkan Pesanan",
                       style: TextStyle(
@@ -558,7 +661,6 @@ class _PesananScreenState extends State<PesananScreen> {
                       // Check if a chat already exists
                       bool chatExists = await chatService.chatExists(
                         token,
-                        orderStatus!['id_order'],
                       );
                       if (chatExists) {
                         print('Chat already exists');
@@ -603,11 +705,28 @@ class _PesananScreenState extends State<PesananScreen> {
                             profilePicture: orderStatus!['driver_photo'],
                           ),
                         ),
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(
+                            chatId: chatId.toString(),
+                            name: orderStatus!['driver_name'],
+                            profilePicture: orderStatus!['driver_photo'],
+                          ),
+                        ),
                       );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
+                        Flexible(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 20),
+                            child: Text(
+                              "Chat dengan Sopir pesanan",
+                              style: TextStyle(color: Colors.black),
+                              textAlign: TextAlign.start,
+                              maxLines: 1, // Add this line
+                              overflow: TextOverflow.ellipsis,
+                            ),
                         Flexible(
                           child: Padding(
                             padding: const EdgeInsets.only(left: 20),
@@ -624,6 +743,7 @@ class _PesananScreenState extends State<PesananScreen> {
                           padding: const EdgeInsets.only(right: 10),
                           child: Icon(
                             Icons.send,
+                            color: Colors.black,
                             color: Colors.black,
                             size: 20,
                           ),
