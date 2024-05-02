@@ -69,9 +69,11 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
 
   void connectToServer() {
     socket = IO.io('https://admin.movel.id/', <String, dynamic>{
+    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
       'transports': ['websocket'],
     });
 
+    socket.onConnect((_) {
     socket.onConnect((_) {
       print('Connected to Socket.IO server');
     });
