@@ -219,6 +219,7 @@ class ChatService {
       print('User ID: $userId');
       print('Chats: $chats');
       return jsonData; // Return the JSON data
+      return jsonData; // Return the JSON data
     } else {
       throw Exception('Failed to load chats');
     }

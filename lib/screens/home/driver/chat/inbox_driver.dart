@@ -15,7 +15,7 @@ class _DriverInboxScreenState extends State<DriverInboxScreen> {
   Map<String, dynamic> data = {};
   final chatService = ChatService(); // Create an instance of ChatService
   late IO.Socket socket;
-  
+
   @override
   void initState() {
     super.initState();
