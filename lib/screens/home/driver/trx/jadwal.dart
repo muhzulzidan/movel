@@ -217,24 +217,29 @@ class _JadwalScreenState extends State<JadwalScreen> {
         'Authorization': 'Bearer $token',
       };
 
-      final _time = _selectedTime.toString();
+      final _time = _pickedTime.toString().substring(0, 5);
+
       print("submitform asal $_selectedKotaAsalId");
       print("submitform tujuan $_selectedKotaTujuanId");
       print("submitform tujuan $_pickedDate");
-      print("submitform tujuan $_pickedTime");
+      print("submitform tujuan $_time");
 
       final body = {
         'kota_asal_id': _selectedKotaAsalId,
         'kota_tujuan_id': _selectedKotaTujuanId,
-        'date_departure': _pickedDate,
-        'time_departure': _pickedTime.toString(),
+        'date_departure': _pickedDate.toString(),
+        'time_departure': _time,
       };
 
       Response response;
+
+      print(" _submitForm hasExistingData  $hasExistingData");
       if (hasExistingData) {
         // If there is existing data, use PUT to update
+        print(" _submitForm put  $hasExistingData");
         response = await Requests.put(url, headers: headers, body: body);
       } else {
+        print(" _submitForm post $hasExistingData");
         // If there is no existing data, use POST to create
         response = await Requests.post(url, headers: headers, body: body);
       }
@@ -257,9 +262,10 @@ class _JadwalScreenState extends State<JadwalScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Rute Gagal!')),
         );
-        print('Request failed with status: ${response.statusCode}');
-        print('Request failed with status: ${response.body}');
-        print('Request failed with status: ${response.json()}');
+        print('Request failed with response: ${response}');
+        print('Request failed with statusCode: ${response.statusCode}');
+        print('Request failed with body: ${response.body}');
+        print('Request failed with json: ${response.json()}');
       }
     }
   }
@@ -692,7 +698,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
         _selectedTimeController.text = _pickedTime;
       });
       print("_pickedTime $_pickedTime");
-
     }
   }
 }

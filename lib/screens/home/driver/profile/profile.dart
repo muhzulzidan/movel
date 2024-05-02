@@ -209,7 +209,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                     //       ),
                     //       Divider(
                     //         height: 30,
-                    //         color: Colors.black54,
+                    //         color: Colors.black12,
                     //       ),
                     //     ],
                     //   ),
@@ -239,7 +239,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -253,9 +253,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         );
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
+
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -267,7 +265,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -282,9 +280,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
+
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -296,7 +292,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -310,9 +306,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
+
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -324,7 +318,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -338,9 +332,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
+
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -352,7 +344,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                           ),
                           Divider(
                             height: 30,
-                            color: Colors.black54,
+                            color: Colors.black12,
                           ),
                         ],
                       ),
@@ -366,9 +358,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-                    Divider(
-                      height: 1,
-                    ),
 
                     // ListTile(
                     //   // leading: Icon(Icons.lock),
@@ -381,7 +370,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                     //       ),
                     //       Divider(
                     //         height: 30,
-                    //         color: Colors.black54,
+                    //         color: Colors.black12,
                     //       ),
                     //     ],
                     //   ),
@@ -408,7 +397,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                             ),
                             Divider(
                               height: 30,
-                              color: Colors.black54,
+                              color: Colors.black12,
                             ),
                           ],
                         ),

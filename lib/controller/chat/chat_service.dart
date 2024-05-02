@@ -7,6 +7,7 @@ import 'message.dart'; // Import the Message class
 
 class ChatService {
   final String baseUrl = 'https://api.movel.id/api/user/passenger';
+  final String baseUrlDriver = 'https://api.movel.id/api/user';
 
   Future<int?> getLatestChatId(String token) async {
     // Make the GET request
@@ -93,20 +94,6 @@ class ChatService {
     }
   }
 
-  Future<void> deleteChat(String token, int chatId, String url) async {
-    final response = await http.delete(
-      Uri.parse('$url/$chatId'),
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
-    print(response.statusCode);
-    print(response.body);
-    if (response.statusCode != 200) {
-      throw Exception('Failed to delete chat');
-    }
-  }
-
   Future<Map<String, dynamic>> fetchChats(String token, String url) async {
     final response = await http.get(
       Uri.parse('$url'),
@@ -122,20 +109,35 @@ class ChatService {
       print('User ID: $userId');
       print('Chats: $chats');
       return jsonData; // Return the JSON data
+      return jsonData; // Return the JSON data
     } else {
       throw Exception('Failed to load chats');
     }
   }
 
+  Future<void> deleteChat(String token, int chatId, String url) async {
+    final response = await http.delete(
+      Uri.parse('$url/$chatId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    print(response.statusCode);
+    print(response.body);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete chat');
+    }
+  }
+
   Future<List<Message>> fetchMessages(String token, String chatId) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/chats/$chatId/messages'),
+      Uri.parse('$baseUrlDriver/chats/$chatId/messages'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
-    print("fetchMessages : ${baseUrl}/chats/${chatId}/messages");
+    print("fetchMessages : ${baseUrlDriver}/chats/${chatId}/messages");
 
     if (response.statusCode == 200) {
       List<Message> _messages = [];

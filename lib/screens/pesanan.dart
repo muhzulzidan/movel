@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:http/http.dart' as http;
+
 import 'chat/inbox.dart';
 import "package:movel/controller/chat/chat_service.dart";
 
@@ -22,7 +22,7 @@ class PesananScreen extends StatefulWidget {
 class _PesananScreenState extends State<PesananScreen> {
   // final Function(int) updateSelectedIndex;
   Map<String, dynamic>? orderStatus;
-  ChatService chatService = ChatService();
+
   late IO.Socket socket;
 
   @override
@@ -35,89 +35,35 @@ class _PesananScreenState extends State<PesananScreen> {
     });
 
     socket.onConnect((_) {
-      print('Socket Connected');
+      print('Connected');
     });
-    List<String> events = [
-      'new_order',
-      'order_pick_location',
-      'order_pick_location_arrive',
-      'order_complete',
-      'order_cancel_accept',
-      'order_cancel_reject',
-      'order_accept',
-    ];
 
-    for (var event in events) {
-      socket.on(event, (data) {
-        print('pesanan screen');
-        print('$event event: $data');
-        _fetchOrderStatusUpdated();
-        // Show a SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$event'),
-            duration: Duration(seconds: 5),
-          ),
-        );
-      });
-    }
+    socket.on('order_pick_location', (data) {
+      print('order_pick_location event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_pick_location_arrive', (data) {
+      print('order_pick_location_arrive event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_complete', (data) {
+      print('order_complete event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_cancel_accept', (data) {
+      print('order_cancel_accept event: $data');
+      _fetchOrderStatus();
+    });
+
+    socket.on('order_cancel_reject', (data) {
+      print('order_cancel_reject event: $data');
+      _fetchOrderStatus();
+    });
 
     socket.connect();
-    if (orderStatus != null) {
-      Map<String, String> data = {
-        'receiver_id': orderStatus!['driver_id'].toString(),
-        'order_id': orderStatus!['id_order'].toString(),
-      };
-
-      print("pesanan $data");
-    }
-  }
-
-  Future<int> createChat(String details) async {
-    // Check if orderStatus is not null
-    if (orderStatus != null) {
-      final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString('token') ?? '';
-
-      // Define the data to send
-      Map<String, String> data = {
-        'receiver_id': orderStatus!['driver_id'].toString(),
-        'details': details,
-        'order_id': orderStatus!['id_order'].toString(),
-      };
-
-      // Make the POST request
-      var response = await http.post(
-        Uri.parse('https://api.movel.id/api/user/passenger/chats'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode(data),
-      );
-
-      // Check the response
-      if (response.statusCode == 201) {
-        print('Chat created successfully');
-        var responseBody = json.decode(response.body);
-        return responseBody['chat']['id']; // Return the ID of the created chat
-      } else {
-        throw Exception('Could not create chat: ${response.body}');
-      }
-    } else {
-      return -1; // Replace -1 with your default value
-    }
-  }
-
-  Future<void> _fetchOrderStatusUpdated() async {
-    final data = await _fetchOrderStatusData();
-    print("pesanan fetchorder status data $data");
-    if (data != null && mounted) {
-      // Check if the widget is still mounted
-      setState(() {
-        orderStatus = data;
-      });
-    }
   }
 
   Future<void> _fetchOrderStatus() async {
@@ -161,10 +107,15 @@ class _PesananScreenState extends State<PesananScreen> {
   Widget build(BuildContext context) {
     print("orderStatus : $orderStatus");
 
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progress Pesanan Anda"),
       ),
+      body: (orderStatus == null ||
+              orderStatus?['status_order_id'] == 7 ||
+              orderStatus?['status_order_id'] == 8 ||
+              orderStatus?['status_order_id'] == 0)
       body: (orderStatus == null ||
               orderStatus?['status_order_id'] == 7 ||
               orderStatus?['status_order_id'] == 8 ||
@@ -218,20 +169,24 @@ class _PesananScreenState extends State<PesananScreen> {
                       title: "Pesanan Diterima",
                       icon: Icons.bookmark_added,
                       status: 3,
+                      status: 3,
                     ),
                     buildProgressTile(
                       title: "Sopir Menuju ke Lokasi Anda",
                       icon: Icons.directions_run,
+                      status: 5,
                       status: 5,
                     ),
                     buildProgressTile(
                       title: "Sopir Telah Tiba di Lokasi Anda",
                       icon: Icons.directions_car,
                       status: 6,
+                      status: 6,
                     ),
                     buildProgressTile(
                       title: "Anda Telah Tiba di Tujuan",
                       icon: Icons.place,
+                      status: 7,
                       status: 7,
                     ),
                   ],
@@ -273,6 +228,7 @@ class _PesananScreenState extends State<PesananScreen> {
 
   Widget buildProgressTile(
       {required String title, required int status, required IconData icon}) {
+      {required String title, required int status, required IconData icon}) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -285,7 +241,10 @@ class _PesananScreenState extends State<PesananScreen> {
             Icon(
               icon,
               color: status == orderStatus?['status_order_id']
+              color: status == orderStatus?['status_order_id']
                   ? Colors.deepPurple.shade700
+                  : Colors.black,
+              size: 32, // Adjust the size as needed
                   : Colors.black,
               size: 32, // Adjust the size as needed
             ),
@@ -294,12 +253,19 @@ class _PesananScreenState extends State<PesananScreen> {
               title,
               style: TextStyle(
                 color: status == orderStatus?['status_order_id']
+                color: status == orderStatus?['status_order_id']
                     ? Colors.deepPurple.shade700
+                    : Colors.black,
+                fontSize: 12,
+                // Adjust the font size as needed
                     : Colors.black,
                 fontSize: 12,
                 // Adjust the font size as needed
               ),
               maxLines: 2,
+              textAlign: TextAlign.center, // Align the text to center if needed
+              overflow: TextOverflow
+                  .ellipsis, // Show ellipsis if the text exceeds two lines
               textAlign: TextAlign.center, // Align the text to center if needed
               overflow: TextOverflow
                   .ellipsis, // Show ellipsis if the text exceeds two lines

@@ -8,6 +8,7 @@ import 'chat/inbox_driver.dart';
 import 'pesanan/pesanan_baru.dart';
 import 'pesanan/pesanan_driver_diterima.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class MyHomeDriverPage extends StatefulWidget {
   // final String userAccessToken;
@@ -18,19 +19,19 @@ class MyHomeDriverPage extends StatefulWidget {
 }
 
 class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
-  late IO.Socket socket;  
+  late IO.Socket socket;
   int _currentIndex = 0;
   late List<dynamic> _newOrders = [];
 
   @override
   void initState() {
     super.initState();
-      connectToServer();
+    connectToServer();
 
     _fetchAcceptedOrders();
   }
 
-    void connectToServer() {
+  void connectToServer() {
     socket = IO.io('https://admin.movel.id/', <String, dynamic>{
       'transports': ['websocket'],
     });
@@ -50,7 +51,6 @@ class _MyHomeDriverPageState extends State<MyHomeDriverPage> {
       print('Disconnected from Socket.IO server');
     });
   }
-
 
   Future<void> _fetchAcceptedOrders() async {
     final prefs = await SharedPreferences.getInstance();
