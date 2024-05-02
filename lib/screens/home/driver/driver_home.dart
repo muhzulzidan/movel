@@ -8,7 +8,6 @@ import 'chat/inbox_driver.dart';
 import 'pesanan/pesanan_baru.dart';
 import 'pesanan/pesanan_driver_diterima.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class MyHomeDriverPage extends StatefulWidget {
   // final String userAccessToken;
