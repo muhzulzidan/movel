@@ -44,33 +44,32 @@ class _PesananScreenState extends State<PesananScreen> {
     });
 
     socket.onConnect((_) {
-      print('Connected');
+      print('Socket Connected');
     });
+    List<String> events = [
+      'new_order',
+      'order_pick_location',
+      'order_pick_location_arrive',
+      'order_complete',
+      'order_cancel_accept',
+      'order_cancel_reject',
+      'order_accept',
+    ];
 
-    socket.on('order_pick_location', (data) {
-      print('order_pick_location event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_pick_location_arrive', (data) {
-      print('order_pick_location_arrive event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_complete', (data) {
-      print('order_complete event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_cancel_accept', (data) {
-      print('order_cancel_accept event: $data');
-      _fetchOrderStatus();
-    });
-
-    socket.on('order_cancel_reject', (data) {
-      print('order_cancel_reject event: $data');
-      _fetchOrderStatus();
-    });
+    for (var event in events) {
+      socket.on(event, (data) {
+        print('pesanan screen');
+        print('$event event: $data');
+        _fetchOrderStatusUpdated();
+        // Show a SnackBar
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$event'),
+            duration: Duration(seconds: 5),
+          ),
+        );
+      });
+    }
 
     socket.connect();
     if (orderStatus != null) {
