@@ -1,13 +1,9 @@
 import 'dart:ui';
 import 'package:intl/intl.dart';
-import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'dart:convert';
-import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -30,9 +26,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
   late WebSocketChannel _channel;
   late IO.Socket socket;
 
-  late WebSocketChannel _channel;
-  late IO.Socket socket;
-
   int saldo = 0; // Initialize with 0 or some default value
   List<Map<String, dynamic>> _seats = [];
   bool _hasAcceptedOrders = false;
@@ -49,9 +42,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
   @override
   void initState() {
     super.initState();
-
-    connectToServer();
-
 
     connectToServer();
 
@@ -72,7 +62,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
 
     fetchSaldo();
     _fetchAcceptedOrders();
-    // Fetch the active status of the driver
     // Fetch the active status of the driver
     _fetchActiveStatus();
   }
@@ -162,7 +151,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     }
   }
 
-  Future<void> _fetchAcceptedOrders() async {
   Future<void> _fetchAcceptedOrders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
@@ -547,10 +535,8 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (_hasAcceptedOrders) {
-                          if (_hasAcceptedOrders) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Tidak Bisa Mengubah Rute lagi.'),
                                 content: Text('Tidak Bisa Mengubah Rute lagi.'),
                                 duration: Duration(seconds: 2),
                                 backgroundColor: Colors.red.shade700,
@@ -654,12 +640,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                   ),
                                   Text(
                                     "Rp ${NumberFormat('#,###', 'id_ID').format(saldo)}",
-                                    "Rp ${NumberFormat('#,###', 'id_ID').format(saldo)}",
                                     style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800,
-                                    ),
                                       fontSize: 20,
                                       color: Colors.black,
                                       fontWeight: FontWeight.w800,
@@ -669,7 +650,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                               ),
                             ),
                             SizedBox(
-                              width: 20,
                               width: 20,
                             ),
                             ElevatedButton(

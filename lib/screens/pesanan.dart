@@ -161,15 +161,10 @@ class _PesananScreenState extends State<PesananScreen> {
   Widget build(BuildContext context) {
     print("orderStatus : $orderStatus");
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progress Pesanan Anda"),
       ),
-      body: (orderStatus == null ||
-              orderStatus?['status_order_id'] == 7 ||
-              orderStatus?['status_order_id'] == 8 ||
-              orderStatus?['status_order_id'] == 0)
       body: (orderStatus == null ||
               orderStatus?['status_order_id'] == 7 ||
               orderStatus?['status_order_id'] == 8 ||
@@ -223,24 +218,20 @@ class _PesananScreenState extends State<PesananScreen> {
                       title: "Pesanan Diterima",
                       icon: Icons.bookmark_added,
                       status: 3,
-                      status: 3,
                     ),
                     buildProgressTile(
                       title: "Sopir Menuju ke Lokasi Anda",
                       icon: Icons.directions_run,
-                      status: 5,
                       status: 5,
                     ),
                     buildProgressTile(
                       title: "Sopir Telah Tiba di Lokasi Anda",
                       icon: Icons.directions_car,
                       status: 6,
-                      status: 6,
                     ),
                     buildProgressTile(
                       title: "Anda Telah Tiba di Tujuan",
                       icon: Icons.place,
-                      status: 7,
                       status: 7,
                     ),
                   ],
@@ -282,7 +273,6 @@ class _PesananScreenState extends State<PesananScreen> {
 
   Widget buildProgressTile(
       {required String title, required int status, required IconData icon}) {
-      {required String title, required int status, required IconData icon}) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -295,10 +285,7 @@ class _PesananScreenState extends State<PesananScreen> {
             Icon(
               icon,
               color: status == orderStatus?['status_order_id']
-              color: status == orderStatus?['status_order_id']
                   ? Colors.deepPurple.shade700
-                  : Colors.black,
-              size: 32, // Adjust the size as needed
                   : Colors.black,
               size: 32, // Adjust the size as needed
             ),
@@ -307,19 +294,12 @@ class _PesananScreenState extends State<PesananScreen> {
               title,
               style: TextStyle(
                 color: status == orderStatus?['status_order_id']
-                color: status == orderStatus?['status_order_id']
                     ? Colors.deepPurple.shade700
-                    : Colors.black,
-                fontSize: 12,
-                // Adjust the font size as needed
                     : Colors.black,
                 fontSize: 12,
                 // Adjust the font size as needed
               ),
               maxLines: 2,
-              textAlign: TextAlign.center, // Align the text to center if needed
-              overflow: TextOverflow
-                  .ellipsis, // Show ellipsis if the text exceeds two lines
               textAlign: TextAlign.center, // Align the text to center if needed
               overflow: TextOverflow
                   .ellipsis, // Show ellipsis if the text exceeds two lines
