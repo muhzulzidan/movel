@@ -32,7 +32,9 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
 
       if (response.statusCode == 200) {
         final jsonData = response.json();
-        final rejectedOrders = jsonData['data'];
+        final rejectedOrders = jsonData['data'] ??
+            []; // If jsonData['data'] is null, assign an empty list
+
         setState(() {
           _rejectedOrdersFuture = Future.value(rejectedOrders);
         });
@@ -94,6 +96,15 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
                         return Text('Error: ${snapshot.error}');
                       } else if (snapshot.hasData) {
                         final rejectedOrders = snapshot.data!;
+                        if (rejectedOrders.isEmpty) {
+                          // Check if the list is empty
+                          return Column(
+                            children: [
+                              Center(
+                                  child: Text('Belum ada pesanan dibatalkan')),
+                            ],
+                          );
+                        }
                         return Column(
                           children: rejectedOrders.map((order) {
                             final name = order['passenger_name'];
@@ -141,7 +152,7 @@ class _PesananDibatalkanScreenState extends State<PesananDibatalkanScreen> {
                           }).toList(),
                         );
                       } else {
-                        return Text('No rejected orders found');
+                        return Text('No cancelled orders');
                       }
                     },
                   ),

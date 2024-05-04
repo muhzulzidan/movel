@@ -5,8 +5,6 @@ class EditProfileScreen extends StatelessWidget {
 
   EditProfileScreen({required this.userData});
 
-  // int no_hp = "userData["no_hp"]";
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,112 +14,119 @@ class EditProfileScreen extends StatelessWidget {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         iconTheme: IconThemeData(color: Colors.white),
-        backgroundColor: Colors.deepPurple.shade700,
+        backgroundColor: Colors.deepPurple.shade500, // Lighter shade
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            decoration: BoxDecoration(color: Colors.deepPurple.shade700),
-            child: Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: CircleAvatar(
-                    radius: 50.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: AssetImage('assets/placeholderPhoto.png'),
+      body: Padding(
+        padding: EdgeInsets.all(0), // Padding around the body
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade500), // Lighter shade
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: CircleAvatar(
+                      radius: 50.0,
+                      backgroundColor: Colors.transparent,
+                      backgroundImage:
+                          AssetImage('assets/placeholderPhoto.png'),
+                    ),
                   ),
-                ),
-                SizedBox(height: 40),
-              ],
+                  SizedBox(height: 40),
+                ],
+              ),
             ),
-          ),
-          Divider(),
-          Column(
-            children: [Text('$userData')],
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text('Nama Pengguna'),
+            Card(
+              // Card for a raised effect
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text('Nama Pengguna'),
+                    ),
+                    Expanded(
+                      child: Text('${userData["name"]}',
+                          style: TextStyle(
+                              fontWeight:
+                                  FontWeight.bold)), // Different font style
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Text('${userData["name"]}'),
-                ),
-              ],
+              ),
             ),
-          ),
-          Divider(),
-          ListTile(
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text('E-mail'),
+            // Divider(
+            //   color: Colors.white,
+            // ),
+            Card(
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text('E-mail'),
+                    ),
+                    Expanded(
+                      child: Text('${userData["email"]}',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Text('${userData["email"]}'),
-                ),
-              ],
+              ),
             ),
-          ),
-          Divider(),
-          ListTile(
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text('No. Handphone'),
+            // Divider(
+            //   color: Colors.white,
+            // ),
+            Card(
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text('No. Handphone'),
+                    ),
+                    Expanded(
+                      child: Text('${userData["no_hp"]}',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Text('${userData["no_hp"]}'),
-                ),
-              ],
+              ),
             ),
-          ),
-          Divider(),
-          ListTile(
-            title: Row(
-              children: [
-                Expanded(
-                  child: Text('Alamat'),
+            // Divider(
+            //   color: Colors.white,
+            // ),
+            Card(
+              child: ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text('Alamat'),
+                    ),
+                    Expanded(
+                      child: Text(
+                        userData["alamat"] ?? "kosong",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Text(
-                    userData["alamat"] ?? "kosong",
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-          Divider(),
-
-          // ListTile(
-          //   leading: Icon(Icons.person),
-          //   title: Text('Personal Information'),
-          //   trailing: Icon(Icons.arrow_forward_ios),
-          //   onTap: () {
-          //     // TODO: Navigate to personal information screen.
-          //   },
-          // ),
-          // Divider(),
-          // ListTile(
-          //   leading: Icon(Icons.lock),
-          //   title: Text('Change Password'),
-          //   trailing: Icon(Icons.arrow_forward_ios),
-          //   onTap: () {
-          //     // TODO: Navigate to change password screen.
-          //   },
-          // ),
-          // Divider(),
-          ListTile(
-            leading: Icon(Icons.exit_to_app),
-            title: Text('Log Out'),
-            onTap: () {
-              // TODO: Log out the user and navigate to the login screen.
-            },
-          ),
-        ],
+            // Divider(
+            //   color: Colors.white,
+            // ),
+            Card(
+              child: ListTile(
+                leading: Icon(Icons.exit_to_app),
+                title: Text('Log Out'),
+                onTap: () {
+                  // TODO: Log out the user and navigate to the login screen.
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -137,7 +137,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     super.dispose();
   }
 
-  Future<void> _fetchActiveStatus() async {
+  Future<bool> _fetchActiveStatus() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
 
@@ -153,12 +153,14 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
       setState(() {
         _isButtonPressed = activeStatus == 1;
       });
+      return activeStatus == 1; // Return the active status
     } else {
       // Handle error
       print('Failed to fetch active status');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to fetch active status')),
       );
+      return false; // Return false if there was an error
     }
   }
 
@@ -298,7 +300,6 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
     }
   }
 
-// Function to set the driver to "Active"
   Future<void> setDriverActive() async {
     print("setDriverActive");
     final prefs = await SharedPreferences.getInstance();
@@ -311,8 +312,34 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
       },
     );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to set driver to active');
+    if (response.statusCode == 200) {
+      final jsonData = response.json();
+      if (!jsonData['success']) {
+        print(response.json());
+        throw Exception('Failed to set driver to active');
+      }
+    } else if (response.statusCode == 400) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            surfaceTintColor: Colors.white,
+            title: Text('Saldo Tidak Cukup'),
+            content: Text('Tolong top up saldo Anda terlebih dahulu'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      print(response.json());
+      throw Exception('Unexpected error occurred');
     }
   }
 
@@ -476,15 +503,23 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                             bool routeExists = await checkRouteAndSchedule();
                             if (routeExists) {
                               await setDriverActive();
+                              bool isActive =
+                                  await _fetchActiveStatus(); // Fetch the active status from the server
                               final prefs =
                                   await SharedPreferences.getInstance();
-                              await prefs.setBool('aktif', true);
+                              await prefs.setBool('aktif',
+                                  isActive); // Update the local state based on the server's state
                               setState(() {
-                                _isButtonPressed = true;
+                                _isButtonPressed =
+                                    isActive; // Update the button's state based on the server's state
                               });
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Status Driver Aktif!')),
-                              );
+                              if (isActive) {
+                                // Only show the snackbar if the driver is active
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text('Status Driver Aktif!')),
+                                );
+                              }
                             } else {
                               Navigator.push(
                                 context,
@@ -802,10 +837,10 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                     ),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 30,
                   ),
                   Center(
-                    child: Row(
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
@@ -816,7 +851,8 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                           ),
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 30,
+                          height: 10,
                         ),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -845,45 +881,45 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  SizedBox(
-                    width: 180,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _isBerangkat ? Colors.amberAccent : Colors.grey,
-                        padding: EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      onPressed: () {
-                        // TODO: Add your logic here
-                        setState(() {
-                          _isBerangkat = !_isBerangkat;
-                        });
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.check_circle,
-                            color: _isBerangkat ? Colors.black : Colors.white,
-                          ),
-                          SizedBox(width: 8.0),
-                          Text(
-                            "Berangkat",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: _isBerangkat ? Colors.black : Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  // SizedBox(
+                  //   height: 15,
+                  // ),
+                  // SizedBox(
+                  //   width: 180,
+                  //   child: ElevatedButton(
+                  //     style: ElevatedButton.styleFrom(
+                  //       backgroundColor:
+                  //           _isBerangkat ? Colors.amberAccent : Colors.grey,
+                  //       padding: EdgeInsets.symmetric(vertical: 12),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(20.0),
+                  //       ),
+                  //     ),
+                  //     onPressed: () {
+                  //       // TODO: Add your logic here
+                  //       setState(() {
+                  //         _isBerangkat = !_isBerangkat;
+                  //       });
+                  //     },
+                  //     child: Row(
+                  //       mainAxisAlignment: MainAxisAlignment.center,
+                  //       children: [
+                  //         Icon(
+                  //           Icons.check_circle,
+                  //           color: _isBerangkat ? Colors.black : Colors.white,
+                  //         ),
+                  //         SizedBox(width: 8.0),
+                  //         Text(
+                  //           "Berangkat",
+                  //           style: TextStyle(
+                  //             fontWeight: FontWeight.w700,
+                  //             color: _isBerangkat ? Colors.black : Colors.white,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // )
                 ],
               ),
               //
@@ -954,8 +990,9 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                         ),
                       ),
                       AlertDialog(
+                        surfaceTintColor: Colors.white,
                         content: Text(
-                          'Yakin ingin menambahkan penumpang?',
+                          'yakin ingin menambahkan penumpang?',
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                           ),
@@ -992,6 +1029,7 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                                 ),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
+                                    surfaceTintColor: Colors.white,
                                     padding: EdgeInsets.symmetric(vertical: 8),
                                     backgroundColor: Colors.white,
                                     shape: RoundedRectangleBorder(

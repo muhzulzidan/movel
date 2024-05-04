@@ -43,7 +43,40 @@ class ChatService {
     }
   }
 
-  Future<bool> chatExists(String token) async {
+  Future<int?> getLatestDriverChatId(String token) async {
+    // Make the GET request
+    print("chat exists : ${baseUrlDriver}/chats/");
+    var response = await http.get(
+      Uri.parse('$baseUrlDriver/chats/'), // Replace with your actual endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print("response : ${response.statusCode}");
+    print("response : ${response.body}");
+
+    // Check the response
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      var data = jsonDecode(response.body);
+      // If the server returns a chat, return the ID of the latest chat
+      if (data != null && data['chats'] is List && data['chats'].isNotEmpty) {
+        print("chat exists : true");
+        return data['chats'].last['id'];
+      } else {
+        print("No chats found");
+        return null;
+      }
+    } else {
+      // If the server returns an error or no chat, return null
+      print("Failed to load chats");
+      return null;
+    }
+  }
+
+  Future<bool> chatExists(String token, int orderId) async {
     // Make the GET request
 
     print("chat exists : ${baseUrl}/chats/");
@@ -61,13 +94,66 @@ class ChatService {
     // Check the response
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON.
-      var data = jsonDecode(response.body);
-      // If the server returns a chat, return true
-      print("chat exists : ${data != null}");
-      return data != null;
+      Map<String, dynamic> data = jsonDecode(response.body);
+
+      // Get the list of chats
+      List<dynamic> chats = data['chats'];
+
+      // Check if there's a chat with the specified order ID
+      for (var chat in chats) {
+        if (chat['order_id'] == orderId) {
+          print("Chat exists for order ID: $orderId");
+          return true;
+        }
+      }
+
+      // If no chat with the specified order ID is found, return false
+      print("No chat exists for order ID: $orderId");
+      return false;
     } else {
-      // If the server returns an error or no chat, return false
-      print("failede to load chats");
+      // If the server returns an error, return false
+      print("Failed to load chats");
+      return false;
+    }
+  }
+
+  Future<bool> chatExistsDriver(String token, int orderId) async {
+    // Make the GET request
+
+    print("chat exists : ${baseUrlDriver}/chats/");
+    var response = await http.get(
+      Uri.parse('$baseUrlDriver/chats/'), // Replace with your actual endpoint
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print("response : ${response.statusCode}");
+    print("response : ${response.body}");
+
+    // Check the response
+    if (response.statusCode == 200) {
+      // If the server returns a 200 OK response, parse the JSON.
+      Map<String, dynamic> data = jsonDecode(response.body);
+
+      // Get the list of chats
+      List<dynamic> chats = data['chats'];
+
+      // Check if there's a chat with the specified order ID
+      for (var chat in chats) {
+        if (chat['order_id'] == orderId) {
+          print("Chat exists for order ID: $orderId");
+          return true;
+        }
+      }
+
+      // If no chat with the specified order ID is found, return false
+      print("No chat exists for order ID: $orderId");
+      return false;
+    } else {
+      // If the server returns an error, return false
+      print("Failed to load chats");
       return false;
     }
   }
@@ -82,6 +168,29 @@ class ChatService {
     // Make the POST request
     var response = await http.post(
       Uri.parse('$baseUrl/chats'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(data),
+    );
+
+    // Check the response
+    if (response.statusCode != 201) {
+      throw Exception('Could not create chat: ${response.body}');
+    }
+  }
+
+  Future<void> createChatDriver(String token, String driverId) async {
+    // Define the data to send
+    Map<String, String> data = {
+      'receiver_id': driverId.toString(),
+      // Add any other data required to create a chat
+    };
+
+    // Make the POST request
+    var response = await http.post(
+      Uri.parse('$baseUrlDriver/chats'),
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -110,7 +219,6 @@ class ChatService {
       print('User ID: $userId');
       print('Chats: $chats');
       return jsonData; // Return the JSON data
-      return jsonData; // Return the JSON data
     } else {
       throw Exception('Failed to load chats');
     }
@@ -123,6 +231,7 @@ class ChatService {
         'Authorization': 'Bearer $token',
       },
     );
+    print("delete chat $chatId");
     print(response.statusCode);
     print(response.body);
     if (response.statusCode != 200) {

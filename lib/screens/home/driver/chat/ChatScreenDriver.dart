@@ -12,10 +12,14 @@ import 'package:intl/intl.dart';
 class ChatScreenDriver extends StatefulWidget {
   final String chatId;
   final String name;
-  final String profilePicture;
+  // final String profilePicture;
 
-  ChatScreenDriver(
-      {required this.chatId, required this.name, required this.profilePicture});
+  ChatScreenDriver({
+    required this.chatId,
+    required this.name,
+
+    // required this.profilePicture,
+  });
 
   @override
   _ChatScreenDriverState createState() => _ChatScreenDriverState();
@@ -122,7 +126,14 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
     );
 
     print('Message sent: $chatId');
-    if (response.statusCode == 201) {
+    if (response.statusCode == 429) {
+      // If the server returns a 429 TOO MANY REQUESTS response, wait for a while before sending another request.
+      print(
+          'Too many requests. Waiting for 30 seconds before sending another request.');
+      await Future.delayed(Duration(seconds: 30));
+      // Then, try to send the message again.
+      postMessage(token, chatId, message);
+    } else if (response.statusCode == 201) {
       // If the server returns a 201 CREATED response, the message was sent successfully.
       print('Message sent: $message');
     } else {
@@ -170,16 +181,16 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // BackButton(),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 10,
-                ), // Adjust the padding as needed
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(widget
-                      .profilePicture), // Display the sender's profile picture
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsets.symmetric(
+              //     horizontal: 12,
+              //     vertical: 10,
+              //   ), // Adjust the padding as needed
+              //   child: CircleAvatar(
+              //     backgroundImage: NetworkImage(widget
+              //         .profilePicture), // Display the sender's profile picture
+              //   ),
+              // ),
               Flexible(
                 child: Text(
                   widget.name,
@@ -310,7 +321,8 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
                   ),
                   IconButton(
                     onPressed: () {
-                      _sendMessage(_textEditingController.text ?? '');
+                      _sendMessage(_textEditingController.text);
+                      _textEditingController.clear(); // Clear the TextField
                     },
                     icon: Icon(Icons.send),
                   ),
