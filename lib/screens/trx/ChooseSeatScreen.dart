@@ -230,7 +230,7 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
           Stack(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.292,
+                height: MediaQuery.of(context).size.height * 0.280,
               ),
               Positioned(
                 bottom: 0,
@@ -377,6 +377,4 @@ class _ChooseSeatScreenState extends State<ChooseSeatScreen> {
             ),
           );
   }
-
-
 }

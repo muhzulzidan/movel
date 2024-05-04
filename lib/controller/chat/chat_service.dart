@@ -8,7 +8,8 @@ import 'message.dart'; // Import the Message class
 
 class ChatService {
   final String baseUrl = 'https://api.movel.id/api/user/passenger';
-
+  final String baseUrlDriver = 'https://api.movel.id/api/user';
+  
   Future<int?> getLatestChatId(String token) async {
     // Make the GET request
     print("chat exists : ${baseUrl}/chats/");

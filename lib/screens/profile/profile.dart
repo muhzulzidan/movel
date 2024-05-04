@@ -22,16 +22,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
-    // final dio = Dio();
-    // var cookieJar = CookieJar();
-
-    // Add the CookieJar to Dio's HttpClientAdapter
-
-    // final options = Options(
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //   },
-    // );
 
     final response = await Requests.post(
       'https://api.movel.id/api/user/logout',

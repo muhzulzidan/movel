@@ -64,7 +64,9 @@ class _ChatScreenState extends State<ChatScreen> {
         widget.chatId,
       )
           .then((messages) {
-        _messageController.add(messages);
+        if (!_messageController.isClosed) {
+          _messageController.add(messages);
+        }
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_scrollController.hasClients) {
             _scrollController
