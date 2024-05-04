@@ -91,168 +91,243 @@ class _InboxScreenState extends State<InboxScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Kotak Masuk",
-        ),
-      ),
-      body: data == null
-          ? Center(child: CircularProgressIndicator()) // Loading indicator
-          : data['chats'] != null && data['chats'].isNotEmpty
-              ? ListView.builder(
-                  itemCount: data['chats'].length,
-                  itemBuilder: (context, index) {
-                    var chat = data['chats'][index];
-                    print("chat pasenger : $chat");
-                    return ListTile(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ChatScreen(
-                                    chatId: chat['id'].toString(),
-                                    name: chat['receiver']['user_driver']
-                                        ['name'],
-                                    profilePicture: chat['receiver']['photo']
-                                        .replaceFirst('/photos/public', ''),
-                                  )),
-                        );
-                      },
-                      title: Row(
-                        children: [
-                          Container(
-                            width: 50,
-                            height: 60,
-                            child: CircleAvatar(
-                              radius: 50,
-                              backgroundColor: Colors.white,
-                              child: ClipOval(
-                                child: chat['receiver'] != null
-                                    ? Image.network(
-                                        chat['receiver']['photo']
-                                            .replaceFirst('/photos/public', ''),
-                                        fit: BoxFit.cover,
-                                        width: 50,
-                                        height: 50,
-                                      )
-                                    : Container(), // Placeholder widget
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                if (chat['receiver'] != null) ...[
-                                  Text(
-                                    '${chat['receiver']['user_driver']['name']}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    textAlign: TextAlign.left,
-                                  ),
-                                ],
-                                SizedBox(
-                                  height: 2,
-                                ),
-                                Text(
-                                  data != null && data['user'] != null
-                                      ? "Halo ${data['user']['name']}"
-                                      : 'Loading...', // Placeholder text
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.delete,
-                          color: Colors.red.shade600,
-                        ),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                surfaceTintColor: Colors.white,
-                                title: Text('Hapus Chat'),
-                                content: Text(
-                                    'Apakah Anda yakin ingin menghapus chat ini?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    child: Text(
-                                      'Batal',
-                                      style: TextStyle(
-                                        color: Colors.red.shade700,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: Text(
-                                      'Hapus',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      String token =
-                                          prefs.getString('token') ?? '';
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Kotak Masuk",
+            ),
+            bottom: TabBar(
+              tabs: <Widget>[
+                Tab(text: 'Ongoing'),
+                Tab(text: 'Completed'),
+              ],
+            ),
+          ),
+          body: TabBarView(
+            children: [
+              _buildChatList(
+                  data['chats']?.where((chat) {
+                        print('Chat order_status: ${chat['status_label']}');
+                        return chat['order_status'] == "ongoing";
+                      }).toList() ??
+                      [],
+                  data,
+                  fetchData,
+                  chatService,
+                  "ongoing"),
+              _buildChatList(
+                  data['chats']?.where((chat) {
+                        print('Chat order_status: ${chat['status_label']}');
+                        return chat['order_status'] == "completed";
+                      }).toList() ??
+                      [],
+                  data,
+                  fetchData,
+                  chatService,
+                  "completed"),
+            ],
+          )),
+    );
+  }
+}
 
-                                      Navigator.of(context).pop();
-                                      await chatService.deleteChat(
-                                        token,
-                                        chat['id'],
-                                        "https://api.movel.id/api/user/passenger/chat",
-                                      );
-                                      fetchData();
-                                    },
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  },
-                )
-              : Center(
+Widget _buildChatList(List<dynamic> chatList, dynamic data,
+    VoidCallback fetchData, ChatService chatService, String orderStatus) {
+  // Here is where orderStatus is defined
+  var filteredChatList = chatList;
+  if (orderStatus != null) {
+    // Here is where orderStatus is used
+    filteredChatList =
+        chatList.where((chat) => chat['orderStatus'] == orderStatus).toList();
+  }
+  print("chatList__buildChatList_filteredChatList : $filteredChatList");
+  print("chatList__buildChatList_chatList : $chatList");
+  return chatList.isNotEmpty
+      ? SingleChildScrollView(
+          child: Column(
+            children: chatList.map((chat) {
+              return ChatTile(
+                chat: chat,
+                data: data,
+                fetchData: fetchData,
+                chatService: chatService,
+                orderStatus: orderStatus,
+              );
+            }).toList(),
+          ),
+        )
+      : Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.inbox,
+                size: 100.0,
+                color: Colors.deepPurple.shade700,
+              ),
+              SizedBox(height: 10.0), // Add space between icon and text
+              Text(
+                'Kotak Masuk Kosong',
+                style: TextStyle(
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+        ); // Display when empty // Placeholder widget when there are no chats
+}
+
+class ChatTile extends StatelessWidget {
+  final dynamic chat;
+  final dynamic data;
+  final VoidCallback fetchData;
+  final ChatService chatService;
+  final String orderStatus;
+
+  ChatTile({
+    required this.chat,
+    required this.data,
+    required this.fetchData,
+    required this.chatService,
+    required this.orderStatus,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: data['chats']
+          .where((chat) => chat['order_status'] == orderStatus)
+          .map<Widget>(
+        (chat) {
+          print("chat driver : ${chat["order"]['status_order_id']}");
+          return ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ChatScreen(
+                          chatId: chat['id'].toString(),
+                          name: chat['receiver']['user_driver']['name'],
+                          profilePicture: chat['receiver']['photo']
+                              .replaceFirst('/photos/public', ''),
+                        )),
+              );
+            },
+            title: Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 60,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    child: ClipOval(
+                      child: chat['receiver'] != null
+                          ? Image.network(
+                              chat['receiver']['photo']
+                                  .replaceFirst('/photos/public', ''),
+                              fit: BoxFit.cover,
+                              width: 50,
+                              height: 50,
+                            )
+                          : Container(), // Placeholder widget
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Icon(
-                        Icons.inbox,
-                        size: 100.0,
-                        color: Colors.deepPurple.shade700,
-                      ),
-                      SizedBox(height: 10.0), // Add space between icon and text
-                      Text(
-                        'Kotak Masuk Kosong',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (chat['receiver'] != null) ...[
+                        Text(
+                          '${chat['receiver']['user_driver']['name']}',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.left,
                         ),
+                      ],
+                      SizedBox(
+                        height: 2,
+                      ),
+                      Text(
+                        data != null && data['user'] != null
+                            ? "Halo ${data['user']['name']}"
+                            : 'Loading...', // Placeholder text
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.left,
                       ),
                     ],
                   ),
-                ), // Display when empty
+                ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                Icons.delete,
+                color: Colors.red.shade600,
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      surfaceTintColor: Colors.white,
+                      title: Text('Hapus Chat'),
+                      content:
+                          Text('Apakah Anda yakin ingin menghapus chat ini?'),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text(
+                            'Batal',
+                            style: TextStyle(
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            'Hapus',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            String token = prefs.getString('token') ?? '';
+
+                            Navigator.of(context).pop();
+                            await chatService.deleteChat(
+                              token,
+                              chat['id'],
+                              "https://api.movel.id/api/user/passenger/chat",
+                            );
+                            fetchData();
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          );
+        },
+      ).toList(),
     );
   }
 }

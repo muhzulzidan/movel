@@ -50,7 +50,7 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
       chatService.fetchChats(token,
           "https://api.movel.id/api/user/chats"); // Use the ChatService instance
       chatService
-          .fetchMessages(
+          .fetchDriverMessages(
         token,
         widget.chatId,
       )
@@ -73,11 +73,9 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
 
   void connectToServer() {
     socket = IO.io('https://admin.movel.id/', <String, dynamic>{
-    socket = IO.io('https://admin.movel.id/', <String, dynamic>{
       'transports': ['websocket'],
     });
 
-    socket.onConnect((_) {
     socket.onConnect((_) {
       print('Connected to Socket.IO server');
     });
@@ -89,7 +87,7 @@ class _ChatScreenDriverState extends State<ChatScreenDriver> {
         chatService.fetchChats(token,
             "https://api.movel.id/api/user/chats"); // Use the ChatService instance
         chatService
-            .fetchMessages(
+            .fetchDriverMessages(
           token,
           widget.chatId,
         )

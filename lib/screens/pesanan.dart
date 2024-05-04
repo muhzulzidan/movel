@@ -1,24 +1,17 @@
 import 'dart:convert';
-import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 import 'package:movel/screens/chat/ChatScreen.dart';
-import 'package:movel/controller/auth/current_index_provider.dart';
-import 'package:movel/screens/chat/ChatScreen.dart';
 import 'package:movel/screens/pesanan/pesanan_detail.dart';
-import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:http/http.dart' as http;
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:http/http.dart' as http;
 import 'chat/inbox.dart';
-import "package:movel/controller/chat/chat_service.dart";
 import "package:movel/controller/chat/chat_service.dart";
 
 class PesananScreen extends StatefulWidget {
@@ -29,8 +22,6 @@ class PesananScreen extends StatefulWidget {
 class _PesananScreenState extends State<PesananScreen> {
   // final Function(int) updateSelectedIndex;
   Map<String, dynamic>? orderStatus;
-  ChatService chatService = ChatService();
-  late IO.Socket socket;
   ChatService chatService = ChatService();
   late IO.Socket socket;
 
@@ -46,114 +37,25 @@ class _PesananScreenState extends State<PesananScreen> {
     socket.onConnect((_) {
       print('Socket Connected');
     });
-    List<String> events = [
-      'new_order',
-      'order_pick_location',
-      'order_pick_location_arrive',
-      'order_complete',
-      'order_cancel_accept',
-      'order_cancel_reject',
-      'order_accept',
-    ];
+    Map<String, String> events = {
+      'new_order': 'Pesanan baru telah diterima.',
+      'order_pick_location': 'Sopir menuju ke lokasi penjemputan.',
+      'order_pick_location_arrive': 'Sopir telah tiba di lokasi penjemputan.',
+      'order_complete': 'Pesanan telah selesai.',
+      'order_cancel_accept': 'Pesanan telah dibatalkan.',
+      'order_cancel_reject': 'Pembatalan pesanan ditolak.',
+      'order_accept': 'Pesanan telah diterima oleh sopir.',
+    };
 
-    for (var event in events) {
-      socket.on(event, (data) {
+    for (var entry in events.entries) {
+      socket.on(entry.key, (data) {
         print('pesanan screen');
-        print('$event event: $data');
+        print('${entry.key} event: $data');
         _fetchOrderStatusUpdated();
         // Show a SnackBar
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('$event'),
-            duration: Duration(seconds: 5),
-          ),
-        );
-      });
-    }
-
-    socket.connect();
-    if (orderStatus != null) {
-      Map<String, String> data = {
-        'receiver_id': orderStatus!['driver_id'].toString(),
-        'order_id': orderStatus!['id_order'].toString(),
-      };
-
-      print("pesanan $data");
-    }
-  }
-
-  Future<int> createChat(String details) async {
-    // Check if orderStatus is not null
-    if (orderStatus != null) {
-      final prefs = await SharedPreferences.getInstance();
-      String token = prefs.getString('token') ?? '';
-
-      // Define the data to send
-      Map<String, String> data = {
-        'receiver_id': orderStatus!['driver_id'].toString(),
-        'details': details,
-        'order_id': orderStatus!['id_order'].toString(),
-      };
-
-      // Make the POST request
-      var response = await http.post(
-        Uri.parse('https://api.movel.id/api/user/passenger/chats'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode(data),
-      );
-
-      // Check the response
-      if (response.statusCode == 201) {
-        print('Chat created successfully');
-        var responseBody = json.decode(response.body);
-        return responseBody['chat']['id']; // Return the ID of the created chat
-      } else {
-        throw Exception('Could not create chat: ${response.body}');
-      }
-    } else {
-      return -1; // Replace -1 with your default value
-    }
-  }
-
-  Future<void> _fetchOrderStatusUpdated() async {
-    final data = await _fetchOrderStatusData();
-    print("pesanan fetchorder status data $data");
-    if (data != null && mounted) {
-      // Check if the widget is still mounted
-      setState(() {
-        orderStatus = data;
-      });
-    }
-
-    socket = IO.io('https://admin.movel.id', <String, dynamic>{
-      'transports': ['websocket'],
-    });
-
-    socket.onConnect((_) {
-      print('Socket Connected');
-    });
-    List<String> events = [
-      'new_order',
-      'order_pick_location',
-      'order_pick_location_arrive',
-      'order_complete',
-      'order_cancel_accept',
-      'order_cancel_reject',
-      'order_accept',
-    ];
-
-    for (var event in events) {
-      socket.on(event, (data) {
-        print('pesanan screen');
-        print('$event event: $data');
-        _fetchOrderStatusUpdated();
-        // Show a SnackBar
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$event'),
+            content: Text(entry.value),
             duration: Duration(seconds: 5),
           ),
         );
@@ -259,16 +161,10 @@ class _PesananScreenState extends State<PesananScreen> {
   Widget build(BuildContext context) {
     print("orderStatus : $orderStatus");
 
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Cek Progress Pesanan Anda"),
-        title: Text("Cek Progress Pesanan Anda"),
       ),
-      body: (orderStatus == null ||
-              orderStatus?['status_order_id'] == 7 ||
-              orderStatus?['status_order_id'] == 8 ||
-              orderStatus?['status_order_id'] == 0)
       body: (orderStatus == null ||
               orderStatus?['status_order_id'] == 7 ||
               orderStatus?['status_order_id'] == 8 ||
@@ -322,24 +218,20 @@ class _PesananScreenState extends State<PesananScreen> {
                       title: "Pesanan Diterima",
                       icon: Icons.bookmark_added,
                       status: 3,
-                      status: 3,
                     ),
                     buildProgressTile(
                       title: "Sopir Menuju ke Lokasi Anda",
                       icon: Icons.directions_run,
-                      status: 5,
                       status: 5,
                     ),
                     buildProgressTile(
                       title: "Sopir Telah Tiba di Lokasi Anda",
                       icon: Icons.directions_car,
                       status: 6,
-                      status: 6,
                     ),
                     buildProgressTile(
                       title: "Anda Telah Tiba di Tujuan",
                       icon: Icons.place,
-                      status: 7,
                       status: 7,
                     ),
                   ],
@@ -381,7 +273,6 @@ class _PesananScreenState extends State<PesananScreen> {
 
   Widget buildProgressTile(
       {required String title, required int status, required IconData icon}) {
-      {required String title, required int status, required IconData icon}) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -394,10 +285,7 @@ class _PesananScreenState extends State<PesananScreen> {
             Icon(
               icon,
               color: status == orderStatus?['status_order_id']
-              color: status == orderStatus?['status_order_id']
                   ? Colors.deepPurple.shade700
-                  : Colors.black,
-              size: 32, // Adjust the size as needed
                   : Colors.black,
               size: 32, // Adjust the size as needed
             ),
@@ -406,19 +294,12 @@ class _PesananScreenState extends State<PesananScreen> {
               title,
               style: TextStyle(
                 color: status == orderStatus?['status_order_id']
-                color: status == orderStatus?['status_order_id']
                     ? Colors.deepPurple.shade700
-                    : Colors.black,
-                fontSize: 12,
-                // Adjust the font size as needed
                     : Colors.black,
                 fontSize: 12,
                 // Adjust the font size as needed
               ),
               maxLines: 2,
-              textAlign: TextAlign.center, // Align the text to center if needed
-              overflow: TextOverflow
-                  .ellipsis, // Show ellipsis if the text exceeds two lines
               textAlign: TextAlign.center, // Align the text to center if needed
               overflow: TextOverflow
                   .ellipsis, // Show ellipsis if the text exceeds two lines
@@ -620,10 +501,6 @@ class _PesananScreenState extends State<PesananScreen> {
                       Icons.cancel,
                       color: Colors.white,
                     ),
-                    icon: Icon(
-                      Icons.cancel,
-                      color: Colors.white,
-                    ),
                     label: Text(
                       "Batalkan Pesanan",
                       style: TextStyle(
@@ -706,28 +583,11 @@ class _PesananScreenState extends State<PesananScreen> {
                             profilePicture: orderStatus!['driver_photo'],
                           ),
                         ),
-                        MaterialPageRoute(
-                          builder: (context) => ChatScreen(
-                            chatId: chatId.toString(),
-                            name: orderStatus!['driver_name'],
-                            profilePicture: orderStatus!['driver_photo'],
-                          ),
-                        ),
                       );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 20),
-                            child: Text(
-                              "Chat dengan Sopir pesanan",
-                              style: TextStyle(color: Colors.black),
-                              textAlign: TextAlign.start,
-                              maxLines: 1, // Add this line
-                              overflow: TextOverflow.ellipsis,
-                            ),
                         Flexible(
                           child: Padding(
                             padding: const EdgeInsets.only(left: 20),
@@ -744,7 +604,6 @@ class _PesananScreenState extends State<PesananScreen> {
                           padding: const EdgeInsets.only(right: 10),
                           child: Icon(
                             Icons.send,
-                            color: Colors.black,
                             color: Colors.black,
                             size: 20,
                           ),

@@ -262,6 +262,29 @@ class ChatService {
       throw Exception('Failed to load messages');
     }
   }
+  Future<List<Message>> fetchDriverMessages(String token, String chatId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrlDriver/chats/$chatId/messages'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    print("fetchMessages : ${baseUrlDriver}/chats/${chatId}/messages");
+
+    if (response.statusCode == 200) {
+      List<Message> _messages = [];
+      if (response.body.isNotEmpty) {
+        var jsonData = jsonDecode(response.body);
+        for (var message in jsonData) {
+          _messages.add(Message.fromJson(message));
+        }
+      }
+      return _messages; // Return the list of messages
+    } else {
+      throw Exception('Failed to load messages');
+    }
+  }
 
   Future<void> postMessage(
       String token, String chatId, String message, String url) async {

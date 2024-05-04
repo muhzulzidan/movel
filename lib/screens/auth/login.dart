@@ -228,8 +228,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // final email = emailController.text;
-    // final password = _passwordController.text;
+    final email = emailController.text;
+    final password = _passwordController.text;
 
     // user
     // final email = "zulzdn@gmail.com";
@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "zidanPenumpang61@gmail.com";
     // final email = "zidanPenumpang62@gmail.com";
     // final email = "zidanPenumpang63@gmail.com";
-    final email = "vemot98522@acentni.com";
+    // final email = "vemot98522@acentni.com";
     // const password = "zidan100";
 
     // const email = "zulzdn@sopir.com";
@@ -269,7 +269,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "zidan5@gmail.com";
     // final email = "zidansopir6@gmail.com";
     // final email = "magibom440@agromgt.com";
-    final password = "zidan100";
+    // final email = "xodabi5002@eryod.com";
+    // final password = "zidan100";
 
     final result = await _authService.login(email, password);
 
