@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:movel/controller/auth/auth_state.dart';
+import 'package:movel/controller/chat/chat_service.dart';
+import 'package:movel/screens/home/driver/chat/ChatScreenDriver.dart';
 import 'package:requests/requests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
+import 'package:http/http.dart' as http;
 import 'cek_progress_pesanan.dart';
 
 class PesananDriverDiterimaScreen extends StatefulWidget {
@@ -17,20 +20,57 @@ class PesananDriverDiterimaScreen extends StatefulWidget {
 
 class OrderListItem extends StatelessWidget {
   final String name;
+  final String userId;
+  final String driverId;
   final int orderid;
   final String pickupLocation;
   final String destination;
   final String orderDate;
   final int statusOrder;
+  final Map<String, dynamic> userData;
 
   const OrderListItem({
+    required this.userData,
     required this.name,
+    required this.userId,
+    required this.driverId,
     required this.orderid,
     required this.pickupLocation,
     required this.destination,
     required this.orderDate,
     required this.statusOrder,
   });
+
+  Future<int> createChat(String details) async {
+    final prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token') ?? '';
+
+    // Define the data to send
+    Map<String, String> data = {
+      'receiver_id': userId.toString(),
+      'details': details,
+      'order_id': orderid.toString(),
+    };
+
+    // Make the POST request
+    var response = await http.post(
+      Uri.parse('https://api.movel.id/api/user/chats'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: json.encode(data),
+    );
+
+    // Check the response
+    if (response.statusCode == 201) {
+      print('Chat created successfully');
+      var responseBody = json.decode(response.body);
+      return responseBody['chat']['id']; // Return the ID of the created chat
+    } else {
+      throw Exception('Could not create chat: ${response.body}');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +117,56 @@ class OrderListItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(100),
                       ),
                     ),
-                    onPressed: () {
-                      // Implement chat functionality
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      String token = prefs.getString('token') ?? '';
+
+                      // Initialize the ChatService instance
+                      final chatService = ChatService();
+
+                      // Check if a chat already exists
+                      bool chatExists =
+                          await chatService.chatExistsDriver(token, orderid);
+                      if (chatExists) {
+                        print('Chat already exists');
+
+                        // Get the ID of the latest chat
+                        int? latestChatId =
+                            await chatService.getLatestDriverChatId(token);
+                        if (latestChatId != null) {
+                          // Navigate to the ChatScreen for the existing chat
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatScreenDriver(
+                                chatId: latestChatId.toString(),
+                                name: name,
+                              ),
+                            ),
+                          );
+                        }
+                        return;
+                      }
+
+                      // Create a chat
+                      int chatId;
+                      try {
+                        chatId = await createChat("$userData");
+                      } catch (e) {
+                        print('Failed to create chat: $e');
+                        return;
+                      }
+
+                      // Navigate to the ChatScreen and pass the necessary data
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreenDriver(
+                            chatId: chatId.toString(),
+                            name: name,
+                          ),
+                        ),
+                      );
                     },
                     child: Text(
                       'Chat',
@@ -149,12 +237,14 @@ class _PesananDriverDiterimaScreenState
   late IO.Socket socket;
   late WebSocketChannel channel;
   bool _hasAcceptedOrders = true;
+  String _userName = '';
+  late Map<String, dynamic> userData = {};
 
   @override
   void initState() {
     super.initState();
     _acceptedOrdersFuture = _fetchAcceptedOrders();
-
+    _loadUserData();
     socket = IO.io('https://admin.movel.id', <String, dynamic>{
       'transports': ['websocket'],
     });
@@ -177,6 +267,32 @@ class _PesananDriverDiterimaScreenState
   void dispose() {
     socket.disconnect();
     super.dispose();
+  }
+
+  Future<void> _loadUserData() async {
+    late String _token;
+
+    Future<void> _getSharedPrefrences() async {
+      final prefs = await SharedPreferences.getInstance();
+      _token = prefs.getString('token') ?? '';
+    }
+
+    try {
+      final userService = UserService();
+      final user = await userService.getUser();
+      print("PesananDriverDiterimaScreen user : $user");
+      setState(() {
+        // _userName = user["user"]["name"].toString();
+        _userName = user[0]['name'].toString();
+
+        userData = user[0];
+      });
+      print('profile testtt');
+      print(_userName);
+      print("user data PesananDriverDiterimaScreen: $userData");
+    } catch (e) {
+      print("dari profil : $e");
+    }
   }
 
   Future<List<dynamic>> _fetchAcceptedOrders() async {
@@ -237,9 +353,9 @@ class _PesananDriverDiterimaScreenState
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Icon(
-                        Icons.inbox,
+                        Icons.warning,
                         size: 100.0,
-                        color: Colors.deepPurple.shade200,
+                        color: Colors.deepPurple.shade700,
                       ),
                       SizedBox(height: 5.0),
                       Container(
@@ -250,7 +366,7 @@ class _PesananDriverDiterimaScreenState
                           style: TextStyle(
                             fontSize: 15.0,
                             fontWeight: FontWeight.w700,
-                            color: Colors.grey,
+                            color: Colors.black,
                           ),
                         ),
                       )
@@ -297,20 +413,24 @@ class _PesananDriverDiterimaScreenState
                       final order = acceptedOrders[index];
                       final orderId = order['id'];
                       final name = order['passenger_name'];
+                      final userId = order['passenger_id'].toString();
                       final pickupLocation = order['kota_asal'];
                       final destination = order['kota_tujuan'];
                       final orderDate = order['date_order'];
                       final statusOrder = order['status_order'];
-
+                      print("pesanan driver diterima : $acceptedOrders");
                       return Column(
                         children: [
                           OrderListItem(
                             statusOrder: statusOrder,
                             orderid: orderId,
                             name: name,
+                            driverId: userData['id'].toString(),
+                            userId: userId,
                             pickupLocation: pickupLocation,
                             destination: destination,
                             orderDate: orderDate,
+                            userData: userData,
                           ),
                         ],
                       );

@@ -1,6 +1,3 @@
-// import 'package:cookie_jar/cookie_jar.dart';
-// import 'package:dio/dio.dart';
-// import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -26,24 +23,12 @@ class DriverProfileScreen extends StatefulWidget {
 
 class _DriverProfileScreenState extends State<DriverProfileScreen> {
   Future<void> logout(BuildContext context, String token) async {
-    // final dio = Dio();
-    // var cookieJar = CookieJar();
-
-    // Add the CookieJar to Dio's HttpClientAdapter
-
-    // final options = Options(
-    //   headers: {
-    //     'Authorization': 'Bearer $token',
-    //   },
-    // );
-
     final response = await Requests.post(
       'https://api.movel.id/api/user/logout',
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
-
     if (response.statusCode == 200) {
       // Logout was successful
       final responseData = response.json();
@@ -54,18 +39,14 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
       );
     } else {
       print(response);
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Logout failed')),
       );
-      // Logout failed
     }
   }
 
   String _userName = '';
   late String _userPhoto = '';
-  // String _userName = '';
-  // String _u = '';
   late Map<String, dynamic> _userData = {};
 
   Future<void> _loadUserData() async {
@@ -86,7 +67,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
         _userData = user[0];
       });
-      print('profile testtt');
+      print('profile driver screen : $_userData');
       print(_userName);
     } catch (e) {
       print("dari profil : $e");
@@ -115,7 +96,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("_userPhoto : $_userPhoto");
+    // print("_userPhoto : $_userPhoto");
     return Scaffold(
       body: Stack(children: [
         SafeArea(
@@ -167,26 +148,46 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                         size: 12, color: Colors.white),
                                   ],
                                 ),
-                              ])
-                          // Text(
-                          //   "${_userData["user"]["name"]}",
-                          //   // "${_userName}",
-                          //   style: TextStyle(
-                          //       fontWeight: FontWeight.w700,
-                          //       fontSize: 25,
-                          //       color: Colors.black),
-                          // ),
-                          ),
+                              ])),
                       // SizedBox(width: 0),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15),
-                        child: CircleAvatar(
-                          radius: 40,
-                          backgroundColor: Colors.deepPurple.shade700,
-                          backgroundImage:
-                              AssetImage('assets/placeholderPhoto.png'),
-                        ),
-                      ),
+                      FutureBuilder(
+                        future:
+                            _loadUserData(), // Replace this with your actual future
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.deepPurple.shade700,
+                                backgroundImage:
+                                    AssetImage('assets/placeholderPhoto.png'),
+                              ),
+                            ); // Show loading spinner while waiting
+                          } else if (snapshot.hasError) {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.deepPurple.shade700,
+                                backgroundImage:
+                                    AssetImage('assets/placeholderPhoto.png'),
+                              ),
+                            ); // Show error message if something went wrong
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.deepPurple.shade700,
+                                backgroundImage: NetworkImage(
+                                    'https://api.movel.id/storage/${_userData['photo'].replaceFirst('public/', '')}'),
+                              ),
+                            );
+                          }
+                        },
+                      )
                       // SizedBox(width: 2),
                     ],
                   ),
@@ -196,35 +197,11 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                 padding: const EdgeInsets.all(15),
                 child: Column(
                   children: [
-                    // ListTile(
-                    //   visualDensity: VisualDensity.compact,
-                    //   // leading: Icon(Icons.person),
-                    //   title: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Text(
-                    //         // '$_userData',
-                    //         'Personal Information',
-                    //         style: TextStyle(fontWeight: FontWeight.w500),
-                    //       ),
-                    //       Divider(
-                    //         height: 30,
-                    //         color: Colors.black12,
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   // trailing: Icon(Icons.arrow_forward_ios),
-                    //   onTap: () {
-                    //     // // TODO: Navigate to personal information screen.
-                    //     // Navigator.push(
-                    //     //   context,
-                    //     //   MaterialPageRoute(
-                    //     //       builder: (context) => TokecScreen()),
-                    //     // );
-                    //   },
-                    // ),
-                    // Divider(
-                    //   height: 1,
+                    // Text(_userData['photo'] ?? 'Email'),
+                    // Text(
+                    //   _userData['photo'] != null
+                    //       ? 'https://api.movel.id/storage/${_userData['photo'].replaceFirst('public/', '')}'
+                    //       : 'Email',
                     // ),
                     ListTile(
                       visualDensity: VisualDensity.compact,
@@ -253,7 +230,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         );
                       },
                     ),
-
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -280,7 +256,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -306,7 +281,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -332,7 +306,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-
                     ListTile(
                       // leading: Icon(Icons.lock),
                       title: Column(
@@ -358,34 +331,6 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                         // TODO: Navigate to change password screen.
                       },
                     ),
-
-                    // ListTile(
-                    //   // leading: Icon(Icons.lock),
-                    //   title: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       Text(
-                    //         'Alamat',
-                    //         style: TextStyle(fontWeight: FontWeight.w500),
-                    //       ),
-                    //       Divider(
-                    //         height: 30,
-                    //         color: Colors.black12,
-                    //       ),
-                    //     ],
-                    //   ),
-                    //   // trailing: Icon(Icons.arrow_forward),
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //             builder: (context) => AlamatScreen()));
-                    //     // TODO: Navigate to change password screen.
-                    //   },
-                    // ),
-                    // Divider(
-                    //   height: 1,
-                    // ),
                     ListTile(
                         // leading: Icon(Icons.exit_to_app),
                         title: Column(
@@ -408,6 +353,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                               return BackdropFilter(
                                 filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                                 child: AlertDialog(
+                                  surfaceTintColor: Colors.white,
                                   contentPadding:
                                       EdgeInsets.only(top: 30, bottom: 10),
                                   buttonPadding: EdgeInsets.zero,
@@ -432,6 +378,7 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                                                     vertical: 8,
                                                     horizontal: 30),
                                                 backgroundColor: Colors.white,
+                                                surfaceTintColor: Colors.white,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -501,20 +448,33 @@ class _DriverProfileScreenState extends State<DriverProfileScreen> {
                   ],
                 ),
               ),
-              // Container(
-              //     alignment: Alignment.centerRight,
-              //     child: Image.asset("assets/bgProfile.png"))
             ],
           ),
         ),
-        Positioned(
-          bottom: 20,
-          right: 0,
-          child: Container(
-            alignment: Alignment.centerRight,
-            child: Image.asset("assets/bgProfile.png"),
-          ),
-        ),
+        // Positioned(
+        //     bottom: 20,
+        //     right: 0,
+        //     child: Container(
+        //       alignment: Alignment.centerRight,
+        //       child: _userPhoto != null
+        //           ? Image.network(
+        //               'https://api.movel.id/storage/${_userPhoto.replaceFirst('/public/', '')}')
+        //           : CircularProgressIndicator(), // or some other placeholder widget
+        //     )),
+
+        // FutureBuilder(
+        //   future: _loadUserData(), // assuming _loadUserData() returns a Future
+        //   builder: (BuildContext context, AsyncSnapshot snapshot) {
+        //     if (snapshot.connectionState == ConnectionState.waiting) {
+        //       return CircularProgressIndicator(); // or some other placeholder widget
+        //     } else if (snapshot.hasError) {
+        //       return Text('Error: ${snapshot.error}');
+        //     } else {
+        //       return Image.network(
+        //           'https://api.movel.id/storage/${_userPhoto.replaceFirst('/public/', '')}');
+        //     }
+        //   },
+        // )
       ]),
     );
   }

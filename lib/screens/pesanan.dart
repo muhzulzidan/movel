@@ -538,6 +538,7 @@ class _PesananScreenState extends State<PesananScreen> {
                       // Check if a chat already exists
                       bool chatExists = await chatService.chatExists(
                         token,
+                        orderStatus!['id_order'],
                       );
                       if (chatExists) {
                         print('Chat already exists');

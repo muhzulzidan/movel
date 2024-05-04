@@ -268,7 +268,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "zidansopir5@gmail.com";
     // final email = "zidan5@gmail.com";
     // final email = "zidansopir6@gmail.com";
-    final email = "magibom440@agromgt.com";
+    // final email = "magibom440@agromgt.com";
+    final email = "xodabi5002@eryod.com";
     final password = "zidan100";
 
     final result = await _authService.login(email, password);

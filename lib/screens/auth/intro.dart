@@ -224,6 +224,7 @@ class _IntroScreenState extends State<IntroScreen> {
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: 12),
                         backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.white,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(100),
