@@ -9,7 +9,7 @@ import 'message.dart'; // Import the Message class
 class ChatService {
   final String baseUrl = 'https://api.movel.id/api/user/passenger';
   final String baseUrlDriver = 'https://api.movel.id/api/user';
-  
+
   Future<int?> getLatestChatId(String token) async {
     // Make the GET request
     print("chat exists : ${baseUrl}/chats/");
@@ -78,7 +78,6 @@ class ChatService {
 
   Future<bool> chatExists(String token, int orderId) async {
     // Make the GET request
-
     print("chat exists : ${baseUrl}/chats/");
     var response = await http.get(
       Uri.parse('$baseUrl/chats/'), // Replace with your actual endpoint
@@ -95,6 +94,12 @@ class ChatService {
     if (response.statusCode == 200) {
       // If the server returns a 200 OK response, parse the JSON.
       Map<String, dynamic> data = jsonDecode(response.body);
+
+      // Check if the response is empty
+      if (data['status'] == 'empty') {
+        print("No chats available");
+        return false;
+      }
 
       // Get the list of chats
       List<dynamic> chats = data['chats'];
@@ -262,6 +267,7 @@ class ChatService {
       throw Exception('Failed to load messages');
     }
   }
+
   Future<List<Message>> fetchDriverMessages(String token, String chatId) async {
     final response = await http.get(
       Uri.parse('$baseUrlDriver/chats/$chatId/messages'),

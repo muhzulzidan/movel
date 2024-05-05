@@ -132,208 +132,206 @@ class _PesananBaruScreenState extends State<PesananBaruScreen> {
     print("PesananBaruScreen : ${widget.newOrders[0]["id"]}");
     // print("PesananBaruScreen : ${acceptedOrders['passenger_name']}");
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Pesanan Baru'),
-        ),
-        body: Stack(children: [
-          SizedBox(
-            height: double.infinity,
-          ),
-          Positioned(
-            right: -30,
-            bottom: -30,
-            child: Image.asset(
-              'assets/konfirmasiCars.png',
-              // fit: BoxFit.,
-            ),
-          ),
-          Expanded(
-              child: Container(
-                  margin: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
+      appBar: AppBar(
+        title: Text('Pesanan Baru'),
+      ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    right: -30,
+                    bottom: -30,
+                    child: Image.asset(
+                      'assets/konfirmasiCars.png',
+                      // fit: BoxFit.,
+                    ),
                   ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child:
+                  Container(
+                    margin: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child:
 
-                              // Column(
-                              // crossAxisAlignment: CrossAxisAlignment.stretch,
-                              // children: acceptedOrders.map<Widget>((order) {
-                              // return
-                              Card(
-                            color: Colors.deepPurple.shade500,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 30, vertical: 30),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomRow(
-                                    label: 'Nama',
-                                    value: widget.newOrders[0]
-                                        ['passenger_name'],
-                                  ),
-                                  CustomRow(
-                                    label: 'Asal Kota',
-                                    value: widget.newOrders[0]['kota_asal'],
-                                  ),
-                                  CustomRow(
-                                    label: 'Kota Tujuan',
-                                    value: widget.newOrders[0]['kota_tujuan'],
-                                  ),
-                                  CustomRow(
-                                    label: 'Tanggal',
-                                    value: widget.newOrders[0]
-                                        ['date_departure'],
-                                  ),
-                                  CustomRow(
-                                    label: 'Jam',
-                                    value: widget.newOrders[0]
-                                        ['time_departure'],
-                                  ),
-                                  CustomRow(
-                                    label: 'Kode Kursi',
-                                    value: widget.newOrders[0]['label_seat_car']
-                                        .join(', '),
-                                  ),
+                                // Column(
+                                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                                // children: acceptedOrders.map<Widget>((order) {
+                                // return
+                                Card(
+                              color: Colors.deepPurple.shade500,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 30, vertical: 30),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomRow(
+                                      label: 'Nama',
+                                      value: widget.newOrders[0]
+                                          ['passenger_name'],
+                                    ),
+                                    CustomRow(
+                                      label: 'Asal Kota',
+                                      value: widget.newOrders[0]['kota_asal'],
+                                    ),
+                                    CustomRow(
+                                      label: 'Kota Tujuan',
+                                      value: widget.newOrders[0]['kota_tujuan'],
+                                    ),
+                                    CustomRow(
+                                      label: 'Tanggal',
+                                      value: widget.newOrders[0]
+                                          ['date_departure'],
+                                    ),
+                                    CustomRow(
+                                      label: 'Jam',
+                                      value: widget.newOrders[0]
+                                          ['time_departure'],
+                                    ),
+                                    CustomRow(
+                                      label: 'Kode Kursi',
+                                      value: widget.newOrders[0]
+                                              ['label_seat_car']
+                                          .join(', '),
+                                    ),
 
-                                  // CustomRow(
-                                  //   label: 'Jam',
-                                  //   value: order['jam'],
-                                  // ),
-                                  // CustomRow(
-                                  //   label: 'Kode Kursi',
-                                  //   value: order['kode_kursi'],
-                                  // ),
-                                  // CustomRow(
-                                  //   label: 'Titik Jemput',
-                                  //   value: order['titik_jemput'],
-                                  // ),
-                                ],
+                                    // CustomRow(
+                                    //   label: 'Jam',
+                                    //   value: order['jam'],
+                                    // ),
+                                    // CustomRow(
+                                    //   label: 'Kode Kursi',
+                                    //   value: order['kode_kursi'],
+                                    // ),
+                                    // CustomRow(
+                                    //   label: 'Titik Jemput',
+                                    //   value: order['titik_jemput'],
+                                    // ),
+                                  ],
+                                ),
                               ),
                             ),
+                            // }).toList(),
+                            // )
                           ),
-                          // }).toList(),
-                          // )
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 15),
-                          child: Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Implement logic for rejecting the order
-                                    rejectOrder(
-                                        context, widget.newOrders[0]["id"]);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 13),
-                                    backgroundColor: Colors.grey,
-                                    elevation: 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            child: Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      // Implement logic for rejecting the order
+                                      rejectOrder(
+                                          context, widget.newOrders[0]["id"]);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 13),
+                                      backgroundColor: Colors.grey,
+                                      elevation: 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    'Tolak',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
+                                    child: Text(
+                                      'Tolak',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w700,
+                                      ),
                                     ),
                                   ),
                                 ),
+                                SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    // onPressed: () {
+                                    //   // Implement logic for accepting the order
+                                    //   acceptOrder(context, widget.newOrders[0]["id"]);
+                                    // },
+                                    onPressed: _acceptButtonEnabled
+                                        ? () {
+                                            // Implement logic for accepting the order
+                                            acceptOrder(context,
+                                                widget.newOrders[0]["id"]);
+                                          }
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 13),
+                                      backgroundColor: Colors.amber,
+                                      elevation: 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Terima',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 30),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                CupertinoIcons.alarm,
+                                color: Colors.red,
                               ),
                               SizedBox(
-                                width: 20,
+                                width: 5,
                               ),
-                              Expanded(
-                                child: ElevatedButton(
-                                  // onPressed: () {
-                                  //   // Implement logic for accepting the order
-                                  //   acceptOrder(context, widget.newOrders[0]["id"]);
-                                  // },
-                                  onPressed: _acceptButtonEnabled
-                                      ? () {
-                                          // Implement logic for accepting the order
-                                          acceptOrder(context,
-                                              widget.newOrders[0]["id"]);
-                                        }
-                                      : null,
-                                  style: ElevatedButton.styleFrom(
-                                    padding: EdgeInsets.symmetric(vertical: 13),
-                                    backgroundColor: Colors.amber,
-                                    elevation: 4,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Terima',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                              Text(
+                                '28 Detik Tersisa',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(height: 30),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              CupertinoIcons.alarm,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              '28 Detik Tersisa',
-                              style: TextStyle(
-                                fontSize: 15,
-                                color: Colors.red,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  )))
-        ]));
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Text(
-            '$label:',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(width: 8),
-          Text(value),
-        ],
+          );
+        },
       ),
     );
   }

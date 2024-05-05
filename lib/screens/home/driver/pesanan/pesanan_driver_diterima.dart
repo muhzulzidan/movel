@@ -340,7 +340,7 @@ class _PesananDriverDiterimaScreenState
       appBar: AppBar(
         title: Container(
             padding: EdgeInsets.only(left: 20),
-            child: Text('Pesanan yang asd Sudah Diterima')),
+            child: Text('Pesanan yang Sudah Diterima')),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),

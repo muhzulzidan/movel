@@ -384,6 +384,7 @@ class _PesananScreenState extends State<PesananScreen> {
                           return BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
                             child: AlertDialog(
+                              surfaceTintColor: Colors.white,
                               content: Text(
                                 "Yakin ingin membatalkan pesanan?",
                                 style: TextStyle(
@@ -392,18 +393,25 @@ class _PesananScreenState extends State<PesananScreen> {
                                 ),
                                 textAlign: TextAlign.center,
                               ),
-                              buttonPadding: EdgeInsets.zero,
-                              actionsPadding:
+
+                              buttonPadding:
                                   EdgeInsets.symmetric(horizontal: 0),
+                              actionsPadding: EdgeInsets.only(
+                                // horizontal: 20,
+                                bottom: 20,
+                              ),
                               actions: [
                                 ButtonBar(
                                   alignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 8),
-                                        backgroundColor: Colors.white,
+                                        surfaceTintColor: Colors
+                                            .white, // Use primary instead of backgroundColor
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal:
+                                                20), // Add horizontal padding
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(100),
@@ -412,18 +420,18 @@ class _PesananScreenState extends State<PesananScreen> {
                                       ),
                                       onPressed: () async {
                                         // Close the dialog
-                                        Navigator.of(context).pop();
+                                        // Navigator.pop(context);
 
                                         // Show a loading indicator
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                          },
-                                        );
+                                        // showDialog(
+                                        //   context: context,
+                                        //   builder: (context) {
+                                        //     return Center(
+                                        //       child:
+                                        //           CircularProgressIndicator(),
+                                        //     );
+                                        //   },
+                                        // );
 
                                         // Make the API request
                                         final prefs = await SharedPreferences
@@ -438,7 +446,7 @@ class _PesananScreenState extends State<PesananScreen> {
                                         );
 
                                         // Dismiss the loading indicator
-                                        Navigator.of(context).pop();
+                                        // Navigator.of(context).pop();
 
                                         if (response.statusCode == 200) {
                                           // Show a success message
@@ -451,6 +459,7 @@ class _PesananScreenState extends State<PesananScreen> {
                                               backgroundColor: Colors.green,
                                             ),
                                           );
+                                           Navigator.of(context).pop();
                                         } else {
                                           // Show an error message
                                           ScaffoldMessenger.of(context)
@@ -462,6 +471,7 @@ class _PesananScreenState extends State<PesananScreen> {
                                               backgroundColor: Colors.red,
                                             ),
                                           );
+                                           Navigator.of(context).pop();
                                         }
                                       },
                                       child: Text(
@@ -473,9 +483,12 @@ class _PesananScreenState extends State<PesananScreen> {
                                     ),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 8),
-                                        backgroundColor: Colors.red,
+                                        backgroundColor: Colors
+                                            .red, // Use primary instead of backgroundColor
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 8,
+                                            horizontal:
+                                                20), // Add horizontal padding
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(100),
@@ -487,7 +500,12 @@ class _PesananScreenState extends State<PesananScreen> {
                                         Navigator.of(context)
                                             .pop(); // Close the dialog
                                       },
-                                      child: Text("Tidak"),
+                                      child: Text(
+                                        "Tidak",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
