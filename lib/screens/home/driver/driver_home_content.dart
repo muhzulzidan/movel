@@ -657,31 +657,37 @@ class _DriverHomeContentState extends State<DriverHomeContent> {
                             SizedBox(
                               width: 10,
                             ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 5, horizontal: 10),
-                              decoration: BoxDecoration(
-                                  // border: Border.all(color: Colors.black),
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: Colors.white),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Saldo:",
-                                    style: TextStyle(
-                                        fontSize: 15, color: Colors.black),
-                                  ),
-                                  Text(
-                                    "Rp ${NumberFormat('#,###', 'id_ID').format(saldo)}",
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800,
+                            ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth:
+                                    140, // Set your desired minimum width here
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
+                                decoration: BoxDecoration(
+                                    // border: Border.all(color: Colors.black),
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: Colors.white),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Poin:",
+                                      style: TextStyle(
+                                          fontSize: 15, color: Colors.black),
                                     ),
-                                  ),
-                                ],
+                                    Text(
+                                      "${NumberFormat('#,###', 'id_ID').format(saldo)} Poin",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                             SizedBox(

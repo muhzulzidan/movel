@@ -7,10 +7,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../driver_home_content.dart';
 
 class TopUpScreen extends StatelessWidget {
-   final int saldo;
+  final int saldo;
 
   TopUpScreen({required this.saldo});
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +65,7 @@ class TopUpScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'Saldo',
+                        'Poin Anda',
                         style: TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.w500,
@@ -74,7 +73,7 @@ class TopUpScreen extends StatelessWidget {
                       ),
                       // SizedBox(height: 8),
                       Text(
-                        'Rp. ${NumberFormat.currency(locale: 'id', symbol: '').format(saldo)}',
+                        '${NumberFormat.currency(locale: 'id', symbol: '').format(saldo)} Poin. ',
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -102,7 +101,7 @@ class TopUpScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    'Jl. Jend. Ahmad Yani No. 50.',
+                    'Jl. Lapawawoi Kr Sigeri Kel. Biru, Depannya Mesjid Nurul Hamirah',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -114,13 +113,26 @@ class TopUpScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 24),
                   ElevatedButton.icon(
-                    // onPressed: () => launch('tel:+6281234567890'),
-                    // onPressed: null,
-                    onPressed: () => launchUrl(
-                        'https://wa.me/+6281354789375?text=Hello' as Uri),
-
-                    icon: Icon(Icons.call),
-                    label: Text('Hubungi Admin'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.greenAccent.shade700,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    onPressed: () => launchUrl(Uri.parse(
+                        'https://wa.me/+6285298751997?text=Movel%20Admin%20Top%20Up%20Poin%20Driver%20Movel%20ID%20%3A%20')),
+                    icon: Icon(
+                      Icons.call,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      'Hubungi Admin',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ],
               ),

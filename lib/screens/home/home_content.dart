@@ -153,12 +153,38 @@ class _HomeContentScreenState extends State<HomeContentScreen> {
   @override
   void initState() {
     super.initState();
-    fetchActiveDrivers();
-    fetchKotaData().then((data) {
+    _initializeState();
+  }
+
+  _initializeState() async {
+    await _checkTokenValidity();
+    await fetchActiveDrivers();
+    await fetchKotaData().then((data) {
       setState(() {
         kotaData = data;
       });
     });
+  }
+
+  _checkTokenValidity() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+
+    final response = await http.get(
+      Uri.parse('https://api.movel.id/check-token/$token'),
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 401) {
+      // Token is not valid
+      prefs.remove('token');
+      // Set login status to false
+      prefs.setBool('isLoggedIn', false);
+      // Navigate to login screen
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   Widget buildKotaName(Map<String, dynamic> activeDriver) {

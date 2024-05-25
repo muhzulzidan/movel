@@ -73,7 +73,7 @@ class _DriverInboxScreenState extends State<DriverInboxScreen> {
     String token = prefs.getString('token') ?? '';
 
     final response = await http.get(
-      Uri.parse('https://api.movel.id/api/user/passenger/chats'),
+      Uri.parse('https://api.movel.id/api/user/chats'),
       headers: {
         'Authorization': 'Bearer $token',
       },

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:movel/screens/auth/login.dart';
@@ -9,7 +11,8 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import 'screens/home/driver/driver_home.dart';
 
 void main() async {
@@ -20,19 +23,50 @@ void main() async {
   // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   // print(isLoggedIn);
   initializeDateFormatting('id_ID', null);
+  late int roleId;
 
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token');
+  print('Token: $token'); // Print the value of the token
+
+  if (token != null) {
+    final response = await http.get(
+      Uri.parse('https://api.movel.id/api/user/check-token'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseBody = jsonDecode(response.body);
+      roleId = responseBody['role_id'];
+      prefs.setBool('isLoggedIn', true);
+    } else {
+      roleId = 0;
+      // Token is not valid
+      prefs.remove('token');
+      // Set login status to false
+      prefs.setBool('isLoggedIn', false);
+      print("Token is not valid");
+      print("response : ${response.statusCode}");
+    }
+  } else {
+    print("Token is null");
+    roleId = 0;
+  }
+
+  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  print("main dart is log in  $isLoggedIn");
+  print('main dart is role id : $roleId');
   runApp(
     ChangeNotifierProvider(
       create: (_) => CurrentIndexProvider(),
-      child: MyApp(),
+      child: MyApp(isLoggedIn: isLoggedIn, roleId: roleId),
     ),
   );
-  // runApp(MyApp(
-  // isLoggedIn: isLoggedIn
-  //     ));
-  // runApp(MyApp());
+
   Future.delayed(Duration(seconds: 2), () {
-    // Remove the splash screen
     FlutterNativeSplash.remove();
   });
 }
@@ -40,6 +74,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   // const MyApp({super.key});
   // final bool isLoggedIn;
+  final bool isLoggedIn;
+  final int roleId; // Declare roleId as non-nullable
+
+  MyApp({required this.isLoggedIn, required this.roleId});
 
   // const MyApp({required this.isLoggedIn});
   @override
@@ -102,7 +140,8 @@ class MyApp extends StatelessWidget {
           ),
           // home: LoginScreen(),
           debugShowCheckedModeBanner: false,
-          initialRoute: '/login',
+          initialRoute:
+              isLoggedIn ? (roleId == 3 ? '/driver' : '/home') : '/login',
           // home: isLoggedIn ? IntroScreen() : MyHomePage(),
           routes: {
             // '/seat': (context) => ChooseSeatScreen(),

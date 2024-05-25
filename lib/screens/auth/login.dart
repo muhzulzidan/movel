@@ -286,9 +286,14 @@ class _LoginScreenState extends State<LoginScreen> {
     // }
 
     if (result) {
-      // final accessToken = await getToken();
+       // Save login state
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool("isLoggedIn", true);
+      await prefs.setBool('isLoggedIn', true);
+
+      // Save user data
+      await prefs.setString('email', email);
+      await prefs.setString('password',
+          password); // Be careful with saving passwords in plain text
       final roleId = prefs.getInt('roleId');
       print(result);
       print('loginscren role id from login is : $roleId');
