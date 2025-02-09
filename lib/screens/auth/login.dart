@@ -228,12 +228,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    final email = emailController.text;
-    final password = _passwordController.text;
+    // final email = emailController.text;
+    // final password = _passwordController.text;
 
     // user
-    // final email = "zulzdn@gmail.com";
-    // const password = "zidan100";
+    final email = "zulzdn@gmail.com";
+    const password = "Maryam@100";
     // final email = "zidan4@gmail.com";
     // const password = "zidan100";
     // final email = "nuryamukhtar@gmail.com";
@@ -271,7 +271,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // final email = "magibom440@agromgt.com";
     // final email = "xodabi5002@eryod.com";
     // final password = "zidan100";
-
+    print("start login");
     final result = await _authService.login(email, password);
 
     setState(() {
@@ -286,7 +286,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // }
 
     if (result) {
-       // Save login state
+      // Save login state
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
 

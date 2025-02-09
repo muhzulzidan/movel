@@ -30,15 +30,19 @@ void main() async {
   print('Token: $token'); // Print the value of the token
 
   if (token != null) {
+    print("check token");
+
     final response = await http.get(
-      Uri.parse('https://api.movel.id/api/user/check-token'),
+      Uri.parse('https://api.movel.id/api/user/check-token?token=$token'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode == 200) {
+      print("Token is valid");
+      print("response checktoken : ${response.statusCode}");
+      print("response body : ${response.body}");
       final responseBody = jsonDecode(response.body);
       roleId = responseBody['role_id'];
       prefs.setBool('isLoggedIn', true);

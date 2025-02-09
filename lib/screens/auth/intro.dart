@@ -16,7 +16,7 @@ var items = [
         "Anda dapat merencanakan perjalanan dengan lebih mudah dan aman tanpa khawatir akan biaya yang tidak terduga."
   },
   {
-    "foto": "assets/images/Sopir.png",
+    "foto": "assets/images/sopir.png",
     "heading": "Sopir Profesional",
     "desc":
         "Sopir berintegritas, bertanggungjawab dan memahami rute perjalanan dengan baik"

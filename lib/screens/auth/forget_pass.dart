@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ForgotPasswordScreen extends StatefulWidget {
   @override
@@ -8,6 +9,38 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> sendResetPasswordLink(String email) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final response = await http.post(
+      Uri.parse('https://api.movel.id/api/user/forgot_password'),
+      body: {'email': email},
+    );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (response.statusCode == 200) {
+      // Handle success
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Reset password link sent successfully. Please check your email.')),
+      );
+    } else {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content:
+                Text('Failed to send reset password link. Please try again.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +60,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 20,
-                      ),
+                      SizedBox(height: 20),
                       Container(
                         alignment: Alignment.center,
                         child: Text(
@@ -41,9 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           textAlign: TextAlign.left,
                         ),
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
+                      SizedBox(height: 15),
                       Container(
                         alignment: Alignment.center,
                         child: Text(
@@ -82,9 +111,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 horizontal: 21, vertical: 10),
                           ),
                           validator: (value) {
-                            // if (value?.isEmpty) {
-                            //   return 'Please enter your email';
-                            // }
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your email';
+                            }
                             return null;
                           },
                         ),
@@ -101,17 +130,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               borderRadius: BorderRadius.circular(100),
                             ),
                           ),
-                          child: Text(
-                            'Kirimkan Kode',
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17),
-                          ),
+                          child: _isLoading
+                              ? CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.black),
+                                )
+                              : Text(
+                                  'Kirimkan Kode',
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 17),
+                                ),
                           onPressed: () {
-                            // if (_formKey.currentState.validate()) {
-                            //   // TODO: Implement reset password logic
-                            // }
+                            if (_formKey.currentState!.validate()) {
+                              final email = _emailController.text;
+                              sendResetPasswordLink(email);
+                            }
                           },
                         ),
                       ),
@@ -130,26 +165,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           ),
                           height: 320),
                     ),
-                    // Column(
-                    //   children: [
-                    //     Text("Tidak punya akun?"),
-                    //     TextButton(
-                    //         onPressed: () {
-                    //           // Navigator.push(
-                    //           //   context,
-                    //           //   MaterialPageRoute(
-                    //           //       builder: (context) => RegisterScreen()),
-                    //           // );
-                    //         },
-                    //         style: ElevatedButton.styleFrom(
-                    //           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    //           minimumSize: Size.zero,
-                    //           padding: EdgeInsets.zero,
-                    //           backgroundColor: Colors.transparent,
-                    //         ),
-                    //         child: Text("Daftar"))
-                    //   ],
-                    // ),
                   ],
                 )
               ],
