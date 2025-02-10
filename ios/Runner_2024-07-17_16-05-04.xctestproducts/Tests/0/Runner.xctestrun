@@ -12,7 +12,7 @@
 		<string>Runner.xcodeproj</string>
 		<key>BundleIdentifiersForCrashReportEmphasis</key>
 		<array>
-			<string>com.example.movel.RunnerTests</string>
+			<string>com.movel.movel.RunnerTests</string>
 			<string>com.movel.movel</string>
 		</array>
 		<key>CommandLineArguments</key>

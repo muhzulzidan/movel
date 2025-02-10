@@ -228,12 +228,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    // final email = emailController.text;
-    // final password = _passwordController.text;
+    final email = emailController.text;
+    final password = _passwordController.text;
 
     // user
-    final email = "zulzdn@gmail.com";
-    const password = "Maryam@100";
+    // final email = "zulzdn@gmail.com";
+    // const password = "Maryam@100";
     // final email = "zidan4@gmail.com";
     // const password = "zidan100";
     // final email = "nuryamukhtar@gmail.com";

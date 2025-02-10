@@ -1,4 +1,4 @@
-package com.example.movel
+package com.movel.movel
 
 import io.flutter.embedding.android.FlutterActivity
 
