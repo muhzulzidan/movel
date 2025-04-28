@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 // import './auth/auth_screens.dart';
 
@@ -23,6 +24,8 @@ class _TokecScreenState extends State<TokecScreen> {
             onPressed: () async {
               final SharedPreferences prefs = await _prefs;
               await prefs.clear();
+              final authBox = Hive.box('authBox');
+              await authBox.delete('token');
               // Get.offAll(() => MyApp());
             },
             child: Text(

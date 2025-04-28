@@ -1,0 +1,2 @@
+/Users/macpro2020/code/movel/android/app/.cxx/Debug/z394se73/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/macpro2020/code/movel/android/app/.cxx/Debug/z394se73/armeabi-v7a/CMakeFiles/rebuild_cache.dir

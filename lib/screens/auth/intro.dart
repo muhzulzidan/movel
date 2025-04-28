@@ -3,6 +3,7 @@
 import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/auth/login.dart';
 import 'package:movel/screens/auth/register.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Add this import
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -183,7 +184,9 @@ class _IntroScreenState extends State<IntroScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: ElevatedButton(
-                      onPressed: () {
+                    onPressed: () {
+                        Hive.box('authBox')
+                            .put('hasSeenIntro', true); // Mark intro as seen
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -214,7 +217,9 @@ class _IntroScreenState extends State<IntroScreen> {
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.8,
                     child: ElevatedButton(
-                      onPressed: () {
+                     onPressed: () {
+                        Hive.box('authBox')
+                            .put('hasSeenIntro', true); // Mark intro as seen
                         Navigator.push(
                           context,
                           MaterialPageRoute(

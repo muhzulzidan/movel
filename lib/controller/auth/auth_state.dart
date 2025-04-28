@@ -3,6 +3,7 @@
 // import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:requests/requests.dart';
 
@@ -32,10 +33,14 @@ class AuthState with ChangeNotifier {
 
 class AuthService {
   Future<void> saveToken(String token) async {
+    await Hive.initFlutter();
+    await Hive.openBox('authBox');
     // Get the SharedPreferences instance.
     final prefs = await SharedPreferences.getInstance();
 
     // Save the token.
+    final authBox = Hive.box('authBox');
+    await authBox.put('token', token);
     prefs.setString('token', token);
   }
 
@@ -114,59 +119,36 @@ class AuthService {
       return false; // Return false to indicate failed login
     }
   }
+  Future<Map<String, dynamic>?> loginAndGetData(
+      String email, String password) async {
+    try {
+      final response = await Requests.post(
+        '$apiUrl/login',
+        body: {
+          'email': email,
+          'password': password,
+        },
+        bodyEncoding: RequestBodyEncoding.FormURLEncoded,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.json();
+        final token = responseData['data']['token'];
+        final roleId = responseData['data']['role_id'];
+        return {
+          'token': token,
+          'role_id': roleId,
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
 }
 
-// class AuthService {
-//   var cookieJar = CookieJar();
-
-//   var client = http.Client();
-
-//   static const API_URL = 'https://api.movel.id/api/user';
-
-//   Future<bool> login(String email, String password) async {
-
-//     final response = await client.post(
-//       Uri.parse('$API_URL/login'),
-//       body: {
-//         'email': email,
-//         'password': password,
-//       },
-//     );
-
-//     if (response.statusCode == 200) {
-//       // Save authentication data here, such as a JWT token
-//       final responseData = (response.body);
-//       print(responseData);
-//       final token = responseData['token'];
-//       final roleId = responseData['role_id'];
-//       // print(roleId);
-//       AuthState().token = token; // set the token in the state management class
-//       await saveToken(token); // save the token to storage
-
-//       String roleName;
-//       switch (roleId) {
-//         case 2:
-//           roleName = "passenger";
-//           break;
-//         case 3:
-//           roleName = "driver";
-//           break;
-//         default:
-//           roleName = "unknown";
-//           break;
-//       }
-
-//       SharedPreferences prefs = await SharedPreferences.getInstance();
-//       await prefs.setInt('roleId', roleId);
-
-//       // print("$token");
-//       // ... save token to state management system or storage
-//       return true; // Return true to indicate successful login
-//     } else {
-//       return false; // Return false to indicate failed login
-//     }
-//   }
-// }
 
 bool verifyToken(String token) {
   // Check if the token is not empty

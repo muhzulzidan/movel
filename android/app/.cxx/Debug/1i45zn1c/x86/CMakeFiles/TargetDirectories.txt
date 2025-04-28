@@ -1,0 +1,2 @@
+/Users/macpro2020/code/movel/android/app/.cxx/Debug/1i45zn1c/x86/CMakeFiles/edit_cache.dir
+/Users/macpro2020/code/movel/android/app/.cxx/Debug/1i45zn1c/x86/CMakeFiles/rebuild_cache.dir

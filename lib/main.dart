@@ -11,62 +11,84 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:movel/controller/auth/current_index_provider.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'screens/home/driver/driver_home.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import 'package:movel/controller/auth/auth_state.dart';
 
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-  // final prefs = await SharedPreferences.getInstance();
-  // final token = prefs.getString('token');
-  // bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  // print(isLoggedIn);
-  initializeDateFormatting('id_ID', null);
-  late int roleId;
 
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('token');
-  print('Token: $token'); // Print the value of the token
+  await Hive.initFlutter();
+  await Hive.openBox('authBox');
+
+  initializeDateFormatting('id_ID', null);
+
+  final authBox = Hive.box('authBox');
+  String? token = authBox.get('token');
+  final hasSeenIntro = authBox.get('hasSeenIntro', defaultValue: false);
+
+  late int roleId = 0;
+  bool isLoggedIn = false;
 
   if (token != null) {
-    print("check token");
-
     final response = await http.get(
       Uri.parse('https://api.movel.id/api/user/check-token?token=$token'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
     );
-
     if (response.statusCode == 200) {
-      print("Token is valid");
-      print("response checktoken : ${response.statusCode}");
-      print("response body : ${response.body}");
       final responseBody = jsonDecode(response.body);
       roleId = responseBody['role_id'];
-      prefs.setBool('isLoggedIn', true);
+      isLoggedIn = true;
+      authBox.put('isLoggedIn', true);
     } else {
-      roleId = 0;
-      // Token is not valid
-      prefs.remove('token');
-      // Set login status to false
-      prefs.setBool('isLoggedIn', false);
-      print("Token is not valid");
-      print("response : ${response.statusCode}");
+      // Try to re-login using saved email and password
+      final email = authBox.get('email');
+      final password = authBox.get('password');
+      if (email != null && password != null) {
+        print("start login");
+        final authService = AuthService();
+        final loginBody = await authService.loginAndGetData(email, password);
+
+        if (loginBody != null) {
+          authBox.put('email', email);
+          authBox.put('password', password);
+          token = loginBody['token'];
+          roleId = loginBody['role_id'];
+          authBox.put('token', token);
+          authBox.put('roleId', roleId);
+          isLoggedIn = true;
+          authBox.put('isLoggedIn', true);
+          print('loginscreen role id from login is : $roleId');
+        } else {
+          authBox.delete('token');
+          authBox.delete('email');
+          authBox.delete('password');
+          authBox.put('isLoggedIn', false);
+        }
+      } else {
+        authBox.delete('token');
+        authBox.put('isLoggedIn', false);
+      }
     }
-  } else {
-    print("Token is null");
-    roleId = 0;
   }
 
-  bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-  print("main dart is log in  $isLoggedIn");
-  print('main dart is role id : $roleId');
+  Widget firstScreen;
+  if (!hasSeenIntro) {
+    firstScreen = IntroScreen();
+  } else if (isLoggedIn) {
+    firstScreen = (roleId == 3 ? MyHomeDriverPage() : MyHomePage());
+  } else {
+    firstScreen = LoginScreen();
+  }
+
   runApp(
     ChangeNotifierProvider(
       create: (_) => CurrentIndexProvider(),
-      child: MyApp(isLoggedIn: isLoggedIn, roleId: roleId),
+      child: MyApp(firstScreen: firstScreen),
     ),
   );
 
@@ -76,20 +98,14 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // const MyApp({super.key});
-  // final bool isLoggedIn;
-  final bool isLoggedIn;
-  final int roleId; // Declare roleId as non-nullable
+  final Widget firstScreen;
+  MyApp({required this.firstScreen});
 
-  MyApp({required this.isLoggedIn, required this.roleId});
-
-  // const MyApp({required this.isLoggedIn});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         FocusScopeNode currentFocus = FocusScope.of(context);
-
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.unfocus();
         }
@@ -97,12 +113,8 @@ class MyApp extends StatelessWidget {
       child: ChangeNotifierProvider(
         create: (context) => MyAppState(),
         child: GetMaterialApp(
-          // key: UniqueKey(),
           builder: (context, child) {
-            if (child == null) {
-              return Container(); // or throw an error
-            }
-
+            if (child == null) return Container();
             return MediaQuery(
               data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
               child: child,
@@ -111,12 +123,9 @@ class MyApp extends StatelessWidget {
           title: 'Movel : Mobil Travel',
           theme: ThemeData(
             fontFamily: 'Poppins',
-            // useMaterial3: true,
             scaffoldBackgroundColor: HexColor("#Ffffff"),
             appBarTheme: AppBarTheme(
-              iconTheme: IconThemeData(
-                color: Colors.black, //change your color here
-              ),
+              iconTheme: IconThemeData(color: Colors.black),
               toolbarHeight: 60,
               titleTextStyle: TextStyle(
                   color: Colors.black,
@@ -124,10 +133,8 @@ class MyApp extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                   fontFamily: 'Poppins'),
               elevation: 0,
-              // shadowColor: Colors.transparent,
               backgroundColor: Colors.white,
             ),
-            // scaffoldBackgroundColor: HexColor("#F2F2F2"),
             colorScheme: ColorScheme(
               primary: Colors.deepPurple.shade900,
               secondary: Colors.amber,
@@ -142,22 +149,13 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.light,
             ),
           ),
-          // home: LoginScreen(),
           debugShowCheckedModeBanner: false,
-          initialRoute:
-              isLoggedIn ? (roleId == 3 ? '/driver' : '/home') : '/login',
-          // home: isLoggedIn ? IntroScreen() : MyHomePage(),
+          home: firstScreen,
           routes: {
-            // '/seat': (context) => ChooseSeatScreen(),
-            '/': (context) => IntroScreen(),
-            // '/': (context) => MyHomePage(),
             '/home': (context) => MyHomePage(),
-            //  "/home": isLoggedIn ? MyHomePage() : LoginScreen(),
             '/login': (context) => LoginScreen(),
             '/register': (context) => RegisterScreen(),
             '/driver': (context) => MyHomeDriverPage(),
-
-            // '/profile' : (context) => ProfileScreen(),
           },
         ),
       ),

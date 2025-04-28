@@ -1,0 +1,2 @@
+/Users/macpro2020/code/movel/android/app/.cxx/RelWithDebInfo/3p554j35/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/macpro2020/code/movel/android/app/.cxx/RelWithDebInfo/3p554j35/arm64-v8a/CMakeFiles/rebuild_cache.dir

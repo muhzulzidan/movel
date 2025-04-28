@@ -3,6 +3,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:movel/screens/auth/register.dart';
 import 'package:movel/screens/home/home.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart'; // Add this import
 
 import '../../controller/auth/auth_state.dart';
 import '../home/driver/driver_home.dart';
@@ -285,15 +286,20 @@ class _LoginScreenState extends State<LoginScreen> {
     //   return token;
     // }
 
-    if (result) {
+if (result) {
       // Save login state
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
 
-      // Save user data
-      await prefs.setString('email', email);
-      await prefs.setString('password',
-          password); // Be careful with saving passwords in plain text
+      // // Save user data in SharedPreferences (old, can be removed if not needed)
+      // await prefs.setString('email', email);
+      // await prefs.setString('password', password);
+
+      // Save user data in Hive (recommended)
+      final authBox = Hive.box('authBox');
+      await authBox.put('email', email);
+      await authBox.put('password', password);
+
       final roleId = prefs.getInt('roleId');
       print(result);
       print('loginscren role id from login is : $roleId');
@@ -312,7 +318,6 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (BuildContext context) => MyHomePage()));
       }
-
       // Navigator.pushNamed(context, '/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
